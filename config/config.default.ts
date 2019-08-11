@@ -36,6 +36,7 @@ export default (appInfo: EggAppInfo) => {
 
     // 不需要验证token的 路由白名单
     config.authWhiteList = [
+        "/api/common/uploadImage",
         "/api/account/login",
         "/api/account/register"
     ]
@@ -45,16 +46,26 @@ export default (appInfo: EggAppInfo) => {
     config.jwtSecret = "ins_zhangyu"
 
     config.keys = appInfo.name + '_1563628739386_852';
-
+''
     // add your egg config in here
     // 使用koa的中间件
     // config.middleware = [];
     config.middleware = [ "authorization" ];
 
+    config.multipart = {
+        mode: "file"
+    }
+
+    config.bodyParser = {
+        enable: true,
+        jsonLimit: '5mb',
+        formLimit: '10mb',
+    }
     // add your special config in here
     const bizConfig = {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
     };
+
 
     // the return config will combines to EggAppConfig
     return {

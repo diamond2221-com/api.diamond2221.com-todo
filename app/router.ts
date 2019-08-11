@@ -3,18 +3,27 @@ import { Application } from 'egg';
 
 export default (app: Application) => {
     const { controller, router } = app;
-    const { account, post } = controller;
+    const { account, post, common } = controller;
+
+    // 公共接口
+    // 上传图片
+    router.post("/api/common/uploadImage", common.uploadImage)
 
 
     // 登录
-    router.post("/api/account/login", account.login)
+    router.post("/api/account/login", account.login);
     // 注册
-    router.post("/api/account/register", account.register)
+    router.post("/api/account/register", account.register);
 
-    router.get("/api/post/getUserPosts", post.getUserPosts)
+    // 获取用户的帖子
+    router.get("/api/post/getUserPosts", post.getUserPosts);
 
-    // // 发送帖子
-    // router.post("/postMessage", login.login)
+    // 添加帖子评论
+    router.post("/api/post/addComments", post.addComments);
+
+    // 发送帖子
+    router.post("/api/post/addPost", post.addPost);
+
     // // 获取状态
     // router.get("/api/getStatus", login.login)
     // // 获取推荐用户
