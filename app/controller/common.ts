@@ -6,10 +6,10 @@ export default class CommonController extends Controller {
         const { ctx } = this;
 
         const client = new OssAli({
-            region: 'oss-cn-beijing',
-            accessKeyId: 'LTAIej8aK2sOalxT',
-            accessKeySecret: 'IivM51kqFsCVOWwKScr0Hmp08h7axl',
-            bucket: 'ins-web'
+            region: 'oss-ap-northeast-1',
+            accessKeyId: 'LTAInaRxcKVhzEN3',
+            accessKeySecret: 'DYsHsKmn7Ovt8K26M8dlrG82cnsgcb',
+            bucket: 'instagram-web'
         });
         const files = ctx.request.files;
 

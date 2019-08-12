@@ -43,7 +43,7 @@ export default class PostService extends Service {
             },
             orders: [["addTime", "desc"]]
         });
-        return res.map(img => img.src + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_40/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1");
+        return res.map(img => img.src + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1");
     }
 
     /**
@@ -106,7 +106,9 @@ export default class PostService extends Service {
                 })
             }
         }
-        return { ...post, imgs: imgs.map(img => img + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_40/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1"), postId };
+        return { ...post, imgs: imgs.map(img => img + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1"), postId };
     }
+
+
 
 }
