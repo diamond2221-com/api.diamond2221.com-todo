@@ -1,19 +1,8 @@
 import { Controller } from "egg";
 import { LoginParams, RegisterParams } from '../types/account_interface';
 // import md5 from "../utils/md5";
+import { UserInfo } from "../types/account_interface"
 
-interface UserInfo {
-    addTime: string;
-    badge: number;
-    img: string;
-    name: string | null;
-    password: string;
-    signature: string | null;
-    userId: number;
-    username: string;
-    website: string | null;
-    lastTime: string;
-}
 
 export default class AccountController extends Controller {
     /**
@@ -25,20 +14,20 @@ export default class AccountController extends Controller {
 
         let user: UserInfo | null = await service.account.getUserByUserNamePassWord(LoginParams);
         if (user) {
-            let token: string = await service.account.Login(user.username, user.userId);
+            let token: string = await service.account.Login(user.userName, user.userId);
 
-            ctx.send(200, "登录成功", {
+            ctx.send({
                 token,
-                userName: user.username,
+                userName: user.userName,
                 badge: user.badge,
                 img: user.img,
                 name: user.name,
                 signature: user.signature,
                 userId: user.userId,
                 website: user.website,
-            });
+            }, 200, "登录成功");
         } else {
-            ctx.send(400, "账号或密码错误");
+            ctx.send("账号或密码错误", 400);
         }
     }
 
@@ -51,20 +40,20 @@ export default class AccountController extends Controller {
 
         const hasUser: boolean = await this.service.account.getUserByUserName(RegisterParams.userName);
         if (hasUser) {
-            return ctx.send(400, "当前用户名已被占用")
+            return ctx.send("当前用户名已被占用", 400)
         }
 
         if (RegisterParams.passWord !== RegisterParams.rePassWord) {
-            return ctx.send(400, "两次密码不相同");
+            return ctx.send("两次密码不相同", 400);
         }
 
         const res: boolean = await this.service.account.Register(RegisterParams);
 
         if (res) {
-            return ctx.send(200, "注册成功")
+            return ctx.send("注册成功", 200)
         }
 
-        return ctx.send(99, "服务异常，请稍后再试")
+        return ctx.send("服务异常，请稍后再试", 99)
 
     }
 }

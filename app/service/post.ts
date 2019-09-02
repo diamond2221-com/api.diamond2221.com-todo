@@ -3,7 +3,7 @@ import { Service } from "egg";
 interface PostComments {
     commentId: number;
     postId: number;
-    userId: number;
+    userId: string;
     content: string;
     addTime: string;
 }
@@ -17,7 +17,7 @@ export default class PostService extends Service {
      * @param page
      */
     public async getUserPostsByUserId(
-        userId: number,
+        userId: string,
         size: number,
         page: number
     ) {
@@ -28,6 +28,45 @@ export default class PostService extends Service {
             orders: [["addTime", "desc"]],
             limit: size,
             offset: (page - 1) * size
+        });
+        return res;
+    }
+
+    /**
+     * 通过用户Id 获取 发帖总数
+     * @param userId
+     */
+    public async getUserPostsCountByUserId(
+        userId: string
+    ) {
+        const res = await this.app.mysql.count("ins_post", {
+            userId
+        });
+        return res;
+    }
+
+    /**
+     * 通过用户Id 获取 粉丝总数
+     * @param userId
+     */
+    public async getUserFansCountByUserId(
+        userId: string
+    ) {
+        const res = await this.app.mysql.count("ins_focus", {
+            userId
+        });
+        return res;
+    }
+
+    /**
+     * 通过用户Id 获取 关注总数
+     * @param focusUserId
+     */
+    public async getUserFocusCountByfocusUserId(
+        focusUserId: string
+    ) {
+        const res = await this.app.mysql.count("ins_focus", {
+            focusUserId
         });
         return res;
     }
@@ -71,7 +110,7 @@ export default class PostService extends Service {
      * @param userId
      * @param content
      */
-    public async addComments(postId: number, userId: number, content: string) {
+    public async addComments(postId: number, userId: string, content: string) {
         const comment = {
             postId,
             userId,
@@ -89,7 +128,7 @@ export default class PostService extends Service {
      * @param imgs
      * @param userId
      */
-    public async addPost(content: string, imgs: string[], userId: number) {
+    public async addPost(content: string, imgs: string[], userId: string) {
         const post = {
             content,
             userId,

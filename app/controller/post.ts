@@ -3,7 +3,7 @@ import { Controller } from 'egg';
 
 export interface Post {
     postId: number;
-    userId: number;
+    userId: string;
     content: string;
     addTime: string;
 }
@@ -19,7 +19,7 @@ export interface IPostComment {
     content: string;
     id: number;
     userName: string;
-    useId: number;
+    useId: string;
     addTime: string;
 }
 
@@ -31,8 +31,8 @@ interface UserInfo {
     name: string | null;
     password: string;
     signature: string | null;
-    userId: number;
-    username: string;
+    userId: string;
+    userName: string;
     website: string | null;
     lastTime: string;
 }
@@ -46,7 +46,7 @@ export default class PostController extends Controller {
         const { ctx, service } = this;
         const { page, size, userId } = ctx.query;
 
-        let posts: [Post] | [] = await service.post.getUserPostsByUserId(Number(userId), Number(size), Number(page));
+        let posts: [Post] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
 
 
         let dealPosts: [PostA] | [] | any = [];
@@ -65,7 +65,7 @@ export default class PostController extends Controller {
                         {
                             content: comment.content,
                             id: comment.commentId,
-                            userName: userInfo.username,
+                            userName: userInfo.userName,
                             useId: userInfo.userId,
                             addTime: timestampToTime(Number(comment.addTime))
                         }
@@ -77,7 +77,7 @@ export default class PostController extends Controller {
                     {
                         ...post,
                         imgs,
-                        userName: userInfo.username,
+                        userName: userInfo.userName,
                         userImg: userInfo.img,
                         comments: dealComments,
                         addTime: timestampToTime(Number(post.addTime)),
@@ -88,7 +88,7 @@ export default class PostController extends Controller {
             }
         }
 
-        ctx.send(200, "成功", dealPosts);
+        ctx.send(dealPosts, 200, "成功");
     }
 
 
@@ -99,16 +99,16 @@ export default class PostController extends Controller {
         const { ctx, service } = this;
         const { content, userId, postId } = ctx.request.body;
 
-        const comment = await service.post.addComments(Number(postId), Number(userId), content);
+        const comment = await service.post.addComments(Number(postId), userId, content);
 
         let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
 
         if (comment) {
-            ctx.send(200, "评论成功", {
+            ctx.send({
                 ...comment,
                 addTime: timestampToTime(Number(comment.addTime)),
-                userName: userInfo.username
-            })
+                userName: userInfo.userName
+            }, 200, "评论成功")
         }
 
     }
@@ -120,17 +120,17 @@ export default class PostController extends Controller {
         const { ctx, service } = this;
         const { post } = service;
         const { content, userId, imgs } = ctx.request.body;
-        let newPost = await post.addPost(content, imgs, Number(userId));
+        let newPost = await post.addPost(content, imgs, userId);
         const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);
         const result: PostA = {
             ...newPost,
-            userName: userInfo.username,
+            userName: userInfo.userName,
             userImg: userInfo.img,
             addTime: timestampToTime(newPost.addTime),
             comments: []
         }
 
-        ctx.send(200, "发帖成功", result);
+        ctx.send(result, 200, "发帖成功");
     }
 }
 

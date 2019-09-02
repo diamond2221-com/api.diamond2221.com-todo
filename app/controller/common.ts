@@ -19,9 +19,10 @@ export default class CommonController extends Controller {
             const suffix: string = get_suffix(file.filename);
             const filename: string = random_string(16);
             let res = await client.put(`post_img/${filename}${suffix}`, file.filepath);
+            // console.log(res, "22")
             result.push(res.url);
         }
 
-        ctx.send(200, "", result)
+        ctx.send(result, 200, "")
     }
 }
