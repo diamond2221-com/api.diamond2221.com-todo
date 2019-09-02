@@ -7,11 +7,22 @@ export default class UserService extends Service {
     public getUserInfoByUserId(userId: string) {
         return this.app.mysql.get("ins_user", {userId});
     }
-/**
- * 通过用户username 来获取用户的 信息
- * @param userName
- */
+
+    /**
+     * 通过用户username 来获取用户的 信息
+     * @param userName
+     */
     public getUserInfoByUsername(userName: string) {
         return this.app.mysql.get("ins_user", { userName });
     }
+
+    /**
+     * 通过用户Id 来修改用户信息
+     * @param userId
+     * @param newUserInfo
+     */
+    public changeUserInfoByUserId(userId: string, newUserInfo) {
+        this.app.mysql.update("ins_user", newUserInfo, { where: { userId } })
+    }
+
 }
