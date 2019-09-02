@@ -3,7 +3,7 @@ import { Application } from 'egg';
 
 export default (app: Application) => {
     const { controller, router } = app;
-    const { account, post, common } = controller;
+    const { account, post, common, user } = controller;
 
     // 公共接口
     // 上传图片
@@ -23,6 +23,12 @@ export default (app: Application) => {
 
     // 发送帖子
     router.post("/api/post/addPost", post.addPost);
+
+    // 修改用户个人信息
+    router.post("/api/user/changeAccount", user.changeAccount);
+
+    // 收藏帖子
+    router.post("/api/user/markPost", user.markPost)
 
     // // 获取状态
     // router.get("/api/getStatus", login.login)

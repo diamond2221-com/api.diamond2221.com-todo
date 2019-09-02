@@ -17,7 +17,10 @@ interface UserInfo {
 
 export default class AccountController extends Controller {
     /**
-     * login
+     * @description 用户登录
+     * @author ZhangYu
+     * @date 2019-08-30
+     * @memberof AccountController
      */
     public async login() {
         const { ctx, service } = this;
@@ -42,8 +45,13 @@ export default class AccountController extends Controller {
         }
     }
 
+
     /**
-     * register
+     * @description 用户注册
+     * @author ZhangYu
+     * @date 2019-08-30
+     * @returns
+     * @memberof AccountController
      */
     public async register() {
         const { ctx } = this;
@@ -67,4 +75,5 @@ export default class AccountController extends Controller {
         return ctx.send(99, "服务异常，请稍后再试")
 
     }
+
 }
