@@ -28,9 +28,8 @@ export default class UserController extends Controller {
             focusNum: 0
         }
         result.postNum = await service.post.getUserPostsCountByUserId(userId);
-        result.fansNum = await service.post.getUserFansCountByUserId(userId);
-        result.focusNum = await service.post.getUserFocusCountByfocusUserId(userId);
-
+        result.fansNum = await service.user.getUserFansCountByUserId(userId);
+        result.focusNum = await service.user.getUserFocusCountByfocusUserId(userId);
 
         ctx.send(result, 200, "")
     }
@@ -42,7 +41,7 @@ export default class UserController extends Controller {
      */
     public async changeAccount() {
         const { ctx, service } = this;
-        const { userName, img, name, signature, userId, website } = ctx.body;
+        const { userName, img, name, signature, userId, website } = ctx.request.body;
         let newUserInfo = {};
         function addProp(obj, key: string, prop: any) {
             if (prop && prop !== 0) {
@@ -57,7 +56,7 @@ export default class UserController extends Controller {
         addProp(newUserInfo, "website", website);
 
         await service.user.changeUserInfoByUserId(userId, newUserInfo);
-        ctx.send(200, "修改成功", {});
+        ctx.send({}, 200, "修改成功");
     }
 
     /**
@@ -67,8 +66,62 @@ export default class UserController extends Controller {
      * @memberof UserController
      */
     public async markPost() {
-    //     const { ctx, service } = this;
-    //     const {postId, userId} = ctx;
-    //     service
+        const { ctx, service } = this;
+        const { postId, userId } = ctx.request.body;
+        await service.user.markPostByPostId(Number(postId), userId);
+        ctx.send({}, 200, "收藏成功");
     }
+
+    /**
+     * @description 用户关注用户
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @memberof UserController
+     */
+    public async focusUser() {
+        const { ctx, service } = this;
+        const { userId, focusUserId } = ctx.request.body;
+        await service.user.focusUserByUserId(userId, focusUserId);
+        ctx.send({}, 200, "关注成功");
+    }
+
+    /**
+     * @description 取消关注用户
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @memberof UserController
+     */
+    public async cancelFocusUser() {
+        const { ctx, service } = this;
+        const { userId, focusUserId } = ctx.request.body;
+        await service.user.cancelFocusUserByUserId(userId, focusUserId);
+        ctx.send({}, 200, "取消关注成功")
+    }
+
+    /**
+     * @description 获取用户关注用户列表
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @memberof UserController
+     */
+    public async focusUserList() {
+        const { ctx, service } = this;
+        const { page, size, userId } = ctx.request.body;
+        let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
+        ctx.send(focusList, 200)
+    }
+
+    /**
+     * @description 获取用户 粉丝用户列表
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @memberof UserController
+     */
+    public async fansUserList() {
+        const { ctx, service } = this;
+        const { page, size, userId } = ctx.request.body;
+        let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
+        ctx.send(focusList, 200)
+    }
+
 }

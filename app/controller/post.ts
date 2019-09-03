@@ -1,41 +1,10 @@
 import { timestampToTime } from "../utils/common";
 import { Controller } from 'egg';
-
-export interface Post {
-    postId: number;
-    userId: string;
-    content: string;
-    addTime: string;
-}
-
-export interface PostA extends Post {
-    imgs?: string[];
-    userName?: string;
-    userImg: string;
-    comments: IPostComment[];
-    likeNum?: number;
-}
-export interface IPostComment {
-    content: string;
-    id: number;
-    userName: string;
-    useId: string;
-    addTime: string;
-}
-
-
-interface UserInfo {
-    addTime: string;
-    badge: number;
-    img: string;
-    name: string | null;
-    password: string;
-    signature: string | null;
-    userId: string;
-    userName: string;
-    website: string | null;
-    lastTime: string;
-}
+import {
+    BasePost,
+    PostA,
+    UserInfo
+} from "../types/post_interface";
 
 export default class PostController extends Controller {
     /**
@@ -46,47 +15,47 @@ export default class PostController extends Controller {
         const { ctx, service } = this;
         const { page, size, userId } = ctx.query;
 
-        let posts: [Post] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
+        let posts: [BasePost] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
 
+        let dealPosts: [PostA] | [] = await service.getPostInfo(posts);
+        // let dealPosts: [PostA] | [] | any = [];
+        // {
+        //     for (let post of posts) {
+        //         const imgs: [string] | [] = await service.post.getPostImgsByPostId(post.postId);
+        //         const userInfo: UserInfo = await service.user.getUserInfoByUserId(post.userId);
 
-        let dealPosts: [PostA] | [] | any = [];
-        {
-            for (let post of posts) {
-                const imgs: [string] | [] = await service.post.getUserPostImgsByPostId(post.postId);
-                const userInfo: UserInfo = await service.user.getUserInfoByUserId(post.userId);
+        //         let dealComments: IPostComment[] = [];
+        //         const comments = await service.post.getPostCommentsByPostId(post.postId, 20, 1);
 
-                let dealComments: IPostComment[] = [];
-                const comments = await service.post.getUserPostCommentsByPostId(post.postId, 20, 1);
+        //         for (const comment of comments) {
+        //             let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
+        //             dealComments = [
+        //                 ...dealComments,
+        //                 {
+        //                     content: comment.content,
+        //                     id: comment.commentId,
+        //                     userName: userInfo.userName,
+        //                     useId: userInfo.userId,
+        //                     addTime: timestampToTime(Number(comment.addTime))
+        //                 }
+        //             ]
 
-                for (const comment of comments) {
-                    let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
-                    dealComments = [
-                        ...dealComments,
-                        {
-                            content: comment.content,
-                            id: comment.commentId,
-                            userName: userInfo.userName,
-                            useId: userInfo.userId,
-                            addTime: timestampToTime(Number(comment.addTime))
-                        }
-                    ]
+        //         }
+        //         dealPosts = [
+        //             ...dealPosts,
+        //             {
+        //                 ...post,
+        //                 imgs,
+        //                 userName: userInfo.userName,
+        //                 userImg: userInfo.img,
+        //                 comments: dealComments,
+        //                 addTime: timestampToTime(Number(post.addTime)),
+        //                 likeNum: 0
+        //             }
+        //         ]
 
-                }
-                dealPosts = [
-                    ...dealPosts,
-                    {
-                        ...post,
-                        imgs,
-                        userName: userInfo.userName,
-                        userImg: userInfo.img,
-                        comments: dealComments,
-                        addTime: timestampToTime(Number(post.addTime)),
-                        likeNum: 0
-                    }
-                ]
-
-            }
-        }
+        //     }
+        // }
 
         ctx.send(dealPosts, 200, "成功");
     }
@@ -131,6 +100,22 @@ export default class PostController extends Controller {
         }
 
         ctx.send(result, 200, "发帖成功");
+    }
+
+    /**
+     * @description 获取所有帖子 按日期降序
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @memberof PostController
+     */
+    public async allPosts() {
+        const { ctx, service } = this;
+        const { page, size } = ctx.query;
+
+        let posts: [BasePost] | [] = await service.post.getPosts(Number(size), Number(page));
+
+        let dealPosts: [PostA] | [] = await service.getPostInfo(posts);
+        ctx.send(dealPosts, 200);
     }
 }
 
