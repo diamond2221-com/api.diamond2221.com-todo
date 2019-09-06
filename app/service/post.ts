@@ -23,7 +23,7 @@ export default class PostService extends Service {
         size: number,
         page: number
     ) {
-        const res = await this.app.mysql.select("ins_post", {
+        const res = await this.app.mysql.select("tbl_post", {
             where: {
                 userId
             },
@@ -41,7 +41,7 @@ export default class PostService extends Service {
     public async getUserPostsCountByUserId(
         userId: string
     ) {
-        const res = await this.app.mysql.count("ins_post", {
+        const res = await this.app.mysql.count("tbl_post", {
             userId
         });
         return res;
@@ -52,7 +52,7 @@ export default class PostService extends Service {
      * @param postId
      */
     public async getPostImgsByPostId(postId: number) {
-        const res = await this.app.mysql.select("ins_img", {
+        const res = await this.app.mysql.select("tbl_img", {
             where: {
                 postId
             },
@@ -68,7 +68,7 @@ export default class PostService extends Service {
      * @param page
      */
     public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<PostComments[]> {
-        const comments = await this.app.mysql.select("ins_comment", {
+        const comments = await this.app.mysql.select("tbl_comment", {
             where: {
                 postId
             },
@@ -93,7 +93,7 @@ export default class PostService extends Service {
             content,
             addTime: Date.now()
         }
-        await this.app.mysql.insert("ins_comment", comment);
+        await this.app.mysql.insert("tbl_comment", comment);
         return comment;
     }
 
@@ -110,11 +110,11 @@ export default class PostService extends Service {
             userId,
             addTime: Date.now()
         }
-        const res = await this.app.mysql.insert("ins_post", post);
+        const res = await this.app.mysql.insert("tbl_post", post);
         const postId: number = res.insertId;
         if (imgs.length) {
             for (const img of imgs) {
-                await this.app.mysql.insert("ins_img", {
+                await this.app.mysql.insert("tbl_img", {
                     postId,
                     src: img,
                     addTime: Date.now()
@@ -133,7 +133,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPosts(size: number, page: number) {
-        return await this.app.mysql.select("ins_post", {
+        return await this.app.mysql.select("tbl_post", {
             orders: [["addTime", "desc"]],
             limit: size,
             offset: (page - 1) * size

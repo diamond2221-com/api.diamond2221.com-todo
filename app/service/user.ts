@@ -5,7 +5,7 @@ export default class UserService extends Service {
      * @param userId
      */
     public getUserInfoByUserId(userId: string) {
-        return this.app.mysql.get("ins_user", { userId });
+        return this.app.mysql.get("tbl_user", { userId });
     }
 
     /**
@@ -13,7 +13,7 @@ export default class UserService extends Service {
      * @param userName
      */
     public getUserInfoByUsername(userName: string) {
-        return this.app.mysql.get("ins_user", { userName });
+        return this.app.mysql.get("tbl_user", { userName });
     }
 
     /**
@@ -22,7 +22,7 @@ export default class UserService extends Service {
      * @param newUserInfo
      */
     public changeUserInfoByUserId(userId: string, newUserInfo) {
-        this.app.mysql.update("ins_user", newUserInfo, { where: { userId } })
+        this.app.mysql.update("tbl_user", newUserInfo, { where: { userId } })
     }
 
     /**
@@ -34,7 +34,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async markPostByPostId(postId: number, userId: string) {
-        await this.app.mysql.insert("ins_mark_post", { postId, userId, addTime: Date.now() });
+        await this.app.mysql.insert("tbl_mark_post", { postId, userId, addTime: Date.now() });
     }
 
     /**
@@ -44,7 +44,7 @@ export default class UserService extends Service {
     public async getUserFansCountByUserId(
         userId: string
     ) {
-        const res = await this.app.mysql.count("ins_focus", {
+        const res = await this.app.mysql.count("tbl_focus", {
             userId
         });
         return res;
@@ -57,7 +57,7 @@ export default class UserService extends Service {
     public async getUserFocusCountByfocusUserId(
         focusUserId: string
     ) {
-        const res = await this.app.mysql.count("ins_focus", {
+        const res = await this.app.mysql.count("tbl_focus", {
             focusUserId
         });
         return res;
@@ -72,7 +72,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async focusUserByUserId(userId: string, focusUserId: string) {
-        await this.app.mysql.insert("ins_focus", {
+        await this.app.mysql.insert("tbl_focus", {
             userId,
             focusUserId,
             addTime: Date.now()
@@ -88,7 +88,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async cancelFocusUserByUserId(userId: string, focusUserId: string) {
-        await this.app.mysql.delete("ins_focus", { userId, focusUserId });
+        await this.app.mysql.delete("tbl_focus", { userId, focusUserId });
     }
 
     /**
@@ -102,7 +102,7 @@ export default class UserService extends Service {
      */
     public async getFocusListByUserId(userId: string, page: number, size: number) {
         const { app, service } = this;
-        let users = await app.mysql.select("ins_focus", {
+        let users = await app.mysql.select("tbl_focus", {
             where: { userId },
             orders: [["addTime", "desc"]],
             limit: size,
@@ -122,7 +122,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async getFocsUserInfoByserId(userId: string) {
-        return this.app.mysql.get("ins_user", { where: { userId }, columns: ["userId", "userName", "img", "name"] });
+        return this.app.mysql.get("tbl_user", { where: { userId }, columns: ["userId", "userName", "img", "name"] });
     }
 
     /**
@@ -137,7 +137,7 @@ export default class UserService extends Service {
      */
     public async getFansListByUserId(userId: string, page: number, size: number) {
         const { app, service } = this;
-        let users = await app.mysql.select("ins_focus", {
+        let users = await app.mysql.select("tbl_focus", {
             where: { focusUserId: userId },
             orders: [["addTime", "desc"]],
             limit: size,
