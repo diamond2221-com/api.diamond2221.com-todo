@@ -55,8 +55,8 @@ export default class UserController extends Controller {
         addProp(newUserInfo, "signature", signature);
         addProp(newUserInfo, "website", website);
 
-        await service.user.changeUserInfoByUserId(userId, newUserInfo);
-        ctx.send({}, 200, "修改成功");
+        const result = await service.user.changeUserInfoByUserId(userId, newUserInfo);
+        ctx.send(result, 200, "修改成功");
     }
 
     /**

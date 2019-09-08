@@ -21,8 +21,9 @@ export default class UserService extends Service {
      * @param userId
      * @param newUserInfo
      */
-    public changeUserInfoByUserId(userId: string, newUserInfo) {
-        this.app.mysql.update("tbl_user", newUserInfo, { where: { userId } })
+    public async changeUserInfoByUserId(userId: string, newUserInfo) {
+        await this.app.mysql.update("tbl_user", newUserInfo, { where: { userId } })
+        return newUserInfo;
     }
 
     /**
