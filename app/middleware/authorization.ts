@@ -28,6 +28,10 @@ export default (options: any, app: { config: { authWhiteList: { indexOf: (arg0: 
             ...ctx.query,
             userId: info.userId
         }
+        ctx.request.body = {
+            ...ctx.request.body,
+            userId: info.userId
+        }
         await next(options);
     }
 }

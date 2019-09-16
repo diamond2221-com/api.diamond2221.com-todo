@@ -22,7 +22,7 @@ export default class AccountService extends Service {
      */
     public async Register(RegisterParams: RegisterParams): Promise<boolean> {
         const userId: string = `uu${uuid.v4().replace(/-/g, "")}`;
-        const res = await this.app.mysql.insert("ins_user", {
+        const res = await this.app.mysql.insert("tbl_user", {
             userId,
             userName: RegisterParams.userName,
             password: RegisterParams.passWord,
@@ -40,7 +40,7 @@ export default class AccountService extends Service {
      * @memberof LoginService
      */
     public async getUserByUserName(userName: string): Promise<boolean> {
-        const res = await this.app.mysql.get("ins_user", { userName: userName })
+        const res = await this.app.mysql.get("tbl_user", { userName: userName })
         return res ? true : false;
 
     }
@@ -52,7 +52,7 @@ export default class AccountService extends Service {
      * @memberof LoginService
      */
     public async getUserByUserNamePassWord(LoginParams: LoginParams) {
-        const res = this.app.mysql.get("ins_user", {
+        const res = this.app.mysql.get("tbl_user", {
             userName: LoginParams.userName,
             password: LoginParams.passWord
         });
@@ -65,7 +65,7 @@ export default class AccountService extends Service {
      * @param userId 用戶Id
      */
     public async updateLastLoginTime(userId: string) {
-        await this.app.mysql.update("ins_user", {
+        await this.app.mysql.update("tbl_user", {
             lastTime: Date.now()
         }, {
             where: {

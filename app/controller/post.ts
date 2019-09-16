@@ -17,7 +17,7 @@ export default class PostController extends Controller {
 
         let posts: [BasePost] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
 
-        let dealPosts: [PostA] | [] = await service.getPostInfo(posts);
+        let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
         // let dealPosts: [PostA] | [] | any = [];
         // {
         //     for (let post of posts) {
