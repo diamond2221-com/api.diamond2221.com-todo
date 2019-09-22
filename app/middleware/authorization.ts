@@ -14,14 +14,14 @@ export default (options: any, app: { config: { authWhiteList: { indexOf: (arg0: 
         }
         const token: string | null = request.header["client-token"];
         if (!token) {
-            ctx.send(401, "您未登录，请登录后再试");
+            ctx.send("您未登录，请登录后再试", 401);
             return;
         }
         let info: token | any;
         try {
             info = jwt.verify(token, app.config.jwtSecret);
         } catch (error) {
-            ctx.send(401, "您未登录，请登录后再试")
+            ctx.send("您未登录，请登录后再试", 401)
             return;
         }
         ctx.request.header["client-uuid"] = info.userId
