@@ -12,6 +12,21 @@ import {
 
 
 export default class PostService extends Service {
+
+    /**
+     * @description 通过帖子Id 获取 帖子基本信息
+     * @author ZhangYu
+     * @date 2019-09-22
+     * @param {number} postId
+     * @memberof PostService
+     */
+    public async getPostByPostId(postId: number) {
+        const res = await this.app.mysql.get("tbl_post", {
+            postId
+        });
+        return res;
+    }
+
     /**
      * 通过用户Id 获取 帖子 (分页)
      * @param userId
@@ -24,6 +39,29 @@ export default class PostService extends Service {
         page: number
     ) {
         const res = await this.app.mysql.select("tbl_post", {
+            where: {
+                userId
+            },
+            orders: [["addTime", "desc"]],
+            limit: size,
+            offset: (page - 1) * size
+        });
+        return res;
+    }
+
+    /**
+     * 通过用户Id 获取收藏的帖子 (分页)
+     * @param userId
+     * @param size
+     * @param page
+     */
+    public async getUserMarkPostsByUserId(
+        userId: string,
+        size: number,
+        page: number
+    ) {
+        const res = await this.app.mysql.select("tbl_mark_post", {
+            columns: ["postId"],
             where: {
                 userId
             },

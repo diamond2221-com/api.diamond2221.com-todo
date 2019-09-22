@@ -27,6 +27,42 @@ export default class UserService extends Service {
     }
 
     /**
+     * @description 查看是否已收藏该帖子
+     * @author ZhangYu
+     * @date 2019-09-22
+     * @param {number} postId
+     * @param {string} userId
+     * @returns {Promise<boolean>}
+     * @memberof UserService
+     */
+    public async findMarkPost(postId: number, userId: string): Promise<boolean> {
+        let result = await this.app.mysql.get("tbl_mark_post", { postId, userId });
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @description 判断是否收藏的是自己的帖子
+     * @author ZhangYu
+     * @date 2019-09-22
+     * @param {number} postId
+     * @param {string} userId
+     * @returns {Promise<boolean>}
+     * @memberof UserService
+     */
+    public async isSelfPost(postId: number, userId: string): Promise<boolean>  {
+        let result = await this.app.mysql.get("tbl_post", { postId, userId });
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @description 关注帖子 通过帖子Id
      * @author ZhangYu
      * @date 2019-09-03

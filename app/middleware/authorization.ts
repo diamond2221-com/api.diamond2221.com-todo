@@ -24,14 +24,7 @@ export default (options: any, app: { config: { authWhiteList: { indexOf: (arg0: 
             ctx.send(401, "您未登录，请登录后再试")
             return;
         }
-        ctx.query = {
-            ...ctx.query,
-            userId: info.userId
-        }
-        ctx.request.body = {
-            ...ctx.request.body,
-            userId: info.userId
-        }
+        ctx.request.header["client-uuid"] = info.userId
         await next(options);
     }
 }

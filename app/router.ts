@@ -44,6 +44,8 @@ export default (app: Application) => {
     // 获取用户粉丝
     router.get("/api/user/focusUserList", user.focusUserList)
 
+    // 获取用户收藏的帖子
+    router.get("/api/post/markPostList", post.getUserMarkPosts)
 
     // // 获取推荐用户
     // router.get("/api/getSuggestedUser", login.login)

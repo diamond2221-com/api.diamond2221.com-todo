@@ -6,7 +6,7 @@ module.exports = {
     if (code === 200) {
       this.body = {
         data,
-        message: "成功",
+        message,
         code: 200
       }
     } else {

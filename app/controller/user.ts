@@ -67,9 +67,22 @@ export default class UserController extends Controller {
      */
     public async markPost() {
         const { ctx, service } = this;
-        const { postId, userId } = ctx.request.body;
-        await service.user.markPostByPostId(Number(postId), userId);
-        ctx.send({}, 200, "收藏成功");
+        const { postId } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
+        const isMark: boolean = await service.user.findMarkPost(Number(postId), userId);
+
+        if (isMark) {
+            ctx.send("已收藏该帖子", 400);
+        } else {
+            const isSelfPost: boolean = await service.user.isSelfPost(Number(postId), userId);
+            if (isSelfPost) {
+                ctx.send("不可以收藏自己的帖子", 400);
+            } else {
+                await service.user.markPostByPostId(Number(postId), userId);
+                ctx.send({}, 200, "收藏成功");
+
+            }
+        }
     }
 
     /**
@@ -80,7 +93,8 @@ export default class UserController extends Controller {
      */
     public async focusUser() {
         const { ctx, service } = this;
-        const { userId, focusUserId } = ctx.request.body;
+        const { focusUserId } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
         await service.user.focusUserByUserId(userId, focusUserId);
         ctx.send({}, 200, "关注成功");
     }
@@ -93,7 +107,8 @@ export default class UserController extends Controller {
      */
     public async cancelFocusUser() {
         const { ctx, service } = this;
-        const { userId, focusUserId } = ctx.request.body;
+        const { focusUserId } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
         await service.user.cancelFocusUserByUserId(userId, focusUserId);
         ctx.send({}, 200, "取消关注成功")
     }
@@ -106,7 +121,8 @@ export default class UserController extends Controller {
      */
     public async focusUserList() {
         const { ctx, service } = this;
-        const { page, size, userId } = ctx.request.body;
+        const { page, size } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
         let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
         ctx.send(focusList, 200)
     }
@@ -119,7 +135,8 @@ export default class UserController extends Controller {
      */
     public async fansUserList() {
         const { ctx, service } = this;
-        const { page, size, userId } = ctx.request.body;
+        const { page, size } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
         let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
         ctx.send(focusList, 200)
     }

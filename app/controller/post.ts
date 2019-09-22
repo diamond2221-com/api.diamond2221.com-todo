@@ -14,49 +14,31 @@ export default class PostController extends Controller {
     public async getUserPosts() {
         const { ctx, service } = this;
         const { page, size, userId } = ctx.query;
+        // const userId = ctx.request.header["client-uuid"];
 
         let posts: [BasePost] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
 
         let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
-        // let dealPosts: [PostA] | [] | any = [];
-        // {
-        //     for (let post of posts) {
-        //         const imgs: [string] | [] = await service.post.getPostImgsByPostId(post.postId);
-        //         const userInfo: UserInfo = await service.user.getUserInfoByUserId(post.userId);
+        ctx.send(dealPosts, 200, "成功");
+    }
 
-        //         let dealComments: IPostComment[] = [];
-        //         const comments = await service.post.getPostCommentsByPostId(post.postId, 20, 1);
+    /**
+     * getUserMarkPosts
+     * 获取用户收藏的帖子
+     */
+    public async getUserMarkPosts() {
+        const { ctx, service } = this;
+        const { page, size } = ctx.query;
+        const userId = ctx.request.header["client-uuid"];
 
-        //         for (const comment of comments) {
-        //             let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
-        //             dealComments = [
-        //                 ...dealComments,
-        //                 {
-        //                     content: comment.content,
-        //                     id: comment.commentId,
-        //                     userName: userInfo.userName,
-        //                     useId: userInfo.userId,
-        //                     addTime: timestampToTime(Number(comment.addTime))
-        //                 }
-        //             ]
+        let postIds: { postId: number }[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
+        let posts: BasePost[] = [];
 
-        //         }
-        //         dealPosts = [
-        //             ...dealPosts,
-        //             {
-        //                 ...post,
-        //                 imgs,
-        //                 userName: userInfo.userName,
-        //                 userImg: userInfo.img,
-        //                 comments: dealComments,
-        //                 addTime: timestampToTime(Number(post.addTime)),
-        //                 likeNum: 0
-        //             }
-        //         ]
-
-        //     }
-        // }
-
+        for (const postId of postIds) {
+            let post: BasePost = await service.post.getPostByPostId(postId.postId)
+            posts = [...posts, post]
+        }
+        let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
         ctx.send(dealPosts, 200, "成功");
     }
 
@@ -66,7 +48,8 @@ export default class PostController extends Controller {
      */
     public async addComments() {
         const { ctx, service } = this;
-        const { content, userId, postId } = ctx.request.body;
+        const { content, postId } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
 
         const comment = await service.post.addComments(Number(postId), userId, content);
 
@@ -88,7 +71,9 @@ export default class PostController extends Controller {
     public async addPost() {
         const { ctx, service } = this;
         const { post } = service;
-        const { content, userId, imgs } = ctx.request.body;
+        const { content, imgs } = ctx.request.body;
+        const userId = ctx.request.header["client-uuid"];
+
         let newPost = await post.addPost(content, imgs, userId);
         const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);
         const result: PostA = {
