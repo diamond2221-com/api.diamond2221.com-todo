@@ -12,7 +12,7 @@ export interface PostA extends BasePost {
     likeNum?: number;
 }
 export interface IPostComment {
-    content: string;
+    content: string
     id: number;
     userName: string;
     useId: string;

@@ -93,9 +93,9 @@ export default class UserController extends Controller {
      */
     public async focusUser() {
         const { ctx, service } = this;
-        const { focusUserId } = ctx.request.body;
+        const { id } = ctx.request.body;
         const userId = ctx.request.header["client-uuid"];
-        await service.user.focusUserByUserId(userId, focusUserId);
+        await service.user.focusUserByUserId(userId, id);
         ctx.send({}, 200, "关注成功");
     }
 
