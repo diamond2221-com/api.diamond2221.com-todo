@@ -3,22 +3,26 @@ import { Application } from 'egg';
 
 export default (app: Application) => {
     const { controller, router } = app;
-    const { account, post, common, user } = controller;
+    const { accounts, post, common, user, posts } = controller;
 
     // 公共接口
     // 上传图片
     router.post("/api/common/uploadImage", common.uploadImage);
 
     // 登录
-    router.post("/api/account/login", account.login);
+    // router.post("/api/account/login", account.login);
+    router.resources("accountLogin", "/api/account/login", accounts.login);
     // 注册
-    router.post("/api/account/register", account.register);
+    // router.post("/api/account/register", account.register);
+    router.resources("accountLogin", "/api/account/login", accounts.register);
 
     // 获取用户的帖子
-    router.get("/api/post/getUserPosts", post.getUserPosts);
+    // router.get("/api/post/getUserPosts", post.getUserPosts);
+    router.resources("userPost", "/api/posts/user", posts.user);
 
     // 添加帖子评论
-    router.post("/api/post/addComments", post.addComments);
+    // router.post("/api/post/addComments", post.addComments);
+    router.resources("comment", "/api/posts/comment", posts.comment);
 
     // 发送帖子
     router.post("/api/post/addPost", post.addPost);
@@ -39,13 +43,14 @@ export default (app: Application) => {
     router.post("/api/user/cancelFocusUser", user.cancelFocusUser);
 
     // 获取所有帖子
-    router.get("/api/post/allPosts", post.allPosts)
+    // router.get("/api/post/allPosts", post.allPosts)
+    router.resources("posts", "/api/posts/post", posts.index);
 
     // 获取用户粉丝
     router.get("/api/user/focusUserList", user.focusUserList)
 
     // 获取用户收藏的帖子
-    router.get("/api/post/markPostList", post.getUserMarkPosts)
+    router.resources("markPost", "/api/posts/markPostList", posts.markPost);
 
     // // 获取推荐用户
     // router.get("/api/getSuggestedUser", login.login)

@@ -68,7 +68,7 @@ export default class UserController extends Controller {
     public async markPost() {
         const { ctx, service } = this;
         const { postId } = ctx.request.body;
-        const userId = ctx.request.header["client-uuid"];
+        const userId = ctx.request.header["Client-Uid"];
         const isMark: boolean = await service.user.findMarkPost(Number(postId), userId);
 
         if (isMark) {
@@ -94,7 +94,7 @@ export default class UserController extends Controller {
     public async focusUser() {
         const { ctx, service } = this;
         const { id } = ctx.request.body;
-        const userId = ctx.request.header["client-uuid"];
+        const userId = ctx.request.header["Client-Uid"];
         await service.user.focusUserByUserId(userId, id);
         ctx.send({}, 200, "关注成功");
     }
@@ -108,7 +108,7 @@ export default class UserController extends Controller {
     public async cancelFocusUser() {
         const { ctx, service } = this;
         const { focusUserId } = ctx.request.body;
-        const userId = ctx.request.header["client-uuid"];
+        const userId = ctx.request.header["Client-Uid"];
         await service.user.cancelFocusUserByUserId(userId, focusUserId);
         ctx.send({}, 200, "取消关注成功")
     }
@@ -122,7 +122,7 @@ export default class UserController extends Controller {
     public async focusUserList() {
         const { ctx, service } = this;
         const { page, size } = ctx.request.body;
-        const userId = ctx.request.header["client-uuid"];
+        const userId = ctx.request.header["Client-Uid"];
         let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
         ctx.send(focusList, 200)
     }
@@ -136,7 +136,7 @@ export default class UserController extends Controller {
     public async fansUserList() {
         const { ctx, service } = this;
         const { page, size } = ctx.request.body;
-        const userId = ctx.request.header["client-uuid"];
+        const userId = ctx.request.header["Client-Uid"];
         let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
         ctx.send(focusList, 200)
     }

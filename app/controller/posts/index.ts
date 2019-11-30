@@ -1,10 +1,10 @@
-import { timestampToTime } from "../utils/common";
+import { timestampToTime } from "../../utils/common";
 import { Controller } from 'egg';
 import {
     BasePost,
     PostA,
     UserInfo
-} from "../types/post_interface";
+} from "../../types/post_interface";
 
 export default class PostController extends Controller {
     /**
@@ -74,27 +74,7 @@ export default class PostController extends Controller {
 
     }
 
-    /**
-     * 用户添加帖子
-     */
-    public async addPost() {
-        const { ctx, service } = this;
-        const { post } = service;
-        const { content, imgs } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
 
-        let newPost = await post.addPost(content, imgs, userId);
-        const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);
-        const result: PostA = {
-            ...newPost,
-            userName: userInfo.userName,
-            userImg: userInfo.img,
-            addTime: timestampToTime(newPost.addTime),
-            comments: []
-        }
-
-        ctx.send(result, 200, "发帖成功");
-    }
 
     /**
      * @description 获取所有帖子 按日期降序
@@ -102,7 +82,7 @@ export default class PostController extends Controller {
      * @date 2019-09-03
      * @memberof PostController
      */
-    public async allPosts() {
+    public async index() {
         const { ctx, service } = this;
         const { page, size } = ctx.query;
 
