@@ -2,34 +2,40 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
-import ExportCommon from '../../../app/controller/common';
-import ExportPost from '../../../app/controller/post';
-import ExportUser from '../../../app/controller/user';
 import ExportAccountsLogin from '../../../app/controller/accounts/login';
 import ExportAccountsRegister from '../../../app/controller/accounts/register';
-import ExportCommonsIndex from '../../../app/controller/commons/index';
+import ExportCommonsUploadImgs from '../../../app/controller/commons/uploadImgs';
 import ExportPostsComment from '../../../app/controller/posts/comment';
 import ExportPostsIndex from '../../../app/controller/posts/index';
 import ExportPostsMarkPost from '../../../app/controller/posts/markPost';
 import ExportPostsUser from '../../../app/controller/posts/user';
+import ExportUsersFans from '../../../app/controller/users/fans';
+import ExportUsersFocus from '../../../app/controller/users/focus';
+import ExportUsersIndex from '../../../app/controller/users/index';
+import ExportUsersInfo from '../../../app/controller/users/info';
+import ExportUsersUpdate from '../../../app/controller/users/update';
 
 declare module 'egg' {
   interface IController {
-    common: ExportCommon;
-    post: ExportPost;
-    user: ExportUser;
     accounts: {
       login: ExportAccountsLogin;
       register: ExportAccountsRegister;
     }
     commons: {
-      index: ExportCommonsIndex;
+      uploadImgs: ExportCommonsUploadImgs;
     }
     posts: {
       comment: ExportPostsComment;
       index: ExportPostsIndex;
       markPost: ExportPostsMarkPost;
       user: ExportPostsUser;
+    }
+    users: {
+      fans: ExportUsersFans;
+      focus: ExportUsersFocus;
+      index: ExportUsersIndex;
+      info: ExportUsersInfo;
+      update: ExportUsersUpdate;
     }
   }
 }

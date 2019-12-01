@@ -6,7 +6,6 @@ import {
 
 export default class MarkPostController extends Controller {
     /**
-     * getUserMarkPosts
      * 获取用户收藏的帖子
      */
     public async index() {
@@ -34,6 +33,31 @@ export default class MarkPostController extends Controller {
         ctx.send(dealPosts, 200, "成功");
     }
 
+    /**
+     * @description 用户收藏帖子
+     * @author ZhangYu
+     * @date 2019-09-02
+     * @memberof MarkPostController
+     */
+    public async create() {
+        const { ctx, service } = this;
+        const { postId } = ctx.request.body;
+        const userId = ctx.request.header["Client-Uid"];
+        const isMark: boolean = await service.user.findMarkPost(Number(postId), userId);
+
+        if (isMark) {
+            ctx.send("已收藏该帖子", 400);
+        } else {
+            const isSelfPost: boolean = await service.user.isSelfPost(Number(postId), userId);
+            if (isSelfPost) {
+                ctx.send("不可以收藏自己的帖子", 400);
+            } else {
+                await service.user.markPostByPostId(Number(postId), userId);
+                ctx.send({}, 200, "收藏成功");
+
+            }
+        }
+    }
 }
 
 

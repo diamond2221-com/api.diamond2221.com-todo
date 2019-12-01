@@ -25,8 +25,8 @@ export default class UserController extends Controller {
     }
 
     /**
-  * 用户添加帖子
-  */
+     * 用户添加帖子
+     */
     public async create() {
         const { ctx, service } = this;
         const { post } = service;

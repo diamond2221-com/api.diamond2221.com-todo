@@ -1,4 +1,16 @@
 import { Service } from "egg";
+
+interface IFans {
+    addTime: string;
+    img: string;
+    name: string | null;
+    signature: string | null;
+    userId: string;
+    userName: string;
+    website: string | null;
+    followed?: boolean;
+}
+
 export default class UserService extends Service {
     /**
      * 通过用户Id 来获取用户的 信息
@@ -53,7 +65,7 @@ export default class UserService extends Service {
      * @returns {Promise<boolean>}
      * @memberof UserService
      */
-    public async isSelfPost(postId: number, userId: string): Promise<boolean>  {
+    public async isSelfPost(postId: number, userId: string): Promise<boolean> {
         let result = await this.app.mysql.get("tbl_post", { postId, userId });
         if (result) {
             return true;
@@ -75,9 +87,9 @@ export default class UserService extends Service {
     }
 
     /**
- * 通过用户Id 获取 粉丝总数
- * @param userId
- */
+     * 通过用户Id 获取 粉丝总数
+     * @param userId
+     */
     public async getUserFansCountByUserId(
         userId: string
     ) {
@@ -159,31 +171,53 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async getFocsUserInfoByserId(userId: string) {
-        return this.app.mysql.get("tbl_user", { where: { userId }, columns: ["userId", "userName", "img", "name"] });
+        return await this.app.mysql.get(
+            "tbl_user",
+            {
+                userId,
+                // columns: ["userId", "userName", "img", "name"]
+            }
+        );
     }
 
     /**
      * @description  通过userId 获取粉丝用户列表（分页加载）
      * @author ZhangYu
      * @date 2019-09-03
-     * @param {string} userId
+     * @param {string} focusUserId
      * @param {number} page
      * @param {number} size
      * @returns
      * @memberof UserService
      */
-    public async getFansListByUserId(userId: string, page: number, size: number) {
+    public async getFansListByUserId(focusUserId: string, page: number, size: number) {
         const { app, service } = this;
         let users = await app.mysql.select("tbl_focus", {
-            where: { focusUserId: userId },
+            where: { userId: focusUserId },
             orders: [["addTime", "desc"]],
             limit: size,
             offset: (page - 1) * size
         });
+        let result: IFans[] = [];
         for (const user of users) {
-            users = [...users, await service.user.getFocsUserInfoByserId(user.focusUserId)];
+            const { addTime, img, name, signature, userId, userName, website } = await service.user.getFocsUserInfoByserId(user.focusUserId);
+            const followed: boolean = await service.user.floowedByUserId(focusUserId, userId);
+            const fan: IFans = { addTime, img, name, signature, userId, userName, website, followed }
+            result = [...result, fan];
         }
-        return users;
+        return result;
     }
 
+    /**
+     * @description 通过userID 查询 是否我已关注该用户
+     * @author ZhangYu
+     * @date 2019-12-01
+     * @param {string} userId
+     * @param {string} otherUserId
+     * @memberof UserService
+     */
+    public async floowedByUserId(userId: string, focusUserId: string): Promise<boolean> {
+        const res = await this.app.mysql.get("tbl_focus", { userId, focusUserId})
+        return Boolean(res);
+    }
 }

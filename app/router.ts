@@ -3,59 +3,47 @@ import { Application } from 'egg';
 
 export default (app: Application) => {
     const { controller, router } = app;
-    const { accounts, post, common, user, posts } = controller;
+    const { accounts, commons, users, posts } = controller;
 
     // 公共接口
     // 上传图片
-    router.post("/api/common/uploadImage", common.uploadImage);
+    router.resources("uploadImgs", "/api/commons/uploadImgs", commons.uploadImgs);
+
 
     // 登录
-    // router.post("/api/account/login", account.login);
-    router.resources("accountLogin", "/api/account/login", accounts.login);
-    // 注册
-    // router.post("/api/account/register", account.register);
-    router.resources("accountLogin", "/api/account/login", accounts.register);
+    router.resources("accountLogin", "/api/accounts/login", accounts.login);
 
-    // 获取用户的帖子
-    // router.get("/api/post/getUserPosts", post.getUserPosts);
+    // 注册
+    router.resources("accountLogin", "/api/accounts/register", accounts.register);
+
+
+    // 用户帖子相关
     router.resources("userPost", "/api/posts/user", posts.user);
 
-    // 添加帖子评论
-    // router.post("/api/post/addComments", post.addComments);
+    // 帖子评论相关
     router.resources("comment", "/api/posts/comment", posts.comment);
 
-    // 发送帖子
-    router.post("/api/post/addPost", post.addPost);
-
-    // 获取用户信息
-    router.get("/api/user/getInfo", user.getUserInfo);
-
-    // 修改用户个人信息
-    router.post("/api/user/changeAccount", user.changeAccount);
-
-    // 收藏帖子
-    router.post("/api/user/markPost", user.markPost);
-
-    // 关注用户
-    router.post("/api/user/focusUser", user.focusUser);
-
-    // 取消关注用户
-    router.post("/api/user/cancelFocusUser", user.cancelFocusUser);
-
-    // 获取所有帖子
-    // router.get("/api/post/allPosts", post.allPosts)
+    // 所有帖子相关
     router.resources("posts", "/api/posts/post", posts.index);
 
-    // 获取用户粉丝
-    router.get("/api/user/focusUserList", user.focusUserList)
+    // 用户收藏帖子相关
+    router.resources("markPost", "/api/posts/markPost", posts.markPost);
 
-    // 获取用户收藏的帖子
-    router.resources("markPost", "/api/posts/markPostList", posts.markPost);
+    // 用户信息相关
+    router.resources("users", "/api/users/info", users.info);
+
+    // 用户个人信息操作相关
+    router.resources("updateUser", "/api/users/update", users.update);
+
+    // 关注用户
+    router.resources("focusUser", "/api/users/focus", users.focus);
+
+    // 用户粉丝相关
+    router.resources("fansUser", "/api/users/fans", users.fans);
+
 
     // // 获取推荐用户
     // router.get("/api/getSuggestedUser", login.login)
     // // 获取登录用户关注
     // router.get("/api/getLoginUserFocus", login.login)
-    // // 上传用户头像
-    // router.post("/api/uplaod_user_pic", login.login)
 };
