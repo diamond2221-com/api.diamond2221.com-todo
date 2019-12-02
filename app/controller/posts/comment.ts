@@ -14,7 +14,7 @@ export default class CommentsController extends Controller {
     public async create() {
         const { ctx, service } = this;
         const { content, postId } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
+        const userId = ctx.request.header["client-uid"];
 
         const comment = await service.post.addComments(Number(postId), userId, content);
 

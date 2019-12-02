@@ -16,12 +16,12 @@ export default class UserController extends Controller {
     public async index() {
         const { ctx, service } = this;
         const { page, size, userId } = ctx.query;
-        // const userId = ctx.request.header["Client-Uid"];
+        // const userId = ctx.request.header["client-uid"];
 
         let posts: [BasePost] | [] = await service.post.getUserPostsByUserId(userId, Number(size), Number(page));
 
         let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
-        ctx.send(dealPosts, 200, "成功");
+        ctx.send(dealPosts);
     }
 
     /**
@@ -31,7 +31,7 @@ export default class UserController extends Controller {
         const { ctx, service } = this;
         const { post } = service;
         const { content, imgs } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
+        const userId = ctx.request.header["client-uid"];
 
         let newPost = await post.addPost(content, imgs, userId);
         const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);

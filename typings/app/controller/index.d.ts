@@ -4,7 +4,7 @@
 import 'egg';
 import ExportAccountsLogin from '../../../app/controller/accounts/login';
 import ExportAccountsRegister from '../../../app/controller/accounts/register';
-import ExportCommonsUploadImgs from '../../../app/controller/commons/uploadImgs';
+import ExportCommonsUploadImages from '../../../app/controller/commons/uploadImages';
 import ExportPostsComment from '../../../app/controller/posts/comment';
 import ExportPostsIndex from '../../../app/controller/posts/index';
 import ExportPostsMarkPost from '../../../app/controller/posts/markPost';
@@ -22,7 +22,7 @@ declare module 'egg' {
       register: ExportAccountsRegister;
     }
     commons: {
-      uploadImgs: ExportCommonsUploadImgs;
+      uploadImages: ExportCommonsUploadImages;
     }
     posts: {
       comment: ExportPostsComment;

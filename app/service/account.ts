@@ -33,17 +33,6 @@ export default class AccountService extends Service {
         return res ? true : false;
     }
 
-    /**
-     *
-     * @param {string} userName
-     * @returns {Promise<boolean>}
-     * @memberof LoginService
-     */
-    public async getUserByUserName(userName: string): Promise<boolean> {
-        const res = await this.app.mysql.get("tbl_user", { userName: userName })
-        return res ? true : false;
-
-    }
 
     /**
      *

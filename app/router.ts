@@ -7,7 +7,7 @@ export default (app: Application) => {
 
     // 公共接口
     // 上传图片
-    router.resources("uploadImgs", "/api/commons/uploadImgs", commons.uploadImgs);
+    router.resources("uploadImages", "/api/commons/uploadImages", commons.uploadImages);
 
 
     // 登录

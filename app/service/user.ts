@@ -16,16 +16,16 @@ export default class UserService extends Service {
      * 通过用户Id 来获取用户的 信息
      * @param userId
      */
-    public getUserInfoByUserId(userId: string) {
-        return this.app.mysql.get("tbl_user", { userId });
+    public async getUserInfoByUserId(userId: string) {
+        return await this.app.mysql.get("tbl_user", { userId });
     }
 
     /**
      * 通过用户username 来获取用户的 信息
      * @param userName
      */
-    public getUserInfoByUsername(userName: string) {
-        return this.app.mysql.get("tbl_user", { userName });
+    public async getUserInfoByUsername(userName: string) {
+        return await this.app.mysql.get("tbl_user", { userName });
     }
 
     /**
@@ -116,8 +116,8 @@ export default class UserService extends Service {
      * @description 通过userID 关注用户
      * @author ZhangYu
      * @date 2019-09-03
-     * @param {string} userId 关注者的userId
-     * @param {string} focusUserId 被关注者的userId
+     * @param {string} userId 被关注者的userId
+     * @param {string} focusUserId 关注者的userId
      * @memberof UserService
      */
     public async focusUserByUserId(userId: string, focusUserId: string) {
@@ -144,40 +144,28 @@ export default class UserService extends Service {
      * @description 通过userId 获取关注用户列表（分页加载）
      * @author ZhangYu
      * @date 2019-09-03
-     * @param {string} userId
+     * @param {string} focusUserId
      * @param {number} page
      * @param {number} size
      * @memberof UserService
      */
-    public async getFocusListByUserId(userId: string, page: number, size: number) {
+    public async getFocusListByUserId(focusUserId: string, page: number, size: number): Promise<IFans[]> {
         const { app, service } = this;
         let users = await app.mysql.select("tbl_focus", {
-            where: { userId },
+            where: { focusUserId },
             orders: [["addTime", "desc"]],
             limit: size,
             offset: (page - 1) * size
         });
-        for (const user of users) {
-            users = [...users, await service.user.getFocsUserInfoByserId(user.focusUserId)];
-        }
-        return users;
-    }
 
-    /**
-     * @description 通过userId 查询关注用户的信息
-     * @author ZhangYu
-     * @date 2019-09-03
-     * @param {string} userId
-     * @memberof UserService
-     */
-    public async getFocsUserInfoByserId(userId: string) {
-        return await this.app.mysql.get(
-            "tbl_user",
-            {
-                userId,
-                // columns: ["userId", "userName", "img", "name"]
-            }
-        );
+        let result: IFans[] = [];
+
+        for (const user of users) {
+            const { addTime, img, name, signature, userId, userName, website } = await service.user.getUserInfoByUserId(user.userId);
+            const fan: IFans = { addTime, img, name, signature, userId, userName, website, followed: true }
+            result = [...result, fan];
+        }
+        return result;
     }
 
     /**
@@ -190,7 +178,7 @@ export default class UserService extends Service {
      * @returns
      * @memberof UserService
      */
-    public async getFansListByUserId(focusUserId: string, page: number, size: number) {
+    public async getFansListByUserId(focusUserId: string, page: number, size: number): Promise<IFans[]> {
         const { app, service } = this;
         let users = await app.mysql.select("tbl_focus", {
             where: { userId: focusUserId },
@@ -200,8 +188,8 @@ export default class UserService extends Service {
         });
         let result: IFans[] = [];
         for (const user of users) {
-            const { addTime, img, name, signature, userId, userName, website } = await service.user.getFocsUserInfoByserId(user.focusUserId);
-            const followed: boolean = await service.user.floowedByUserId(focusUserId, userId);
+            const { addTime, img, name, signature, userId, userName, website } = await service.user.getUserInfoByUserId(user.focusUserId);
+            const followed: boolean = await service.user.floowedByUserId(userId, focusUserId);
             const fan: IFans = { addTime, img, name, signature, userId, userName, website, followed }
             result = [...result, fan];
         }

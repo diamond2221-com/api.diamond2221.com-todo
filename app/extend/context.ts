@@ -1,6 +1,6 @@
 module.exports = {
 
-  send(data: any = {}, code: number = 200, message: string = "") {
+  send(data: any = {}, code: number = 200, message: string = "成功") {
     this.status = 200;
 
     if (code === 200) {

@@ -11,9 +11,9 @@ export default class FansController extends Controller {
     public async index() {
         const { ctx, service } = this;
         const { page, size } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
+        const userId = ctx.request.header["client-uid"];
         let fansList = await service.user.getFansListByUserId(userId, Number(page), Number(size));
-        ctx.send(fansList, 200, "成功")
+        ctx.send(fansList)
     }
 
 }

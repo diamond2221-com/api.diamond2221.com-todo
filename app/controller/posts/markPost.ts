@@ -20,7 +20,7 @@ export default class MarkPostController extends Controller {
         ctx.validate(rules, ctx.query);
 
         const { page, size } = ctx.query;
-        const userId = ctx.request.header["Client-Uid"];
+        const userId = ctx.request.header["client-uid"];
 
         let postIds: { postId: number }[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
         let posts: BasePost[] = [];
@@ -30,7 +30,7 @@ export default class MarkPostController extends Controller {
             posts = [...posts, post]
         }
         let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
-        ctx.send(dealPosts, 200, "成功");
+        ctx.send(dealPosts);
     }
 
     /**
@@ -42,7 +42,7 @@ export default class MarkPostController extends Controller {
     public async create() {
         const { ctx, service } = this;
         const { postId } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
+        const userId = ctx.request.header["client-uid"];
         const isMark: boolean = await service.user.findMarkPost(Number(postId), userId);
 
         if (isMark) {

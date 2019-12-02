@@ -10,9 +10,9 @@ export default class FocusController extends Controller {
     public async index() {
         const { ctx, service } = this;
         const { page, size } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
-        let focusList = service.user.getFocusListByUserId(userId, Number(page), Number(size));
-        ctx.send(focusList, 200)
+        const userId = ctx.request.header["client-uid"];
+        let focusList = await service.user.getFocusListByUserId(userId, Number(page), Number(size));
+        ctx.send(focusList)
     }
 
     /**
@@ -23,9 +23,9 @@ export default class FocusController extends Controller {
      */
     public async create() {
         const { ctx, service } = this;
-        const id = ctx.request.body.userId;
-        const userId = ctx.request.header["Client-Uid"];
-        await service.user.focusUserByUserId(userId, id);
+        const focusUserId = ctx.request.body.userId;
+        const userId = ctx.request.header["client-uid"];
+        await service.user.focusUserByUserId(focusUserId, userId);
         ctx.send({}, 200, "关注成功");
     }
 
@@ -37,9 +37,11 @@ export default class FocusController extends Controller {
      */
     public async destroy() {
         const { ctx, service } = this;
-        const { focusUserId } = ctx.request.body;
-        const userId = ctx.request.header["Client-Uid"];
+
+        const { userId } = ctx.request.query;
+        const focusUserId = ctx.request.header["client-uid"];
         await service.user.cancelFocusUserByUserId(userId, focusUserId);
+
         ctx.send({}, 200, "取消关注成功")
     }
 }

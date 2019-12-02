@@ -36,9 +36,9 @@ export default (appInfo: EggAppInfo) => {
 
     // 不需要验证token的 路由白名单
     config.authWhiteList = [
-        "/api/common/uploadImage",
-        "/api/account/login",
-        "/api/account/register"
+        "/api/commons/uploadImages",
+        "/api/accounts/login",
+        "/api/accounts/register"
     ]
 
     // token 在请求头中的 名称

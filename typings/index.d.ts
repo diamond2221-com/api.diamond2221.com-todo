@@ -11,7 +11,7 @@ declare module 'egg' {
 
   interface Context {
     // 在app/extend/context.js中定义的返回客户端的方法
-    send(data: any, status: number, message?: string): function,
+    send(data: any, status?: number, message?: string): function,
     user: userStructure
   }
 }

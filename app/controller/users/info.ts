@@ -13,13 +13,20 @@ export default class InfoController extends Controller {
      */
     public async index() {
         const { ctx, service } = this;
-        const { username } = ctx.query;
-        const userInfo: UserInfo | null = await service.user.getUserInfoByUsername(username);
+        let username: string = ctx.query.username || '';
+        let userId: string = ctx.query.userId || '';
+
+        let userInfo: UserInfo | null = null;
+        if (!username &&  userId) {
+            userInfo = await service.user.getUserInfoByUserId(userId);
+        } else if (!userId && username) {
+            userInfo = await service.user.getUserInfoByUsername(username);
+        }
         if (!userInfo) {
             ctx.send("没有该用户", 200)
             return;
         }
-        const userId: string = userInfo.userId;
+        userId = userInfo.userId;
         delete userInfo.password;
         const result: AllUserInfo = {
             ...userInfo,
@@ -27,11 +34,12 @@ export default class InfoController extends Controller {
             fansNum: 0,
             focusNum: 0
         }
+
         result.postNum = await service.post.getUserPostsCountByUserId(userId);
         result.fansNum = await service.user.getUserFansCountByUserId(userId);
         result.focusNum = await service.user.getUserFocusCountByfocusUserId(userId);
 
-        ctx.send(result, 200, "")
+        ctx.send(result)
     }
 
 

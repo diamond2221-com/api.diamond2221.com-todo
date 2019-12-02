@@ -19,7 +19,7 @@ export default class IndexController extends Controller {
         let posts: [BasePost] | [] = await service.post.getPosts(Number(size), Number(page));
 
         let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
-        ctx.send(dealPosts, 200);
+        ctx.send(dealPosts);
     }
 }
 

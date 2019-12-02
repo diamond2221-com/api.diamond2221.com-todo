@@ -13,8 +13,7 @@ export default () => {
       // 用户名
       user: 'root',
       // 密码
-      password: '981220zy',  /* 家用 */
-      // password: '981220Zy', /* 公司 */
+      password: '981220zy',
       // 数据库名
       database: 'db_instagram',
     },

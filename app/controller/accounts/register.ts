@@ -14,7 +14,7 @@ export default class RegisterController extends Controller {
         const { ctx } = this;
         const RegisterParams: RegisterParams = ctx.request.body;
 
-        const hasUser: boolean = await this.service.account.getUserByUserName(RegisterParams.userName);
+        const hasUser: boolean = Boolean(await this.service.user.getUserInfoByUsername(RegisterParams.userName))
         if (hasUser) {
             return ctx.send("当前用户名已被占用", 400)
         }
