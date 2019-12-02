@@ -12,6 +12,20 @@ export default class LoginController extends Controller {
      */
     public async create() {
         const { ctx, service } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            userName: 'string',
+            passWord: 'string'
+        };
+
+        try {
+            ctx.validate(rules, ctx.request.body);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
+
         const LoginParams: LoginParams = ctx.request.body;
 
         let user: UserInfo | null = await service.account.getUserByUserNamePassWord(LoginParams);

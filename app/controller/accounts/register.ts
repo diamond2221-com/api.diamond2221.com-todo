@@ -12,6 +12,19 @@ export default class RegisterController extends Controller {
      */
     public async create() {
         const { ctx } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            userName: "string",
+            passWord: "string",
+            rePassWord: "string",
+        };
+        try {
+            ctx.validate(rules, ctx.request.body);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
         const RegisterParams: RegisterParams = ctx.request.body;
 
         const hasUser: boolean = Boolean(await this.service.user.getUserInfoByUsername(RegisterParams.userName))

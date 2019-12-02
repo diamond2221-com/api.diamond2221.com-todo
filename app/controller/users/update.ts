@@ -9,6 +9,22 @@ export default class UpdateController extends Controller {
      */
     public async create() {
         const { ctx, service } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            userName: "string?",
+            img: "string?",
+            name: "string?",
+            signature: "string?",
+            userId: "string?",
+            website: "string?"
+        };
+        try {
+            ctx.validate(rules, ctx.request.body);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
         const { userName, img, name, signature, userId, website } = ctx.request.body;
         let newUserInfo = {};
         function addProp(obj, key: string, prop: any) {

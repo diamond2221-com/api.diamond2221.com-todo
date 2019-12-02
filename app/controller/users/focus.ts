@@ -9,9 +9,21 @@ export default class FocusController extends Controller {
      */
     public async index() {
         const { ctx, service } = this;
-        const { page, size } = ctx.request.body;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            page: "number",
+            size: "number"
+        };
+        try {
+            ctx.validate(rules, ctx.query);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
+        const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
-        let focusList = await service.user.getFocusListByUserId(userId, Number(page), Number(size));
+        let focusList = await service.user.getFocusListByUserId(userId, page, size);
         ctx.send(focusList)
     }
 

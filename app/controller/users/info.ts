@@ -13,6 +13,18 @@ export default class InfoController extends Controller {
      */
     public async index() {
         const { ctx, service } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            username: "string?",
+            userId: "string?"
+        };
+        try {
+            ctx.validate(rules, ctx.query);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
         let username: string = ctx.query.username || '';
         let userId: string = ctx.query.userId || '';
 

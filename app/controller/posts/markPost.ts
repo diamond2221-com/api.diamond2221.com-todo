@@ -13,11 +13,15 @@ export default class MarkPostController extends Controller {
 
         // 定义创建接口的请求参数规则
         const rules = {
-            page: 'string',
-            size: 'string'
+            page: 'number',
+            size: 'number'
         };
 
-        ctx.validate(rules, ctx.query);
+        try {
+            ctx.validate(rules, ctx.query);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
 
         const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
@@ -41,9 +45,21 @@ export default class MarkPostController extends Controller {
      */
     public async create() {
         const { ctx, service } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            postId: 'number'
+        };
+
+        try {
+            ctx.validate(rules, ctx.request.body);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
         const { postId } = ctx.request.body;
         const userId = ctx.request.header["client-uid"];
-        const isMark: boolean = await service.user.findMarkPost(Number(postId), userId);
+        const isMark: boolean = await service.user.findMarkPost(postId, userId);
 
         if (isMark) {
             ctx.send("已收藏该帖子", 400);

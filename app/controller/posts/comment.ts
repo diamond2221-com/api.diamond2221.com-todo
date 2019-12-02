@@ -13,10 +13,22 @@ export default class CommentsController extends Controller {
     */
     public async create() {
         const { ctx, service } = this;
+
+        // 定义创建接口的请求参数规则
+        const rules = {
+            content: "string",
+            postId: "number"
+        };
+        try {
+            ctx.validate(rules, ctx.request.body);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
         const { content, postId } = ctx.request.body;
         const userId = ctx.request.header["client-uid"];
 
-        const comment = await service.post.addComments(Number(postId), userId, content);
+        const comment = await service.post.addComments(postId, userId, content);
 
         let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
 

@@ -61,6 +61,10 @@ export default (appInfo: EggAppInfo) => {
         jsonLimit: '5mb',
         formLimit: '10mb',
     }
+    config.validate = {
+        convert: true,
+
+    }
     // add your special config in here
     const bizConfig = {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
