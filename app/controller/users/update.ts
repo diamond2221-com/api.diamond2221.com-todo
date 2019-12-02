@@ -16,7 +16,6 @@ export default class UpdateController extends Controller {
             img: "string?",
             name: "string?",
             signature: "string?",
-            userId: "string?",
             website: "string?"
         };
         try {
@@ -25,7 +24,7 @@ export default class UpdateController extends Controller {
             return ctx.send('参数错误', 400);
         }
 
-        const { userName, img, name, signature, userId, website } = ctx.request.body;
+        const { userName, img, name, signature, website } = ctx.request.body;
         let newUserInfo = {};
         function addProp(obj, key: string, prop: any) {
             if (prop && prop !== 0) {
@@ -38,6 +37,7 @@ export default class UpdateController extends Controller {
         addProp(newUserInfo, "name", name);
         addProp(newUserInfo, "signature", signature);
         addProp(newUserInfo, "website", website);
+        const userId = ctx.request.header["client-uid"];
 
         const result = await service.user.changeUserInfoByUserId(userId, newUserInfo);
         ctx.send(result, 200, "修改成功");
