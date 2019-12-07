@@ -41,7 +41,8 @@ export default (app: Application) => {
     // 用户粉丝相关
     router.resources("fansUser", "/api/users/fans", users.fans);
 
-
+    // 搜索用户
+    router.resources("searchUser", "/api/users/search", users.search);
     // // 获取推荐用户
     // router.get("/api/getSuggestedUser", login.login)
     // // 获取登录用户关注

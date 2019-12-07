@@ -33,7 +33,7 @@ export default class MarkPostController extends Controller {
             let post: BasePost = await service.post.getPostByPostId(postId.postId)
             posts = [...posts, post]
         }
-        let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
+        let dealPosts: PostA[] = await service.post.getPostInfo(posts);
         ctx.send(dealPosts);
     }
 

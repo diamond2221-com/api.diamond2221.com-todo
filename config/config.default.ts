@@ -38,7 +38,8 @@ export default (appInfo: EggAppInfo) => {
     config.authWhiteList = [
         "/api/commons/uploadImages",
         "/api/accounts/login",
-        "/api/accounts/register"
+        "/api/accounts/register",
+        // "/api/users/search"
     ]
 
     // token 在请求头中的 名称

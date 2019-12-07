@@ -31,9 +31,9 @@ export default class UserController extends Controller {
         const { page, size, userId } = ctx.query;
         // const userId = ctx.request.header["client-uid"];
 
-        let posts: [BasePost] | [] = await service.post.getUserPostsByUserId(userId, size, page);
+        let posts: BasePost[] = await service.post.getUserPostsByUserId(userId, size, page);
 
-        let dealPosts: [PostA] | [] = await service.post.getPostInfo(posts);
+        let dealPosts: PostA[] = await service.post.getPostInfo(posts);
         ctx.send(dealPosts);
     }
 
