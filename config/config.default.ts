@@ -34,13 +34,6 @@ export default (appInfo: EggAppInfo) => {
         allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
     };
 
-    // 不需要验证token的 路由白名单
-    config.authWhiteList = [
-        "/api/commons/uploadImages",
-        "/api/accounts/login",
-        "/api/accounts/register"
-    ]
-
     // token 在请求头中的 名称
     config.auth_headers_name = 'Client-Token';
     config.jwtSecret = "ins_zhangyu"
@@ -63,8 +56,15 @@ export default (appInfo: EggAppInfo) => {
     }
     config.validate = {
         convert: true,
-
     }
+
+    // config.sequelize = {
+    //     dialect: 'mysql',
+    //     host: '127.0.0.1',
+    //     port: 3306,
+    //     database: 'egg-sequelize-doc-default',
+    // }
+
     // add your special config in here
     const bizConfig = {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,

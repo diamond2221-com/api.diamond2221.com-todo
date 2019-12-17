@@ -29,8 +29,10 @@
     "egg-cors": "^2.2.0",
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.6.0",
+    "egg-sequelize": "^5.2.0",
     "egg-validate": "^2.0.2",
     "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.0.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

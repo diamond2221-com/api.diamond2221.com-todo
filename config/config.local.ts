@@ -23,6 +23,22 @@ export default () => {
     agent: false,
   }
 
+  config.sequelize = {
+    dialect: 'mysql',
+    host: '127.0.0.1',
+    port: 3306,
+    database: 'db_instagram',
+    username: "root",
+    password: "981220zy"
+  }
+
+  // 不需要验证token的 路由白名单
+  config.authWhiteList = [
+    "/api/commons/uploadImages",
+    "/api/accounts/login",
+    "/api/accounts/register",
+    "/api/users/search"
+  ]
 
   return config;
 };
