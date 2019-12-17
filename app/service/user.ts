@@ -1,5 +1,5 @@
 import { Service } from "egg";
-
+import { IUser } from "../types/user_interface";
 interface IFans {
     addTime: string;
     img: string;
@@ -10,6 +10,7 @@ interface IFans {
     website: string | null;
     followed?: boolean;
 }
+
 
 export default class UserService extends Service {
     /**
@@ -207,5 +208,41 @@ export default class UserService extends Service {
     public async floowedByUserId(userId: string, focusUserId: string): Promise<boolean> {
         const res = await this.app.mysql.get("tbl_focus", { userId, focusUserId})
         return Boolean(res);
+    }
+
+    /**
+     * searchUser
+     */
+    public async searchUser(userName: string): Promise<IUser[]> {
+        const sql: string = `SELECT
+                                al1.userId,
+                                al1.userName,
+                                al1.img userImg,
+                                al1.name,
+                                al1.signature,
+                                al1.website,
+                                al1.badge,
+                                al1.fansNum,
+                                COUNT(tbl_focus.focusUserId) focusNum
+                            FROM tbl_focus RIGHT JOIN
+                            (
+                                SELECT
+                                    u.*,
+                                    COUNT(f.userId) fansNum
+                                FROM
+                                    tbl_focus f
+                                RIGHT JOIN tbl_user u ON u.userId = f.userId
+                                WHERE
+                                    userName LIKE '%${userName}%'
+                                GROUP BY
+                                    u.userId
+                            ) al1 ON tbl_focus.focusUserId = al1.userId
+                                GROUP BY
+                                    al1.userId
+                                ORDER BY
+                                    al1.fansNum DESC
+                            `;
+        const res: IUser[] = await this.app.mysql.query(sql);
+        return res;
     }
 }

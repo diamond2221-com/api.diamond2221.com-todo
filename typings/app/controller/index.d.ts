@@ -13,6 +13,7 @@ import ExportUsersFans from '../../../app/controller/users/fans';
 import ExportUsersFocus from '../../../app/controller/users/focus';
 import ExportUsersIndex from '../../../app/controller/users/index';
 import ExportUsersInfo from '../../../app/controller/users/info';
+import ExportUsersSearch from '../../../app/controller/users/search';
 import ExportUsersUpdate from '../../../app/controller/users/update';
 
 declare module 'egg' {
@@ -35,6 +36,7 @@ declare module 'egg' {
       focus: ExportUsersFocus;
       index: ExportUsersIndex;
       info: ExportUsersInfo;
+      search: ExportUsersSearch;
       update: ExportUsersUpdate;
     }
   }

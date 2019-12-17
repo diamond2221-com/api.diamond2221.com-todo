@@ -38,15 +38,33 @@ export default class PostService extends Service {
         size: number,
         page: number
     ) {
-        const res = await this.app.mysql.select("tbl_post", {
-            where: {
-                userId
-            },
-            orders: [["addTime", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        });
-        return res;
+        // const res = await this.app.mysql.select("tbl_post", {
+        //     where: {
+        //         userId
+        //     },
+        //     orders: [["addTime", "desc"]],
+        //     limit: size,
+        //     offset: (page - 1) * size
+        // });
+        const offset: number = (page - 1) * size;
+        const sql = `
+                    SELECT
+                        p.postId postId,
+                        p.addTime addTime,
+                        p.content content,
+                        u.userId userId,
+                        u.img userImg,
+                        u.userName
+                    FROM
+                        tbl_post p
+                    LEFT JOIN tbl_user u ON p.userId = u.userId
+                    WHERE p.userId = '${userId}'
+                    ORDER BY addTime DESC
+                    limit ${size}
+                    OFFSET ${offset}
+                    `
+        const log = await this.app.mysql.query(sql)
+        return log;
     }
 
     /**
@@ -79,6 +97,19 @@ export default class PostService extends Service {
     public async getUserPostsCountByUserId(
         userId: string
     ) {
+        const res = await this.app.mysql.count("tbl_post", {
+            userId
+        });
+        return res;
+    }
+    /**
+     * getUserPostsCountByUserId1
+     */
+    public async getUserPostsCountByUserId1(
+        userId: string
+    ) {
+        // const sql = `SELECT COUNT(tbl_post.postId) FROM tbl_post LEFT JOIN tbl_user ON tbl_user.userId = tbl_post.userId WHERE tbl_user.userId = '${userId}'`;
+        // const res1 = await this.app.mysql.query(sql)
         const res = await this.app.mysql.count("tbl_post", {
             userId
         });
@@ -179,6 +210,19 @@ export default class PostService extends Service {
         // return res;
     }
 
+
+    /**
+     * @description 获取帖子的点赞数量
+     * @author ZhangYu
+     * @date 2019-12-05
+     * @param {number} postId
+     * @memberof PostService
+     */
+    public async getPostLikeNums(postId: number): Promise<number> {
+        const num: number = await this.app.mysql.count("tbl_like", {postId})
+        return num || 0;
+    }
+
     /**
      * @description 获取完整的帖子详情
      * @author ZhangYu
@@ -187,8 +231,10 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostInfo(posts: Array<BasePost>) {
-        let dealPosts: [PostA] | [] | any = [];
+        let dealPosts: PostA[] = [];
+        // this.app.logger.warn("帖子基本信息", posts)
         for (let post of posts) {
+            // this.app.logger.warn("单个帖子基本信息", post)
             const imgs: [string] | [] = await this.service.post.getPostImgsByPostId(post.postId);
             const userInfo: UserInfo = await this.service.user.getUserInfoByUserId(post.userId);
 
@@ -209,6 +255,7 @@ export default class PostService extends Service {
                 ]
 
             }
+            const likeNum: number = await this.service.post.getPostLikeNums(post.postId);
             dealPosts = [
                 ...dealPosts,
                 {
@@ -218,7 +265,7 @@ export default class PostService extends Service {
                     userImg: userInfo.img,
                     comments: dealComments,
                     addTime: timestampToTime(Number(post.addTime)),
-                    likeNum: 0
+                    likeNum
                 }
             ]
 
