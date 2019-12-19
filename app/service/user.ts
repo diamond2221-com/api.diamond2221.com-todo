@@ -215,30 +215,30 @@ export default class UserService extends Service {
      */
     public async searchUser(userName: string): Promise<IUser[]> {
         const sql: string = `SELECT
-                                al1.userId,
-                                al1.userName,
+                                al1.user_Id as userId,
+                                al1.user_name as userName,
                                 al1.img userImg,
                                 al1.name,
                                 al1.signature,
                                 al1.website,
                                 al1.badge,
                                 al1.fansNum,
-                                COUNT(tbl_focus.focusUserId) focusNum
+                                COUNT(tbl_focus.focus_user_id) focusNum
                             FROM tbl_focus RIGHT JOIN
                             (
                                 SELECT
                                     u.*,
-                                    COUNT(f.userId) fansNum
+                                    COUNT(f.user_Id) as fansNum
                                 FROM
                                     tbl_focus f
-                                RIGHT JOIN tbl_user u ON u.userId = f.userId
+                                RIGHT JOIN tbl_user u ON u.user_Id = f.user_Id
                                 WHERE
-                                    userName LIKE '%${userName}%'
+                                    user_name LIKE '%${userName}%'
                                 GROUP BY
-                                    u.userId
-                            ) al1 ON tbl_focus.focusUserId = al1.userId
+                                    u.user_Id
+                            ) al1 ON tbl_focus.focus_user_id = al1.user_Id
                                 GROUP BY
-                                    al1.userId
+                                    al1.user_Id
                                 ORDER BY
                                     al1.fansNum DESC
                             `;

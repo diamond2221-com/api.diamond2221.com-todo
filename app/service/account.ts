@@ -35,15 +35,17 @@ export default class AccountService extends Service {
 
 
     /**
-     *
+     * @description 登录 根据 用户名 密码 获取用户信息
+     * @author ZhangYu
+     * @date 2019-12-18
      * @param {LoginParams} LoginParams
      * @returns
-     * @memberof LoginService
+     * @memberof AccountService
      */
     public async getUserByUserNamePassWord(LoginParams: LoginParams) {
         const res = this.app.mysql.get("tbl_user", {
-            userName: LoginParams.userName,
-            password: LoginParams.passWord
+            "user_name": LoginParams.userName,
+            "pass_word": LoginParams.passWord
         });
 
         return res
@@ -55,10 +57,10 @@ export default class AccountService extends Service {
      */
     public async updateLastLoginTime(userId: string) {
         await this.app.mysql.update("tbl_user", {
-            lastTime: Date.now()
+            "last_time": Date.now()
         }, {
             where: {
-                userId
+                "user_id": userId
             }
         });
     }

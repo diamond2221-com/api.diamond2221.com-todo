@@ -1,4 +1,6 @@
 import EggMysql from 'egg-mysql';
+import * as sequelize from "sequelize";
+import { Sequelize, ISequelizeValidationOnlyConfig } from 'sequelize-typescript';
 
 interface userStructure {
   userId: string
@@ -6,7 +8,9 @@ interface userStructure {
 
 declare module 'egg' {
   interface Application {
-    mysql: EggMysql
+    mysql: EggMysql;
+    Sequelize: Sequelize;
+    model: IModel;
   }
 
   interface Context {

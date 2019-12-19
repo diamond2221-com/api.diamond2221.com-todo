@@ -49,17 +49,17 @@ export default class PostService extends Service {
         const offset: number = (page - 1) * size;
         const sql = `
                     SELECT
-                        p.postId postId,
-                        p.addTime addTime,
+                        p.post_id postId,
+                        p.add_time addTime,
                         p.content content,
-                        u.userId userId,
+                        u.user_id userId,
                         u.img userImg,
-                        u.userName
+                        u.user_name userName
                     FROM
                         tbl_post p
-                    LEFT JOIN tbl_user u ON p.userId = u.userId
-                    WHERE p.userId = '${userId}'
-                    ORDER BY addTime DESC
+                    LEFT JOIN tbl_user u ON p.user_id = u.user_id
+                    WHERE p.user_id = '${userId}'
+                    ORDER BY add_time DESC
                     limit ${size}
                     OFFSET ${offset}
                     `
