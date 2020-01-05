@@ -34,13 +34,7 @@ export default class LoginController extends Controller {
 
             ctx.send({
                 token,
-                userName: user.userName,
-                badge: user.badge,
-                img: user.img,
-                name: user.name,
-                signature: user.signature,
-                userId: user.userId,
-                website: user.website,
+                ...user
             }, 200, "登录成功");
         } else {
             ctx.send("账号或密码错误", 400);

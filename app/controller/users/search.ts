@@ -10,11 +10,6 @@ export default class SearchController extends Controller {
         }
         const res: IUser[] = await service.user.searchUser(name);
 
-        let options = {
-            include: [{ model: this.app.model.User }]
-        }
-        let re1 = await this.app.model.Focus.findAndCountAll(options)
-        console.log(res)
-        ctx.send({ re1 }, 200)
+        ctx.send(res, 200)
     }
 }

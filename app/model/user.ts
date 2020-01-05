@@ -2,7 +2,6 @@
  * @desc 用户表
  */
 import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
-// import Focus from "./focus";
 
 const { STRING, INTEGER } = DataType;
 @Table({
@@ -58,7 +57,7 @@ export class User extends Model<User> {
         type: INTEGER('2'),
         comment: '用户是否拥有徽章'
     })
-    badge: string;
+    badge: number;
 
     @Column({
         type: STRING(13),

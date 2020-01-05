@@ -36,6 +36,9 @@ export default () => {
       // 但是为了安全着想，复数的转换可能会发生变化，所以禁止该行为
       freezeTableName: true,
       timestamps: false
+    },
+    query: {
+      raw: true
     }
   }
 

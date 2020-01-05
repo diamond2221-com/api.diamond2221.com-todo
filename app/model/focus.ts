@@ -36,6 +36,7 @@ export class Focus extends Model<Focus> {
     add_time: string;
 };
 export default () => {
+
     return Focus;
 };
 

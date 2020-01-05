@@ -2,10 +2,11 @@
  * @Author: ZhangYu
  * @Date:   2018-12-29 14:54:27
  * @Last Modified by: zhangyu
- * @Last Modified time: 2019-08-11 16:49:10
+ * @Last Modified time: 2020-01-05 01:55:57
  */
 
-export const timestampToTime = (timestamp: number): string => {
+export const timestampToTime = (timestamp: number | string): string => {
+    if (typeof timestamp === 'string') timestamp = Number(timestamp);
     //debugger;
     let now: Date = new Date();
     let date: Date = new Date((timestamp));

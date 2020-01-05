@@ -5,7 +5,7 @@ import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table } from 'seque
 
 const { STRING, INTEGER } = DataType;
 @Table({
-    modelName: 'tbl_focus'
+    modelName: 'tbl_comment'
 })
 export class Comment extends Model<Comment> {
 

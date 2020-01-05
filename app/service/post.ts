@@ -21,9 +21,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostByPostId(postId: number) {
-        const res = await this.app.mysql.get("tbl_post", {
-            postId
-        });
+        const res = await this.app.model.Post.findOne({ where: { post_id: postId } })
         return res;
     }
 
@@ -38,14 +36,7 @@ export default class PostService extends Service {
         size: number,
         page: number
     ) {
-        // const res = await this.app.mysql.select("tbl_post", {
-        //     where: {
-        //         userId
-        //     },
-        //     orders: [["addTime", "desc"]],
-        //     limit: size,
-        //     offset: (page - 1) * size
-        // });
+
         const offset: number = (page - 1) * size;
         const sql = `
                     SELECT
@@ -59,7 +50,7 @@ export default class PostService extends Service {
                         tbl_post p
                     LEFT JOIN tbl_user u ON p.user_id = u.user_id
                     WHERE p.user_id = '${userId}'
-                    ORDER BY add_time DESC
+                    ORDER BY p.add_time DESC
                     limit ${size}
                     OFFSET ${offset}
                     `
@@ -78,16 +69,16 @@ export default class PostService extends Service {
         size: number,
         page: number
     ) {
-        const res = await this.app.mysql.select("tbl_mark_post", {
-            columns: ["postId"],
+        const res = await this.app.model.MarkPost.findAll({
             where: {
-                userId
+                user_id: userId
             },
-            orders: [["addTime", "desc"]],
+            order: [["add_time", "desc"]],
             limit: size,
-            offset: (page - 1) * size
-        });
-        return res;
+            offset: (page - 1) * size,
+            attributes: ["post_id"]
+        })
+        return res.map(post => post.post_id);
     }
 
     /**
@@ -96,10 +87,8 @@ export default class PostService extends Service {
      */
     public async getUserPostsCountByUserId(
         userId: string
-    ) {
-        const res = await this.app.mysql.count("tbl_post", {
-            userId
-        });
+    ): Promise<number> {
+        const res = await this.app.model.Post.count({ where: { user_id: userId } })
         return res;
     }
     /**
@@ -107,26 +96,16 @@ export default class PostService extends Service {
      */
     public async getUserPostsCountByUserId1(
         userId: string
-    ) {
-        // const sql = `SELECT COUNT(tbl_post.postId) FROM tbl_post LEFT JOIN tbl_user ON tbl_user.userId = tbl_post.userId WHERE tbl_user.userId = '${userId}'`;
-        // const res1 = await this.app.mysql.query(sql)
-        const res = await this.app.mysql.count("tbl_post", {
-            userId
-        });
-        return res;
+    ): Promise<number> {
+        return await this.app.model.Post.count({ where: { user_id: userId } })
     }
 
     /**
      * 通过帖子Id 获取 单个帖子图片
      * @param postId
      */
-    public async getPostImgsByPostId(postId: number) {
-        const res = await this.app.mysql.select("tbl_img", {
-            where: {
-                postId
-            },
-            orders: [["addTime", "desc"]]
-        });
+    public async getPostImgsByPostId(postId: number): Promise<string[]> {
+        const res = await this.app.model.Img.findAll({ where: { post_id: postId }, order: [["add_time", "DESC"]] })
         return res.map(img => img.src + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1");
     }
 
@@ -137,16 +116,25 @@ export default class PostService extends Service {
      * @param page
      */
     public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<PostComments[]> {
-        const comments = await this.app.mysql.select("tbl_comment", {
+        const comments = await this.app.model.Comment.findAll({
             where: {
-                postId
+                post_id: postId
             },
-            orders: [["addTime", "desc"]],
+            order: [["add_time", "desc"]],
             limit: size,
             offset: (page - 1) * size
-
         })
-        return comments;
+
+        return comments.map(comment => {
+            return {
+                commentId: comment.comment_id,
+                postId: comment.post_id,
+                userId: comment.user_id,
+                content: comment.content,
+                addTime: comment.add_time
+            };
+        })
+
     }
 
     /**
@@ -156,14 +144,18 @@ export default class PostService extends Service {
      * @param content
      */
     public async addComments(postId: number, userId: string, content: string) {
-        const comment = {
-            postId,
-            userId,
+        const comment = await this.app.model.Comment.create({
+            post_id: postId,
+            user_id: userId,
             content,
-            addTime: Date.now()
-        }
-        await this.app.mysql.insert("tbl_comment", comment);
-        return comment;
+            add_time: Date.now()
+        })
+        return {
+            userId: comment.user_id,
+            postId: comment.post_id,
+            content: comment.content,
+            addTime: comment.add_time
+        };
     }
 
 
@@ -176,21 +168,29 @@ export default class PostService extends Service {
     public async addPost(content: string, imgs: string[], userId: string) {
         const post = {
             content,
-            userId,
-            addTime: Date.now()
+            user_id: userId,
+            add_time: Date.now()
         }
-        const res = await this.app.mysql.insert("tbl_post", post);
-        const postId: number = res.insertId;
+        const res = await this.app.model.Post.create(post)
+        const postId: number = res.post_id;
         if (imgs.length) {
             for (const img of imgs) {
-                await this.app.mysql.insert("tbl_img", {
-                    postId,
+                await this.app.model.Img.create({
+                    post_id: postId,
                     src: img,
-                    addTime: Date.now()
+                    add_time: Date.now()
                 })
             }
         }
-        return { ...post, imgs: imgs.map(img => img + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1"), postId };
+        return {
+            postId: res.post_id,
+            userId: res.user_id,
+            addTime: res.add_time,
+            content: res.content,
+            imgs: imgs.map(img => {
+                return img + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1"
+            })
+        };
     }
 
     /**
@@ -201,13 +201,20 @@ export default class PostService extends Service {
      * @param {number} page
      * @memberof PostService
      */
-    public async getPosts(size: number, page: number) {
-        return await this.app.mysql.select("tbl_post", {
-            orders: [["addTime", "desc"]],
+    public async getPosts(size: number, page: number): Promise<BasePost[]> {
+        const posts = await this.app.model.Post.findAll({
+            order: [["add_time", "desc"]],
             limit: size,
             offset: (page - 1) * size
-        });
-        // return res;
+        })
+        return posts.map(post => {
+            return {
+                postId: post.post_id,
+                userId: post.user_id,
+                content: post.content,
+                addTime: post.add_time
+            }
+        })
     }
 
 
@@ -219,8 +226,11 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostLikeNums(postId: number): Promise<number> {
-        const num: number = await this.app.mysql.count("tbl_like", {postId})
-        return num || 0;
+        return await this.app.model.Like.count({
+            where: {
+                post_id: postId
+            }
+        })
     }
 
     /**
@@ -235,7 +245,7 @@ export default class PostService extends Service {
         // this.app.logger.warn("帖子基本信息", posts)
         for (let post of posts) {
             // this.app.logger.warn("单个帖子基本信息", post)
-            const imgs: [string] | [] = await this.service.post.getPostImgsByPostId(post.postId);
+            const imgs = await this.service.post.getPostImgsByPostId(post.postId);
             const userInfo: UserInfo = await this.service.user.getUserInfoByUserId(post.userId);
 
             let dealComments: IPostComment[] = [];
