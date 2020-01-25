@@ -1,7 +1,8 @@
 /**
  * @desc 用户表
  */
-import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table, ForeignKey, /* BelongsTo */ } from 'sequelize-typescript';
+import { User } from './user';
 
 const { STRING, INTEGER } = DataType;
 @Table({
@@ -17,6 +18,7 @@ export class Focus extends Model<Focus> {
     })
     id: number;
 
+    @ForeignKey(() => User)
     @Column({
         type: STRING("255"),
         comment: "关注用户的主ID"
@@ -34,6 +36,9 @@ export class Focus extends Model<Focus> {
         comment: '添加的时间戳'
     })
     add_time: string;
+
+    // @BelongsTo(() => User, "user_id")
+    // focus_user: Focus
 };
 export default () => {
 

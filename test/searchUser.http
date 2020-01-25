@@ -1,0 +1,6 @@
+# GET  http://localhost:7001/api/users/info?username=&userId=uu64ab3f2b429d456c9b324c7b4a97b1f3
+
+GET http://localhost:7001/api/posts/user?page=1&size=21&userId=uu64ab3f2b429d456c9b324c7b4a97b1f3
+Client-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1dTY0YWIzZjJiNDI5ZDQ1NmM5YjMyNGM3YjRhOTdiMWYzIiwidXNlck5hbWUiOiJ3YW5nbGFvd3UiLCJpYXQiOjE1Nzk5NDkwNDEsImV4cCI6MTU4MDU1Mzg0MX0.Z1R4ImGUvff9catZkCwQdRlHIOfsfmZI_1dDe7gKraY
+Client-Uid: uu64ab3f2b429d456c9b324c7b4a97b1f3
+

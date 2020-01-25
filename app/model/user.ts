@@ -2,6 +2,7 @@
  * @desc 用户表
  */
 import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+// import { Focus } from './focus';
 
 const { STRING, INTEGER } = DataType;
 @Table({
@@ -70,8 +71,13 @@ export class User extends Model<User> {
         comment: '用户最后一次登录时间'
     })
     last_time: string;
-};
-export default () => {
-    return User;
+
+
+
+    // @HasMany(() => Focus, "user_id")
+    // focus_users: Focus[];
 };
 
+export default () => {
+    return User
+}

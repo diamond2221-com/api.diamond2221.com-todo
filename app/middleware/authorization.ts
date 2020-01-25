@@ -13,7 +13,6 @@ export default (options: any, app: { config: { authWhiteList: string[]; jwtSecre
             await next(options)
             return;
         } else {
-
             const token: string | null = request.header["client-token"];
             if (!token) {
                 ctx.send("您未登录，请登录后再试", 401);

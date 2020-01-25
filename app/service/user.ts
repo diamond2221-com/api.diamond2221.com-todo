@@ -237,9 +237,31 @@ export default class UserService extends Service {
     }
 
     /**
-     * searchUser
+     * @description 根据用户昵称 搜索用户
+     * @author ZhangYu
+     * @date 2020-01-17
+     * @param {string} userName
+     * @returns
+     * @memberof UserService
      */
     public async searchUser(userName: string) {
+        const { User, Focus } = this.app.model;
+
+        // User.hasMany(Focus)
+        // let res = await User.findAll({
+        //     where: {
+        //         user_name: {
+        //             [Sequelize.Op.like]: `%${userName}%`
+        //         }
+        //     },
+        //     include: [{
+        //         model: Focus,
+        //         as: "f",
+        //         attributes: ["f.focus_user_id"]
+        //     }]
+        // })
+        // console.log(res);
+
         `SELECT
             al1.user_Id as userId,
             al1.user_name as userName,
@@ -269,7 +291,7 @@ export default class UserService extends Service {
                 al1.fansNum DESC
         `;
 
-        const { User, Focus } = this.app.model;
+
         let users = await User.findAll({
             where: {
                 user_name: {
@@ -302,6 +324,7 @@ export default class UserService extends Service {
                 focusNum
             })
         }
+
         return result.map(item => {
             return {
                 focusNum: item.focusNum,
