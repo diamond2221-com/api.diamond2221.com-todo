@@ -37,8 +37,14 @@ export default class FocusController extends Controller {
         const { ctx, service } = this;
         const focusUserId = ctx.request.body.userId;
         const userId = ctx.request.header["client-uid"];
-        await service.user.focusUserByUserId(focusUserId, userId);
-        ctx.send({}, 200, "关注成功");
+        const result: number = await service.user.focusUserByUserId(focusUserId, userId);
+        if (result === 0) {
+            ctx.send({}, 200, "关注成功");
+        } else if(result === 1) {
+            ctx.send('已关注该用户', 400);
+        } else if (result === 2) {
+            ctx.send("关注失败", 400)
+        }
     }
 
     /**

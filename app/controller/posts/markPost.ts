@@ -26,12 +26,14 @@ export default class MarkPostController extends Controller {
         const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
 
-        let postIds: { postId: number }[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
+        let postIds: number[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
         let posts: BasePost[] = [];
 
         for (const postId of postIds) {
-            let post: BasePost = await service.post.getPostByPostId(postId.postId)
-            posts = [...posts, post]
+            let post: BasePost | null = await service.post.getPostByPostId(postId)
+            if (post) {
+                posts = [...posts, post]
+            }
         }
         let dealPosts: PostA[] = await service.post.getPostInfo(posts);
         ctx.send(dealPosts);

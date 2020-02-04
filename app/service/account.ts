@@ -43,7 +43,7 @@ export default class AccountService extends Service {
      * @returns
      * @memberof AccountService
      */
-    public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<UserInfo> {
+    public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<UserInfo | null> {
         const user = await this.app.model.User.findOne({
             where: {
                 "user_name": LoginParams.userName,
@@ -62,17 +62,22 @@ export default class AccountService extends Service {
             //     "img"
             // ]
         })
-        return {
-            userName: user ? user.user_name : '',
-            name: user ? user.name : '',
-            userId: user ? user.user_id : '',
-            img: user ? user.img : '',
-            website: user ? user.website : '',
-            badge: user ? user.badge : 0,
-            signature: user ? user.signature : '',
-            lastTime: user ? user.last_time : '',
-            password: user ? user.pass_word : '',
-            addTime: user ? user.add_time : ''
+        if (user) {
+
+            return {
+                userName: user ? user.user_name : '',
+                name: user ? user.name : '',
+                userId: user ? user.user_id : '',
+                img: user ? user.img : '',
+                website: user ? user.website : '',
+                badge: user ? user.badge : 0,
+                signature: user ? user.signature : '',
+                lastTime: user ? user.last_time : '',
+                password: user ? user.pass_word : '',
+                addTime: user ? user.add_time : ''
+            }
+        } else {
+            return null
         }
     }
 

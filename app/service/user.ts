@@ -43,23 +43,28 @@ export default class UserService extends Service {
      * 通过用户username 来获取用户的 信息
      * @param userName
      */
-    public async getUserInfoByUsername(userName: string): Promise<UserInfo> {
+    public async getUserInfoByUsername(userName: string): Promise<UserInfo | null> {
         const user = await this.app.model.User.findOne({
             where: {
                 user_name: userName
             }
         })
-        return {
-            userName: user ? user.user_name : '',
-            name: user ? user.name : '',
-            userId: user ? user.user_id : '',
-            img: user ? user.img : '',
-            website: user ? user.website : '',
-            badge: user ? user.badge : 0,
-            signature: user ? user.signature : '',
-            lastTime: user ? user.last_time : '',
-            password: user ? user.pass_word : '',
-            addTime: user ? user.add_time : ''
+        if (user) {
+
+            return {
+                userName: user ? user.user_name : '',
+                name: user ? user.name : '',
+                userId: user ? user.user_id : '',
+                img: user ? user.img : '',
+                website: user ? user.website : '',
+                badge: user ? user.badge : 0,
+                signature: user ? user.signature : '',
+                lastTime: user ? user.last_time : '',
+                password: user ? user.pass_word : '',
+                addTime: user ? user.add_time : ''
+            }
+        } else {
+            return null
         }
     }
 
@@ -145,12 +150,27 @@ export default class UserService extends Service {
      * @param {string} focusUserId 关注者的userId
      * @memberof UserService
      */
-    public async focusUserByUserId(userId: string, focusUserId: string) {
-        await this.app.model.Focus.create({
-            user_id: userId,
-            focus_user_id: focusUserId,
-            add_time: Date.now()
+    public async focusUserByUserId(userId: string, focusUserId: string): Promise<number> {
+        const res = await this.app.model.Focus.findOne({
+            where: {
+                user_id: userId,
+                focus_user_id: focusUserId
+            }
         })
+        if (res) {
+            return 1;
+        } else {
+            try {
+                await this.app.model.Focus.create({
+                    user_id: userId,
+                    focus_user_id: focusUserId,
+                    add_time: Date.now()
+                })
+            } catch (error) {
+                return 2;
+            }
+            return 0
+        }
     }
 
     /**

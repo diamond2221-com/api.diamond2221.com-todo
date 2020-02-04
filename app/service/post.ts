@@ -9,8 +9,6 @@ import {
 } from "../types/post_interface";
 
 
-
-
 export default class PostService extends Service {
 
     /**
@@ -20,9 +18,18 @@ export default class PostService extends Service {
      * @param {number} postId
      * @memberof PostService
      */
-    public async getPostByPostId(postId: number) {
+    public async getPostByPostId(postId: number): Promise<BasePost | null> {
         const res = await this.app.model.Post.findOne({ where: { post_id: postId } })
-        return res;
+        if(res) {
+            return {
+                postId: res.post_id,
+                userId: res.user_id,
+                content: res.content,
+                addTime: res.add_time
+            }
+        } else {
+            return null;
+        }
     }
 
     /**
