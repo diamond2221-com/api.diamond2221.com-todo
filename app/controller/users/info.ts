@@ -53,6 +53,4 @@ export default class InfoController extends Controller {
 
         ctx.send(result)
     }
-
-
 }

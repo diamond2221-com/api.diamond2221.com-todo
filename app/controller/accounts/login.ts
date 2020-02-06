@@ -28,9 +28,9 @@ export default class LoginController extends Controller {
 
         const LoginParams: LoginParams = ctx.request.body;
 
-        let user: UserInfo | null = await service.account.getUserByUserNamePassWord(LoginParams);
+        let user: UserInfo | null = await service.accounts.getUserByUserNamePassWord(LoginParams);
         if (user) {
-            let token: string = await service.account.Login(user.userName, user.userId);
+            let token: string = await service.accounts.Login(user.userName, user.userId);
 
             ctx.send({
                 token,

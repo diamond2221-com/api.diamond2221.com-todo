@@ -36,7 +36,7 @@ export default class RegisterController extends Controller {
             return ctx.send("两次密码不相同", 400);
         }
 
-        const res: boolean = await this.service.account.Register(RegisterParams);
+        const res: boolean = await this.service.accounts.Register(RegisterParams);
 
         if (res) {
             return ctx.send("注册成功", 200)

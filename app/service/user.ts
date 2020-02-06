@@ -13,7 +13,6 @@ interface IFans {
     followed?: boolean;
 }
 
-
 export default class UserService extends Service {
     /**
      * 通过用户Id 来获取用户的 信息
@@ -271,7 +270,7 @@ export default class UserService extends Service {
         // let res = await User.findAll({
         //     where: {
         //         user_name: {
-        //             [Sequelize.Op.like]: `%${userName}%`
+        //             [Sequelize..like]: `%${userName}%`
         //         }
         //     },
         //     include: [{

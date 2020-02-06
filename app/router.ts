@@ -14,8 +14,10 @@ export default (app: Application) => {
     router.resources("accountLogin", "/api/accounts/login", accounts.login);
 
     // 注册
-    router.resources("accountLogin", "/api/accounts/register", accounts.register);
+    router.resources("accountRegister", "/api/accounts/register", accounts.register);
 
+    // 修改密码
+    router.resources("changePassword", "/api/accounts/changePassword", accounts.changePassword);
 
     // 用户帖子相关
     router.resources("userPost", "/api/posts/user", posts.user);
@@ -32,7 +34,7 @@ export default (app: Application) => {
     // 用户信息相关
     router.resources("users", "/api/users/info", users.info);
 
-    // 用户个人信息操作相关
+    // 用户个人信息操作相关 修改
     router.resources("updateUser", "/api/users/update", users.update);
 
     // 关注用户

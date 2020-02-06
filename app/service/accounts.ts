@@ -2,11 +2,12 @@ import { Service } from "egg";
 import { LoginParams, RegisterParams, UserInfo } from '../types/account_interface';
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
+import * as Sequelize from "sequelize"
 // import { User } from '../model/user';
 
 // import md5 from "../utils/md5";
 
-export default class AccountService extends Service {
+export default class AccountsService extends Service {
 
     public async Login(userName: string, userId: string): Promise<string> {
         // 验证通过
@@ -49,18 +50,6 @@ export default class AccountService extends Service {
                 "user_name": LoginParams.userName,
                 "pass_word": LoginParams.passWord
             }
-            // attributes: [
-            //     ["user_id", "userId"],
-            //     "name",
-            //     ["user_name", "userName"],
-            //     "website",
-            //     "badge",
-            //     "signature",
-            //     ["pass_word", "password"],
-            //     ["add_time", "addTime"],
-            //     ["last_time", "lastTime"],
-            //     "img"
-            // ]
         })
         if (user) {
 
@@ -93,5 +82,64 @@ export default class AccountService extends Service {
                     "user_id": userId
                 }
             })
+    }
+
+    /**
+     * @description 验证用户密码是否正确
+     * @author ZhangYu
+     * @date 2020-02-06
+     * @param {string} user_id 用户id
+     * @param {pass_word} pass_word 新密码
+     * @memberof AccountsService
+     */
+    public async verifyUserPassword(user_id: string, pass_word: string): Promise<boolean> {
+
+        const { User } = this.app.model;
+        const res = await User.findOne({
+            where: {
+                user_id,
+                pass_word
+            }
+        })
+        return Boolean(res);
+    }
+
+    /**
+     * @description 修改用户密码
+     * @author ZhangYu
+     * @date 2020-02-06
+     * @param {string} user_id 用户id
+     * @param {pass_word} pass_word 新密码
+     * @memberof AccountsService
+     */
+    public async changepass_word(user_id: string, pass_word: string): Promise<boolean> {
+        const { User } = this.app.model;
+        try {
+            await User.update({ pass_word }, { where: { user_id } })
+        } catch (error) {
+            return false
+        }
+        return true
+    }
+
+    /**
+     * @description 验证当前用户名 是否已占用
+     * @author ZhangYu
+     * @date 2020-02-06
+     * @param {string} user_id
+     * @param {string} user_name
+     * @memberof AccountsService
+     */
+    public async verifyRepeatUserName(user_id: string, user_name: string): Promise<boolean> {
+        const { User } = this.app.model;
+        const res = await User.findOne({
+            where: {
+                user_id: {
+                    [Sequelize.Op.ne]: user_id
+                },
+                user_name
+            }
+        })
+        return Boolean(res);
     }
 }

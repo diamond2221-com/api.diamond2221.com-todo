@@ -24,7 +24,15 @@ export default class UpdateController extends Controller {
             return ctx.send('参数错误', 400);
         }
 
-        const { userName, img, name, signature, website } = ctx.request.body;
+        const { userName = "", img, name, signature, website } = ctx.request.body;
+        const userId = ctx.request.header["client-uid"];
+        if (userName.trim()) {
+            // return ctx.send("请填写账号", 200)
+            const repeatUserNameUser: boolean = await service.accounts.verifyRepeatUserName(userId, userName);
+            if (repeatUserNameUser) {
+                return ctx.send("这个帐号用不了，换一个试试呗。", 200);
+            }
+        }
         let newUserInfo = {};
         function addProp(obj, key: string, prop: any) {
             if (prop && prop !== 0) {
@@ -32,12 +40,11 @@ export default class UpdateController extends Controller {
             }
         }
 
-        addProp(newUserInfo, "userName", userName);
+        addProp(newUserInfo, "user_name", userName);
         addProp(newUserInfo, "img", img);
         addProp(newUserInfo, "name", name);
         addProp(newUserInfo, "signature", signature);
         addProp(newUserInfo, "website", website);
-        const userId = ctx.request.header["client-uid"];
 
         const result = await service.user.changeUserInfoByUserId(userId, newUserInfo);
         ctx.send(result, 200, "修改成功");

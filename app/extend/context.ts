@@ -17,6 +17,12 @@ module.exports = {
           message: data,
           code
         }
+      } else if (data === 200) {
+        this.body = {
+          data: {},
+          message: "成功",
+          code: 200
+        }
       } else {
         this.body = {
           data,

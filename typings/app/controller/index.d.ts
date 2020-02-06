@@ -2,6 +2,7 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
+import ExportAccountsChangePassword from '../../../app/controller/accounts/changePassword';
 import ExportAccountsLogin from '../../../app/controller/accounts/login';
 import ExportAccountsRegister from '../../../app/controller/accounts/register';
 import ExportCommonsUploadImages from '../../../app/controller/commons/uploadImages';
@@ -19,6 +20,7 @@ import ExportUsersUpdate from '../../../app/controller/users/update';
 declare module 'egg' {
   interface IController {
     accounts: {
+      changePassword: ExportAccountsChangePassword;
       login: ExportAccountsLogin;
       register: ExportAccountsRegister;
     }
