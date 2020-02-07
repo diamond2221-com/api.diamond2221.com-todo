@@ -3,47 +3,56 @@ import { timestampToTime } from "../utils/common";
 import {
     BasePost,
     PostComments,
-    PostA,
+    PostAllInfo,
     IPostComment,
     UserInfo
 } from "../types/post_interface";
+import { Op } from "sequelize"
 
 
 export default class PostService extends Service {
-
     /**
-     * @description 通过帖子Id 获取 帖子基本信息
+     * @description 通过帖子Id 获取多个帖子基本信息
      * @author ZhangYu
-     * @date 2019-09-22
-     * @param {number} postId
+     * @date 2020-02-07
+     * @param {number[]} postIds
+     * @returns {(Promise<BasePost | null>)}
      * @memberof PostService
      */
-    public async getPostByPostId(postId: number): Promise<BasePost | null> {
-        const res = await this.app.model.Post.findOne({ where: { post_id: postId } })
-        if(res) {
-            return {
-                postId: res.post_id,
-                userId: res.user_id,
-                content: res.content,
-                addTime: res.add_time
+    public async getPostsByPostId(postIds: number[]): Promise<BasePost[]> {
+        const res = await this.app.model.Post.findAll({
+            where: {
+                post_id: {
+                    [Op.in]: postIds
+                }
             }
-        } else {
-            return null;
-        }
+        })
+        return res.map(post => {
+            return {
+                postId: post.post_id,
+                userId: post.user_id,
+                content: post.content,
+                addTime: post.add_time
+            }
+        })
     }
 
     /**
      * 通过用户Id 获取 帖子 (分页)
-     * @param userId
+     * @param userId1 获取该用户的帖子
+     * @param userId2 当前登录人的id
      * @param size
      * @param page
      */
-    public async getUserPostsByUserId(
-        userId: string,
-        size: number,
-        page: number
-    ) {
-
+    public async getUserPostsByUserId(userId1: string, userId2: string, size: number, page: number): Promise<PostAllInfo[]> {
+        // const res = await this.app.model.Post.findAll({
+        //     where: {
+        //         user_id: userId1
+        //     },
+        //     order: [["add_time", "desc"]],
+        //     limit: size,
+        //     offset: (page - 1) * size
+        // })
         const offset: number = (page - 1) * size;
         const sql = `
                     SELECT
@@ -56,13 +65,14 @@ export default class PostService extends Service {
                     FROM
                         tbl_post p
                     LEFT JOIN tbl_user u ON p.user_id = u.user_id
-                    WHERE p.user_id = '${userId}'
+                    WHERE p.user_id = '${userId1}'
                     ORDER BY p.add_time DESC
                     limit ${size}
                     OFFSET ${offset}
                     `
-        const log = await this.app.mysql.query(sql)
-        return log;
+        const posts: BasePost[] = await this.app.mysql.query(sql)
+        let dealPosts: PostAllInfo[] = await this.service.post.getPostInfo(posts, userId2);
+        return dealPosts;
     }
 
     /**
@@ -71,11 +81,7 @@ export default class PostService extends Service {
      * @param size
      * @param page
      */
-    public async getUserMarkPostsByUserId(
-        userId: string,
-        size: number,
-        page: number
-    ) {
+    public async getUserMarkPostsByUserId(userId: string, size: number, page: number) {
         const res = await this.app.model.MarkPost.findAll({
             where: {
                 user_id: userId
@@ -85,25 +91,23 @@ export default class PostService extends Service {
             offset: (page - 1) * size,
             attributes: ["post_id"]
         })
-        return res.map(post => post.post_id);
+        const basePosts = await this.service.post.getPostsByPostId(res.map(post => post.post_id));
+        const posts: PostAllInfo[] = await this.service.post.getPostInfo(basePosts, userId)
+        return posts
     }
 
     /**
      * 通过用户Id 获取 发帖总数
      * @param userId
      */
-    public async getUserPostsCountByUserId(
-        userId: string
-    ): Promise<number> {
+    public async getUserPostsCountByUserId(userId: string): Promise<number> {
         const res = await this.app.model.Post.count({ where: { user_id: userId } })
         return res;
     }
     /**
      * getUserPostsCountByUserId1
      */
-    public async getUserPostsCountByUserId1(
-        userId: string
-    ): Promise<number> {
+    public async getUserPostsCountByUserId1(userId: string): Promise<number> {
         return await this.app.model.Post.count({ where: { user_id: userId } })
     }
 
@@ -233,7 +237,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostLikeNums(postId: number): Promise<number> {
-        return await this.app.model.Like.count({
+        return await this.app.model.LikePost.count({
             where: {
                 post_id: postId
             }
@@ -241,14 +245,47 @@ export default class PostService extends Service {
     }
 
     /**
+     * @description 查询用户是否已经喜欢该贴子
+     * @author ZhangYu
+     * @date 2020-02-07
+     * @private
+     * @param {string} user_id
+     * @param {string} post_id
+     * @returns {Promise<boolean>}
+     * @memberof PostService
+     */
+    public async getUserLikedPost(user_id: string, post_id: number): Promise<boolean> {
+        const { LikePost } = this.app.model;
+        const res = await LikePost.count({ where: { user_id, post_id } })
+        return Boolean(res);
+    }
+
+
+    /**
+     * @description 查看是否已收藏该帖子
+     * @author ZhangYu
+     * @date 2019-09-22
+     * @param {string} userId
+     * @param {number} postId
+     * @returns {Promise<boolean>}
+     * @memberof UserService
+     */
+    public async getUserMarkedPost(userId: string, postId: number): Promise<boolean> {
+        let result = await this.app.model.MarkPost.findOne({ where: { post_id: postId, user_id: userId } })
+        return Boolean(result)
+    }
+
+
+    /**
      * @description 获取完整的帖子详情
      * @author ZhangYu
      * @date 2019-09-03
      * @param {BasePost} posts
+     * @param {string} user_id  当前登录人的userId
      * @memberof PostService
      */
-    public async getPostInfo(posts: Array<BasePost>) {
-        let dealPosts: PostA[] = [];
+    public async getPostInfo(posts: Array<BasePost>, user_id: string) {
+        let dealPosts: PostAllInfo[] = [];
         // this.app.logger.warn("帖子基本信息", posts)
         for (let post of posts) {
             // this.app.logger.warn("单个帖子基本信息", post)
@@ -273,6 +310,8 @@ export default class PostService extends Service {
 
             }
             const likeNum: number = await this.service.post.getPostLikeNums(post.postId);
+            const liked: boolean = await this.service.post.getUserLikedPost(user_id, post.postId);
+            const marked: boolean = await this.service.post.getUserMarkedPost(user_id, post.postId);
             dealPosts = [
                 ...dealPosts,
                 {
@@ -282,7 +321,9 @@ export default class PostService extends Service {
                     userImg: userInfo.img,
                     comments: dealComments,
                     addTime: timestampToTime(Number(post.addTime)),
-                    likeNum
+                    likeNum,
+                    liked,
+                    marked
                 }
             ]
 
@@ -290,4 +331,28 @@ export default class PostService extends Service {
         return dealPosts;
     }
 
+
+    /**
+     * @description 关注帖子 通过帖子Id
+     * @author ZhangYu
+     * @date 2019-09-03
+     * @param {number} postId
+     * @param {string} userId
+     * @memberof PostService
+     */
+    public async markPostByPostId(postId: number, userId: string) {
+        await this.app.model.MarkPost.create({ post_id: postId, user_id: userId, add_time: Date.now() })
+    }
+
+    /**
+     * @description 喜欢帖子 通过帖子Id
+     * @author ZhangYu
+     * @date 2020-02-07
+     * @param {number} postId
+     * @param {string} userId
+     * @memberof PostService
+     */
+    public async likePostByPostId(postId: number, userId: string) {
+        await this.app.model.LikePost.create({ post_id: postId, user_id: userId, add_time: Date.now() })
+    }
 }

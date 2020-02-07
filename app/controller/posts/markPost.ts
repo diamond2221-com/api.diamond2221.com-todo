@@ -1,7 +1,7 @@
 import { Controller } from 'egg';
 import {
-    BasePost,
-    PostA
+    // BasePost,
+    PostAllInfo
 } from "../../types/post_interface";
 
 export default class MarkPostController extends Controller {
@@ -26,16 +26,7 @@ export default class MarkPostController extends Controller {
         const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
 
-        let postIds: number[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
-        let posts: BasePost[] = [];
-
-        for (const postId of postIds) {
-            let post: BasePost | null = await service.post.getPostByPostId(postId)
-            if (post) {
-                posts = [...posts, post]
-            }
-        }
-        let dealPosts: PostA[] = await service.post.getPostInfo(posts);
+        let dealPosts: PostAllInfo[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
         ctx.send(dealPosts);
     }
 
@@ -59,9 +50,9 @@ export default class MarkPostController extends Controller {
             return ctx.send('参数错误', 400);
         }
 
-        const { postId } = ctx.request.body;
-        const userId = ctx.request.header["client-uid"];
-        const isMark: boolean = await service.user.findMarkPost(postId, userId);
+        const postId: number = ctx.request.body.postId;
+        const userId: string = ctx.request.header["client-uid"];
+        const isMark: boolean = await service.post.getUserMarkedPost(userId, Number(postId));
 
         if (isMark) {
             ctx.send("已收藏该帖子", 400);
@@ -70,8 +61,8 @@ export default class MarkPostController extends Controller {
             if (isSelfPost) {
                 ctx.send("不可以收藏自己的帖子", 400);
             } else {
-                await service.user.markPostByPostId(Number(postId), userId);
-                ctx.send({}, 200, "收藏成功");
+                await service.post.markPostByPostId(Number(postId), userId);
+                ctx.send("收藏成功", 200);
 
             }
         }

@@ -5,9 +5,9 @@ import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table } from 'seque
 
 const { STRING, INTEGER } = DataType;
 @Table({
-    modelName: 'tbl_like'
+    modelName: 'tbl_like_post'
 })
-export class Like extends Model<Like> {
+export class LikePost extends Model<LikePost> {
 
     @PrimaryKey
     @AutoIncrement
@@ -36,6 +36,6 @@ export class Like extends Model<Like> {
     add_time: string;
 };
 export default () => {
-    return Like;
+    return LikePost;
 };
 

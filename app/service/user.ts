@@ -78,20 +78,6 @@ export default class UserService extends Service {
     }
 
     /**
-     * @description 查看是否已收藏该帖子
-     * @author ZhangYu
-     * @date 2019-09-22
-     * @param {number} postId
-     * @param {string} userId
-     * @returns {Promise<boolean>}
-     * @memberof UserService
-     */
-    public async findMarkPost(postId: number, userId: string): Promise<boolean> {
-        let result = await this.app.model.MarkPost.findOne({ where: { post_id: postId, user_id: userId } })
-        return Boolean(result)
-    }
-
-    /**
      * @description 判断是否收藏的是自己的帖子
      * @author ZhangYu
      * @date 2019-09-22
@@ -103,18 +89,6 @@ export default class UserService extends Service {
     public async isSelfPost(postId: number, userId: string): Promise<boolean> {
         let result = await this.app.model.Post.findOne({ where: { post_id: postId, user_id: userId } })
         return Boolean(result);
-    }
-
-    /**
-     * @description 关注帖子 通过帖子Id
-     * @author ZhangYu
-     * @date 2019-09-03
-     * @param {number} postId
-     * @param {string} userId
-     * @memberof UserService
-     */
-    public async markPostByPostId(postId: number, userId: string) {
-        await this.app.model.MarkPost.create({ post_id: postId, user_id: userId, add_time: Date.now() })
     }
 
     /**

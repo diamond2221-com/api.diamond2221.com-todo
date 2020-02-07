@@ -4,12 +4,14 @@ export interface BasePost {
     content: string;
     addTime: string;
 }
-export interface PostA extends BasePost {
+export interface PostAllInfo extends BasePost {
     imgs?: string[];
-    userName?: string;
+    userName: string;
     userImg: string;
     comments: IPostComment[];
-    likeNum?: number;
+    likeNum: number;
+    liked: boolean;
+    marked: boolean;
 }
 export interface IPostComment {
     content: string

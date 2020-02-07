@@ -8,6 +8,7 @@ import ExportAccountsRegister from '../../../app/controller/accounts/register';
 import ExportCommonsUploadImages from '../../../app/controller/commons/uploadImages';
 import ExportPostsComment from '../../../app/controller/posts/comment';
 import ExportPostsIndex from '../../../app/controller/posts/index';
+import ExportPostsLikePost from '../../../app/controller/posts/likePost';
 import ExportPostsMarkPost from '../../../app/controller/posts/markPost';
 import ExportPostsUser from '../../../app/controller/posts/user';
 import ExportUsersFans from '../../../app/controller/users/fans';
@@ -30,6 +31,7 @@ declare module 'egg' {
     posts: {
       comment: ExportPostsComment;
       index: ExportPostsIndex;
+      likePost: ExportPostsLikePost;
       markPost: ExportPostsMarkPost;
       user: ExportPostsUser;
     }

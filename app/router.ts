@@ -31,6 +31,9 @@ export default (app: Application) => {
     // 用户收藏帖子相关
     router.resources("markPost", "/api/posts/markPost", posts.markPost);
 
+    // 用户喜欢帖子相关
+    router.resources("likePost", "/api/posts/likePost", posts.likePost);
+
     // 用户信息相关
     router.resources("users", "/api/users/info", users.info);
 

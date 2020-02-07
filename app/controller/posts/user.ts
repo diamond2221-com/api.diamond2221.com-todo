@@ -3,8 +3,7 @@ import { Controller } from "egg";
 import { timestampToTime } from "../../utils/common";
 
 import {
-    BasePost,
-    PostA,
+    PostAllInfo,
     UserInfo
 } from "../../types/post_interface";
 
@@ -29,11 +28,9 @@ export default class UserController extends Controller {
         }
 
         const { page, size, userId } = ctx.query;
-        // const userId = ctx.request.header["client-uid"];
+        const user_id = ctx.request.header["client-uid"];
 
-        let posts: BasePost[] = await service.post.getUserPostsByUserId(userId, size, page);
-
-        let dealPosts: PostA[] = await service.post.getPostInfo(posts);
+        let dealPosts: PostAllInfo[] = await service.post.getUserPostsByUserId(userId, user_id, size, page);
         ctx.send(dealPosts);
     }
 
@@ -60,12 +57,15 @@ export default class UserController extends Controller {
 
         let newPost = await post.addPost(content, imgs, userId);
         const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);
-        const result: PostA = {
+        const result: PostAllInfo = {
             ...newPost,
             userName: userInfo.userName,
             userImg: userInfo.img,
             addTime: timestampToTime(newPost.addTime),
-            comments: []
+            comments: [],
+            likeNum: 0,
+            marked: false,
+            liked: false
         }
 
         ctx.send(result, 200, "发帖成功");
