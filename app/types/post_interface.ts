@@ -7,11 +7,12 @@ export interface BasePost {
 export interface PostAllInfo extends BasePost {
     imgs?: string[];
     userName: string;
-    userImg: string;
+    img: string;
     comments: IPostComment[];
     likeNum: number;
     liked: boolean;
     marked: boolean;
+    focused: boolean;
 }
 export interface IPostComment {
     content: string
@@ -34,7 +35,7 @@ export interface UserInfo {
     lastTime: string;
 }
 
-export interface PostComments {
+export interface PostComment {
     commentId: number;
     postId: number;
     userId: string;

@@ -1,9 +1,6 @@
 import { Controller } from 'egg';
 
-import {
-    BasePost,
-    PostAllInfo
-} from "../../types/post_interface";
+import { BasePost, PostAllInfo } from "../../types/post_interface";
 
 export default class IndexController extends Controller {
     /**
@@ -31,7 +28,7 @@ export default class IndexController extends Controller {
         let posts: BasePost[] = await service.post.getPosts(size, page);
         const user_id: string = this.ctx.request.header["client-uid"]
 
-        let dealPosts: PostAllInfo[] = await service.post.getPostInfo(posts, user_id);
+        let dealPosts: PostAllInfo[] = await service.post.getPostsInfo(posts, user_id);
         ctx.send(dealPosts);
     }
 }

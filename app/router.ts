@@ -20,13 +20,19 @@ export default (app: Application) => {
     router.resources("changePassword", "/api/accounts/changePassword", accounts.changePassword);
 
     // 用户帖子相关
-    router.resources("userPost", "/api/posts/user", posts.user);
+    router.resources("userPostList", "/api/posts/list", posts.list);
+
+    // 用户发帖
+    router.resources("newPost", "/api/posts/add", posts.add);
 
     // 帖子评论相关
     router.resources("comment", "/api/posts/comment", posts.comment);
 
     // 所有帖子相关
     router.resources("posts", "/api/posts/post", posts.index);
+
+    // 获取单个帖子详情
+    router.resources("postDetail", "/api/posts/detail", posts.detail);
 
     // 用户收藏帖子相关
     router.resources("markPost", "/api/posts/markPost", posts.markPost);
@@ -48,6 +54,7 @@ export default (app: Application) => {
 
     // 搜索用户
     router.resources("searchUser", "/api/users/search", users.search);
+
     // // 获取推荐用户
     // router.get("/api/getSuggestedUser", login.login)
     // // 获取登录用户关注

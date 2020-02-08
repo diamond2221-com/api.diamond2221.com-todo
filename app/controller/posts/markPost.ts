@@ -1,8 +1,5 @@
 import { Controller } from 'egg';
-import {
-    // BasePost,
-    PostAllInfo
-} from "../../types/post_interface";
+import { PostAllInfo } from "../../types/post_interface";
 
 export default class MarkPostController extends Controller {
     /**

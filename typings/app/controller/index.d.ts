@@ -6,11 +6,13 @@ import ExportAccountsChangePassword from '../../../app/controller/accounts/chang
 import ExportAccountsLogin from '../../../app/controller/accounts/login';
 import ExportAccountsRegister from '../../../app/controller/accounts/register';
 import ExportCommonsUploadImages from '../../../app/controller/commons/uploadImages';
+import ExportPostsAdd from '../../../app/controller/posts/add';
 import ExportPostsComment from '../../../app/controller/posts/comment';
+import ExportPostsDetail from '../../../app/controller/posts/detail';
 import ExportPostsIndex from '../../../app/controller/posts/index';
 import ExportPostsLikePost from '../../../app/controller/posts/likePost';
+import ExportPostsList from '../../../app/controller/posts/list';
 import ExportPostsMarkPost from '../../../app/controller/posts/markPost';
-import ExportPostsUser from '../../../app/controller/posts/user';
 import ExportUsersFans from '../../../app/controller/users/fans';
 import ExportUsersFocus from '../../../app/controller/users/focus';
 import ExportUsersIndex from '../../../app/controller/users/index';
@@ -29,11 +31,13 @@ declare module 'egg' {
       uploadImages: ExportCommonsUploadImages;
     }
     posts: {
+      add: ExportPostsAdd;
       comment: ExportPostsComment;
+      detail: ExportPostsDetail;
       index: ExportPostsIndex;
       likePost: ExportPostsLikePost;
+      list: ExportPostsList;
       markPost: ExportPostsMarkPost;
-      user: ExportPostsUser;
     }
     users: {
       fans: ExportUsersFans;

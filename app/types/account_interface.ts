@@ -7,9 +7,7 @@ export interface RegisterParams extends LoginParams {
   rePassWord: string;
 }
 
-
 export interface UserInfo {
-  addTime: string;
   badge: number;
   img: string;
   name: string | null;
@@ -18,5 +16,12 @@ export interface UserInfo {
   userId: string;
   userName: string;
   website: string | null;
+  addTime: string;
   lastTime: string;
+}
+
+export interface AllUserInfo extends UserInfo {
+  postNum: number;
+  fansNum: number;
+  focusNum: number;
 }

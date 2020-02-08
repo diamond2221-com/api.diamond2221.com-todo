@@ -1,11 +1,7 @@
 import { Controller } from "egg";
 
-import { UserInfo } from "../../types/account_interface"
-export interface AllUserInfo extends UserInfo {
-    postNum: number;
-    fansNum: number;
-    focusNum: number;
-}
+// import { UserInfo, AllUserInfo } from "../../types/account_interface"
+import { UserInfo, IAllUser } from "../../types/user_interface";
 
 export default class InfoController extends Controller {
     /**
@@ -29,27 +25,27 @@ export default class InfoController extends Controller {
         let userId: string = ctx.query.userId || '';
 
         let userInfo: UserInfo | null = null;
-        if (!username &&  userId) {
+        if (!username && userId) {
             userInfo = await service.user.getUserInfoByUserId(userId);
         } else if (!userId && username) {
             userInfo = await service.user.getUserInfoByUsername(username);
         }
         if (!userInfo) {
-            ctx.send("没有该用户", 200)
-            return;
+            return ctx.send("没有该用户", 200)
         }
         userId = userInfo.userId;
-        delete userInfo.password;
-        const result: AllUserInfo = {
+        const result: IAllUser = {
             ...userInfo,
             postNum: 0,
             fansNum: 0,
-            focusNum: 0
+            focusNum: 0,
+            focused: false
         }
-
+        const myUserId: string = ctx.request.header["client-uid"];
         result.postNum = await service.post.getUserPostsCountByUserId(userId);
         result.fansNum = await service.user.getUserFansCountByUserId(userId);
         result.focusNum = await service.user.getUserFocusCountByfocusUserId(userId);
+        result.focused = await service.user.floowedByUserId(userId, myUserId)
 
         ctx.send(result)
     }
