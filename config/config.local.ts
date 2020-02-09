@@ -42,6 +42,16 @@ export default () => {
     }
   }
 
+  // redis本地配置
+  config.redis = {
+    client: {
+      port: 6379,          // Redis port
+      host: '127.0.0.1',   // Redis host
+      password: '981220Zy+++',
+      db: 0
+    },
+  }
+
   // 不需要验证token的 路由白名单
   config.authWhiteList = [
     "/api/v1/commons/uploadImages",

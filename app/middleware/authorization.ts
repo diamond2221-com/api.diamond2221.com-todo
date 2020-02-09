@@ -1,3 +1,4 @@
+import { Application, Context } from "egg";
 import * as jwt from "jsonwebtoken";
 interface token {
     userId: number;
@@ -5,8 +6,8 @@ interface token {
     iat: number;
     exp: number
 }
-export default (options: any, app: { config: { authWhiteList: string[]; jwtSecret: string | Buffer; }; }) => {
-    return async (ctx: { request?: any; send?: any; jwt?: any; query: any; }, next: { (arg0: any): void; (arg0: any): void; }) => {
+export default (options: any, app: Application) => {
+    return async (ctx: Context, next: { (arg0: any): void; (arg0: any): void; }) => {
         const { request } = ctx;
         const { url } = request;
         if (app.config.authWhiteList.some(item => url.includes(item))) {

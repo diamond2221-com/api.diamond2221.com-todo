@@ -43,7 +43,7 @@ export default (appInfo: EggAppInfo) => {
     // add your egg config in here
     // 使用koa的中间件
     // config.middleware = [];
-    config.middleware = [ "authorization" ];
+    config.middleware = [ "authorization", "singleSign" ];
 
     config.multipart = {
         mode: "file"

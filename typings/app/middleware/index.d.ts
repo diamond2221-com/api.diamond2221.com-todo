@@ -3,9 +3,11 @@
 
 import 'egg';
 import ExportAuthorization from '../../../app/middleware/authorization';
+import ExportSingleSign from '../../../app/middleware/singleSign';
 
 declare module 'egg' {
   interface IMiddleware {
     authorization: typeof ExportAuthorization;
+    singleSign: typeof ExportSingleSign;
   }
 }

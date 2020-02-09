@@ -11,8 +11,7 @@ export default class LoginController extends Controller {
      * @memberof AccountController
      */
     public async create() {
-        const { ctx, service } = this;
-
+        const { ctx, service, app } = this;
         // 定义创建接口的请求参数规则
         const rules = {
             userName: 'string',
@@ -32,6 +31,7 @@ export default class LoginController extends Controller {
         if (user) {
             let token: string = await service.accounts.Login(user.userName, user.userId);
 
+            await app.redis.set(`${user.userId}`, token, 'EX', ((60 * 60 * 24 * 7) - 2))
             ctx.send({
                 token,
                 ...user
