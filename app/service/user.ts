@@ -243,7 +243,6 @@ export default class UserService extends Service {
         //         attributes: ["f.focus_user_id"]
         //     }]
         // })
-        // console.log(res);
 
         `SELECT
             al1.user_Id as userId,

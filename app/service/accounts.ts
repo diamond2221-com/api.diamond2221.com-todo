@@ -31,7 +31,6 @@ export default class AccountsService extends Service {
             add_time: Date.now(),
             last_time: Date.now()
         })
-        // console.log(res);
         return res ? true : false;
     }
 
