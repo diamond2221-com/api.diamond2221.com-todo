@@ -7,7 +7,10 @@ import ExportAccountsLogin from '../../../app/controller/accounts/login';
 import ExportAccountsRegister from '../../../app/controller/accounts/register';
 import ExportCommonsUploadImages from '../../../app/controller/commons/uploadImages';
 import ExportPostsAdd from '../../../app/controller/posts/add';
+<<<<<<< HEAD
 import ExportPostsAll from '../../../app/controller/posts/all';
+=======
+>>>>>>> 03e8b4ffe91a27b0cf7e11f3d21f8d20d5e1b03f
 import ExportPostsComment from '../../../app/controller/posts/comment';
 import ExportPostsDetail from '../../../app/controller/posts/detail';
 import ExportPostsIndex from '../../../app/controller/posts/index';
@@ -33,7 +36,10 @@ declare module 'egg' {
     }
     posts: {
       add: ExportPostsAdd;
+<<<<<<< HEAD
       all: ExportPostsAll;
+=======
+>>>>>>> 03e8b4ffe91a27b0cf7e11f3d21f8d20d5e1b03f
       comment: ExportPostsComment;
       detail: ExportPostsDetail;
       index: ExportPostsIndex;

@@ -1,7 +1,6 @@
 import { Controller } from "egg";
 import { PostAllInfo } from "../../types/post_interface";
 
-
 export default class IndexController extends Controller {
     /**
      * index

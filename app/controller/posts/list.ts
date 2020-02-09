@@ -14,7 +14,7 @@ export default class ListController extends Controller {
         const rules = {
             page: "number",
             size: "number",
-            userId: "string?",
+            userId: "string",
         };
         try {
             ctx.validate(rules, ctx.query);
