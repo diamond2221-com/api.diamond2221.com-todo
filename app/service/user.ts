@@ -1,17 +1,7 @@
 import { Service } from "egg";
 import { UserInfo } from '../types/account_interface';
+import { IUser, IFans } from "../types/user_interface";
 import * as Sequelize from "sequelize"
-
-interface IFans {
-    addTime: string;
-    img: string;
-    name: string | null;
-    signature: string | null;
-    userId: string;
-    userName: string;
-    website: string | null;
-    followed?: boolean;
-}
 
 export default class UserService extends Service {
     /**
@@ -216,16 +206,16 @@ export default class UserService extends Service {
     }
 
     /**
-     * @description 通过userID 查询 是否我已关注该用户
+     * @description 通过userID 查询 focusUserId 是否已关注 userId 用户
      * @author ZhangYu
      * @date 2019-12-01
      * @param {string} userId
-     * @param {string} otherUserId
+     * @param {string} focusUserId
      * @memberof UserService
      */
     public async floowedByUserId(userId: string, focusUserId: string): Promise<boolean> {
 
-        const res = await this.app.model.Focus.findOne({ where: { user_id: userId, focus_user_id: focusUserId } })
+        const res = await this.app.model.Focus.count({ where: { user_id: userId, focus_user_id: focusUserId } })
         return Boolean(res);
     }
 
@@ -237,7 +227,7 @@ export default class UserService extends Service {
      * @returns
      * @memberof UserService
      */
-    public async searchUser(userName: string) {
+    public async searchUser(userName: string): Promise<IUser[]> {
         const { User, Focus } = this.app.model;
 
         // User.hasMany(Focus)
@@ -258,7 +248,7 @@ export default class UserService extends Service {
         `SELECT
             al1.user_Id as userId,
             al1.user_name as userName,
-            al1.img userImg,
+            al1.img img,
             al1.name,
             al1.signature,
             al1.website,
@@ -292,49 +282,26 @@ export default class UserService extends Service {
                 }
             }
         })
-        let result: {
-            focusNum: number;
-            fansNum: number;
-            user_id: string;
-            user_name: string;
-            pass_word: string;
-            img: string;
-            name: string;
-            signature: string;
-            website: string;
-            badge: number;
-            add_time: string;
-            last_time: string;
-            id?: any;
-        }[] = [];
+        let result: IUser[] = [];
         for (let i = 0; i < users.length; i++) {
             let user = users[i];
             let fansNum = await Focus.count({ where: { user_id: user.user_id } })
             let focusNum = await Focus.count({ where: { focus_user_id: user.user_id } })
+            // ...user,
             result.push({
-                ...user,
+                userId: user.user_id,
+                userName: user.user_name,
+                img: user.img,
+                name: user.name,
+                signature: user.signature,
+                website: user.website,
+                badge: user.badge,
                 fansNum,
                 focusNum
             })
         }
 
-        return result.map(item => {
-            return {
-                focusNum: item.focusNum,
-                fansNum: item.fansNum,
-                userId: item.user_id,
-                userName: item.user_name,
-                passWord: item.pass_word,
-                img: item.img,
-                name: item.name,
-                signature: item.signature,
-                website: item.website,
-                badge: item.badge,
-                addTime: item.add_time,
-                lastTime: item.last_time,
-                id: item.id
-            }
-        })
+        return result
     }
 }
 

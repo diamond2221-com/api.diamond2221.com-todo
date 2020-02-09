@@ -1,16 +1,11 @@
-import { Controller } from 'egg';
+import { Controller } from "egg";
+import { PostAllInfo } from "../../types/post_interface";
 
-import {
-    BasePost,
-    PostAllInfo
-} from "../../types/post_interface";
 
 export default class IndexController extends Controller {
     /**
-     * @description 获取所有帖子 按日期降序
-     * @author ZhangYu
-     * @date 2019-09-03
-     * @memberof PostController
+     * index
+     * 获取用户帖子
      */
     public async index() {
         const { ctx, service } = this;
@@ -26,14 +21,14 @@ export default class IndexController extends Controller {
             return ctx.send('参数错误', 400);
         }
 
-        const { page, size } = ctx.query;
+        const page: number = Number(ctx.query.page);
+        const size: number = Number(ctx.query.size);
+        const user_id = ctx.request.header["client-uid"];
+        const users = await service.user.getFocusListByUserId(user_id, 1, 1000000);
+        const userIds: string[] = [...(new Set([...users.map(user => user.userId), user_id]))];
+        let dealPosts: PostAllInfo[] = await service.post.getPostsByUserId(user_id, userIds, page, size);
 
-        let posts: BasePost[] = await service.post.getPosts(size, page);
-        const user_id: string = this.ctx.request.header["client-uid"]
-
-        let dealPosts: PostAllInfo[] = await service.post.getPostInfo(posts, user_id);
-        ctx.send(dealPosts);
+        ctx.send(dealPosts, 200);
     }
+
 }
-
-

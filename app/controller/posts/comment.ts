@@ -2,9 +2,7 @@ import { Controller } from "egg";
 
 import { timestampToTime } from "../../utils/common";
 
-import {
-    UserInfo
-} from "../../types/post_interface";
+import { UserInfo } from "../../types/post_interface";
 
 export default class CommentsController extends Controller {
 

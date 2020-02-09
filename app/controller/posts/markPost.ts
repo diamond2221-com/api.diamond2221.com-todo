@@ -1,8 +1,5 @@
 import { Controller } from 'egg';
-import {
-    // BasePost,
-    PostAllInfo
-} from "../../types/post_interface";
+import { PostAllInfo } from "../../types/post_interface";
 
 export default class MarkPostController extends Controller {
     /**
@@ -66,6 +63,33 @@ export default class MarkPostController extends Controller {
 
             }
         }
+    }
+
+
+    /**
+     * @description 取消用户收藏的帖子
+     * @author ZhangYu
+     * @date 2020-02-09
+     * @memberof MarkPostController
+     */
+    public async destroy() {
+        const { ctx, service } = this;
+        // 定义创建接口的请求参数规则
+        const rules = {
+            id: 'number'
+        };
+
+        try {
+            ctx.validate(rules, ctx.params);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
+        const postId: string = ctx.params.id;
+        const userId = ctx.request.header["client-uid"];
+        await service.post.cancelMarkPostByPostId(Number(postId), userId);
+
+        ctx.send("取消收藏成功", 200)
     }
 }
 

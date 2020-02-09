@@ -44,9 +44,9 @@ export default () => {
 
   // 不需要验证token的 路由白名单
   config.authWhiteList = [
-    "/api/commons/uploadImages",
-    "/api/accounts/login",
-    "/api/accounts/register"
+    "/api/v1/commons/uploadImages",
+    "/api/v1/accounts/login",
+    "/api/v1/accounts/register"
   ]
 
   return config;
