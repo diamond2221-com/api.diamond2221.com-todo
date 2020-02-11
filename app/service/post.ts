@@ -340,7 +340,8 @@ export default class PostService extends Service {
                     content: comment.content,
                     id: comment.commentId,
                     userName: userInfo.userName,
-                    useId: userInfo.userId,
+                    userId: userInfo.userId,
+                    userImg: userInfo.img,
                     addTime: timestampToTime(Number(comment.addTime))
                 }
             ]
@@ -396,7 +397,8 @@ export default class PostService extends Service {
                         content: comment.content,
                         id: comment.commentId,
                         userName: userInfo.userName,
-                        useId: userInfo.userId,
+                        userId: userInfo.userId,
+                        userImg: userInfo.img,
                         addTime: timestampToTime(Number(comment.addTime))
                     }
                 ]

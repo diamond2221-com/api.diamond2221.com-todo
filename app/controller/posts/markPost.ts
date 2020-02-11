@@ -54,14 +54,13 @@ export default class MarkPostController extends Controller {
         if (isMark) {
             ctx.send("已收藏该帖子", 400);
         } else {
-            const isSelfPost: boolean = await service.user.isSelfPost(Number(postId), userId);
-            if (isSelfPost) {
-                ctx.send("不可以收藏自己的帖子", 400);
-            } else {
-                await service.post.markPostByPostId(Number(postId), userId);
-                ctx.send("收藏成功", 200);
-
-            }
+            // const isSelfPost: boolean = await service.user.isSelfPost(Number(postId), userId);
+            // if (isSelfPost) {
+            //     ctx.send("不可以收藏自己的帖子", 400);
+            // } else {
+            // }
+            await service.post.markPostByPostId(Number(postId), userId);
+            ctx.send("收藏成功", 200);
         }
     }
 

@@ -18,7 +18,8 @@ export interface IPostComment {
     content: string
     id: number;
     userName: string;
-    useId: string;
+    userImg: string;
+    userId: string;
     addTime: string;
 }
 
