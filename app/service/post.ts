@@ -155,7 +155,9 @@ export default class PostService extends Service {
             content,
             add_time: Date.now()
         })
+
         return {
+            id: comment.id,
             userId: comment.user_id,
             postId: comment.post_id,
             content: comment.content,

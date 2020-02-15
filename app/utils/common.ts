@@ -73,3 +73,41 @@ export const random_string = (len: number): string => {
     }
     return pwd;
 }
+
+const base64 = () => {
+    const e: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    /**
+     * @description 解码 base64
+     * @author ZhangYu
+     * @date 2020-02-15
+     * @param {string} r
+     * @returns {string}
+     */
+    function atob(r: string): string {
+        var o = String(r).replace(/=+$/, "");
+        if (o.length % 4 == 1) throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
+        for (var n, a, i = 0, c = 0, d = ""; a = o.charAt(c++); ~a && (n = i % 4 ? 64 * n + a : a, i++ % 4) ? d += String.fromCharCode(255 & n >> (-2 * i & 6)) : 0)a = e.indexOf(a);
+        return d
+    }
+
+    /**
+     * @description 把字符串编码为base64
+     * @author ZhangYu
+     * @date 2020-02-15
+     * @param {string} r
+     * @returns {string}
+     */
+    function btoa(r: string): string {
+        for (var o, n, a = String(r), i = 0, c = e, d = ""; a.charAt(0 | i) || (c = "=", i % 1); d += c.charAt(63 & o >> 8 - i % 1 * 8)) {
+            if (n = a.charCodeAt(i += .75), n > 255) throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+            o = o << 8 | n
+        }
+        return d
+    }
+    return {
+        btoa,
+        atob
+    }
+}
+export const btoa = base64().btoa;
+export const atob = base64().atob;

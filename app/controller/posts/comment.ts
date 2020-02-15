@@ -2,7 +2,7 @@ import { Controller } from "egg";
 
 import { timestampToTime } from "../../utils/common";
 
-import { UserInfo } from "../../types/post_interface";
+import { UserInfo, IPostComment } from "../../types/post_interface";
 
 export default class CommentsController extends Controller {
 
@@ -31,11 +31,13 @@ export default class CommentsController extends Controller {
         let userInfo: UserInfo = await service.user.getUserInfoByUserId(comment.userId);
 
         if (comment) {
-            ctx.send({
+            const result: IPostComment = {
                 ...comment,
                 addTime: timestampToTime(Number(comment.addTime)),
-                userName: userInfo.userName
-            }, 200, "评论成功")
+                userName: userInfo.userName,
+                userImg: userInfo.img
+            }
+            ctx.send(result, 200, "评论成功")
         }
 
     }
