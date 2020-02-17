@@ -111,7 +111,7 @@ export default class PostService extends Service {
      */
     public async getPostImgsByPostId(postId: number): Promise<string[]> {
         const res = await this.app.model.Img.findAll({ where: { post_id: postId }, order: [["add_time", "DESC"]] })
-        return res.map(img => img.src + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1");
+        return res.map(img => img.src + this.app.config.postImgConf);
     }
 
     /**
@@ -195,7 +195,7 @@ export default class PostService extends Service {
             addTime: res.add_time,
             content: res.content,
             imgs: imgs.map(img => {
-                return img + "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1"
+                return img + this.app.config.postImgConf
             })
         };
     }

@@ -76,6 +76,7 @@ export default (appInfo: EggAppInfo) => {
         convert: true,
     }
 
+    config.postImgConf = "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_80/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1";
     // config.sequelize = {
     //     dialect: 'mysql',
     //     host: '127.0.0.1',
