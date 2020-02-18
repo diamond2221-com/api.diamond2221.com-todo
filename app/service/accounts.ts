@@ -2,10 +2,7 @@ import { Service } from "egg";
 import { LoginParams, RegisterParams, UserInfo } from '../types/account_interface';
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
-import * as Sequelize from "sequelize"
-// import { User } from '../model/user';
-
-// import md5 from "../utils/md5";
+// import * as Sequelize from "sequelize"
 
 export default class AccountsService extends Service {
 
@@ -27,6 +24,7 @@ export default class AccountsService extends Service {
         const res = await this.app.model.User.create({
             user_id: userId,
             user_name: RegisterParams.userName,
+            phone_number: `${RegisterParams.phoneNumber}`,
             pass_word: RegisterParams.passWord,
             add_time: Date.now(),
             last_time: Date.now()
@@ -44,14 +42,21 @@ export default class AccountsService extends Service {
      * @memberof AccountService
      */
     public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<UserInfo | null> {
-        const user = await this.app.model.User.findOne({
+        let user = await this.app.model.User.findOne({
             where: {
                 "user_name": LoginParams.userName,
                 "pass_word": LoginParams.passWord
             }
         })
+        if (!user) {
+            user = await this.app.model.User.findOne({
+                where: {
+                    "phone_number": LoginParams.userName,
+                    "pass_word": LoginParams.passWord
+                }
+            })
+        }
         if (user) {
-
             return {
                 userName: user ? user.user_name : '',
                 name: user ? user.name : '',
@@ -65,8 +70,9 @@ export default class AccountsService extends Service {
                 addTime: user ? user.add_time : ''
             }
         } else {
-            return null
+            return null;
         }
+
     }
 
     /**
@@ -125,18 +131,32 @@ export default class AccountsService extends Service {
      * @description 验证当前用户名 是否已占用
      * @author ZhangYu
      * @date 2020-02-06
-     * @param {string} user_id
      * @param {string} user_name
      * @memberof AccountsService
      */
-    public async verifyRepeatUserName(user_id: string, user_name: string): Promise<boolean> {
+    public async verifyRepeatUserName(user_name: string): Promise<boolean> {
         const { User } = this.app.model;
         const res = await User.findOne({
             where: {
-                user_id: {
-                    [Sequelize.Op.ne]: user_id
-                },
                 user_name
+            }
+        })
+        return Boolean(res);
+    }
+
+    /**
+     * @description 验证当前手机号 是否已占用
+     * @author ZhangYu
+     * @date 2020-02-18
+     * @param {string} user_id
+     * @param {number} phone_number
+     * @memberof AccountsService
+     */
+    public async verifyRepeatPhoneNumber(phone_number: number): Promise<boolean> {
+        const { User } = this.app.model;
+        const res = await User.findOne({
+            where: {
+                phone_number: `${phone_number}`
             }
         })
         return Boolean(res);

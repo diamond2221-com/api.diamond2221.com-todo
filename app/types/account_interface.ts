@@ -4,7 +4,9 @@ export interface LoginParams {
 }
 
 export interface RegisterParams extends LoginParams {
+  phoneNumber: number;
   rePassWord: string;
+  verifyCode: string
 }
 
 export interface UserInfo {

@@ -20,6 +20,8 @@ import ExportUsersIndex from '../../../app/controller/users/index';
 import ExportUsersInfo from '../../../app/controller/users/info';
 import ExportUsersSearch from '../../../app/controller/users/search';
 import ExportUsersUpdate from '../../../app/controller/users/update';
+import ExportAccountsSignUpSms from '../../../app/controller/accounts/signUp/sms';
+import ExportAccountsSignUpVerify from '../../../app/controller/accounts/signUp/verify';
 
 declare module 'egg' {
   interface IController {
@@ -27,6 +29,10 @@ declare module 'egg' {
       changePassword: ExportAccountsChangePassword;
       login: ExportAccountsLogin;
       register: ExportAccountsRegister;
+      signUp: {
+        sms: ExportAccountsSignUpSms;
+        verify: ExportAccountsSignUpVerify;
+      }
     }
     commons: {
       uploadImages: ExportCommonsUploadImages;

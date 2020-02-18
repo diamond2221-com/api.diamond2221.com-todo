@@ -24,6 +24,8 @@ export default (appInfo: EggAppInfo) => {
         domainWhiteList: [
             'http://localhost:7001',
             'http://127.0.0.1:7001',
+            "http://api.diamond2221.com",
+            "https://api.diamond2221.com",
             "http://instagram.api.cn",
             "http://instagram.api.com"
         ]
@@ -72,17 +74,22 @@ export default (appInfo: EggAppInfo) => {
         jsonLimit: '5mb',
         formLimit: '10mb',
     }
+
     config.validate = {
         convert: true,
     }
 
     config.postImgConf = "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_80/watermark,text_ZGlhbW9uZDIyMjEuY24,color_ffffff,size_10,shadow_100,x_1,y_1";
-    // config.sequelize = {
-    //     dialect: 'mysql',
-    //     host: '127.0.0.1',
-    //     port: 3306,
-    //     database: 'egg-sequelize-doc-default',
-    // }
+
+    // 不需要验证token的 路由白名单
+    config.authWhiteList = [
+        "/api/v1/commons/uploadImages",
+        "/api/v1/accounts/login",
+        "/api/v1/accounts/register",
+        "/api/v1/users/search",
+        "/api/v1/accounts/signUp/sms",
+        "/api/v1/accounts/signUp/verify"
+    ]
 
     // add your special config in here
     const bizConfig = {

@@ -14,7 +14,7 @@ export default class LoginController extends Controller {
         const { ctx, service, app } = this;
         // 定义创建接口的请求参数规则
         const rules = {
-            userName: 'string',
+            userName: "string",
             passWord: 'string'
         };
 
@@ -23,7 +23,6 @@ export default class LoginController extends Controller {
         } catch (error) {
             return ctx.send('参数错误', 400);
         }
-
 
         const LoginParams: LoginParams = ctx.request.body;
 

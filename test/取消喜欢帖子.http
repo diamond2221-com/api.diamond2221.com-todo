@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 DELETE http://localhost:7001/api/v1/posts/likePost/19
-=======
-DELETE http://localhost:7001/api/posts/likePost/cancel"?postId=20
->>>>>>> 03e8b4ffe91a27b0cf7e11f3d21f8d20d5e1b03f
 Client-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1dTM3YjU5M2NhZWUzMTRlNThiM2IxM2MzZDFiYTIxOGQ2IiwidXNlck5hbWUiOiJkaWFtb25kMjIyMSIsImlhdCI6MTU4MDkwODQ5MiwiZXhwIjoxNTgxNTEzMjkyfQ.mKzmrVO1JlEGI4iaf5_hYKkHNnSo9tNz1fEUeLODSX8
 Client-Uid: uu37b593caee314e58b3b13c3d1ba218d6
 Content-Type: application/json

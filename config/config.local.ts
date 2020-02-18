@@ -51,14 +51,5 @@ export default () => {
       db: 0
     },
   }
-
-  // 不需要验证token的 路由白名单
-  config.authWhiteList = [
-    "/api/v1/commons/uploadImages",
-    "/api/v1/accounts/login",
-    "/api/v1/accounts/register",
-    "/api/v1/users/search"
-  ]
-
   return config;
 };

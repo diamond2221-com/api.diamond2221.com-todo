@@ -302,6 +302,28 @@ export default class UserService extends Service {
 
         return result
     }
+
+
+    /**
+     * @description 验证当前用户名  是否已被其他用户使用
+     * @author ZhangYu
+     * @date 2020-02-06
+     * @param {string} user_id
+     * @param {string} user_name
+     * @memberof UserService
+     */
+    public async verifyRepeatUserName(user_id: string, user_name: string): Promise<boolean> {
+        const { User } = this.app.model;
+        const res = await User.findOne({
+            where: {
+                user_id: {
+                    [Sequelize.Op.ne]: user_id
+                },
+                user_name
+            }
+        })
+        return Boolean(res);
+    }
 }
 
 

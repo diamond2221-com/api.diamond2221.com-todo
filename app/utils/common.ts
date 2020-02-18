@@ -111,3 +111,19 @@ const base64 = () => {
 }
 export const btoa = base64().btoa;
 export const atob = base64().atob;
+
+
+/**
+ * @description 生成6位随机数
+ * @author ZhangYu
+ * @date 2020-02-18
+ * @export
+ * @returns {number}
+ */
+export function MathRand(): string {
+    var Num = "";
+    for (var i = 0; i < 6; i++) {
+        Num += Math.floor(Math.random() * 10);
+    };
+    return Num;
+}

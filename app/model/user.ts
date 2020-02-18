@@ -4,7 +4,7 @@
 import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 // import { Focus } from './focus';
 
-const { STRING, INTEGER } = DataType;
+const { STRING, INTEGER, CHAR } = DataType;
 @Table({
     modelName: 'tbl_user'
 })
@@ -23,6 +23,13 @@ export class User extends Model<User> {
         comment: "用户昵称 唯一"
     })
     user_name: string;
+
+    @Column({
+        type: CHAR(11),
+        comment: "用户手机号 唯一"
+    })
+    phone_number: string;
+
 
     @Column({
         type: STRING(54),

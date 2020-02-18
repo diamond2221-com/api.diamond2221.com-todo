@@ -28,7 +28,7 @@ export default class UpdateController extends Controller {
         const userId = ctx.request.header["client-uid"];
         if (userName.trim()) {
             // return ctx.send("请填写账号", 200)
-            const repeatUserNameUser: boolean = await service.accounts.verifyRepeatUserName(userId, userName);
+            const repeatUserNameUser: boolean = await service.user.verifyRepeatUserName(userId, userName);
             if (repeatUserNameUser) {
                 return ctx.send("这个帐号用不了，换一个试试呗。", 200);
             }

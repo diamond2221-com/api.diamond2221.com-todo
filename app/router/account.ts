@@ -13,5 +13,11 @@ export default (app: Application) => {
 
     // 修改密码
     router.resources("changePassword", "/api/v1/accounts/changePassword", accounts.changePassword);
+
+    // 发送注册验证码
+    router.resources("sendSms", "/api/v1/accounts/signUp/sms", accounts.signUp.sms);
+
+    // 验证注册信息
+    router.resources("verifySignUp", "/api/v1/accounts/signUp/verify", accounts.signUp.verify)
 }
 

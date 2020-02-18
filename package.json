@@ -22,6 +22,7 @@
     "clean": "ets clean"
   },
   "dependencies": {
+    "@alicloud/pop-core": "^1.7.9",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/uuid": "^3.4.5",
     "ali-oss": "^6.1.1",
