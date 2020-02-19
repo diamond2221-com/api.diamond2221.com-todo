@@ -8,5 +8,5 @@ Content-Type: application/json
     "phoneNumber": "17535192533",
     "passWord": "615bacc7f5c37188391a971cb8efadcc",
     "rePassWord": "615bacc7f5c37188391a971cb8efadcc",
-    "verifyCode": 494974
+    "verifyCode": ""
 }

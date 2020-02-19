@@ -11,6 +11,15 @@ export default (app: Application) => {
     // 用户个人信息操作相关 修改
     router.resources("updateUser", "/api/v1/users/update", users.update);
 
+    // 用户个人手机号信息 验证
+    router.resources("phoneNumberVerify", "/api/v1/users/phone/verify", users.phone.verify);
+
+    // 用户个人手机号信息 验证码
+    router.resources("phoneNumberSendSms", "/api/v1/users/phone/sms", users.phone.sms);
+
+    // 用户个人手机号信息 验证码
+    router.resources("phoneNumberSendSms", "/api/v1/users/phone/update", users.phone.update);
+
     // 关注用户
     router.resources("focusUser", "/api/v1/users/focus", users.focus);
 

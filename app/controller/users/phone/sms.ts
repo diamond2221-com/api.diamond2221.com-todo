@@ -17,10 +17,11 @@ export default class SmsController extends Controller {
 
         try {
             const code: string = MathRand();
-            await ctx.sendSms({ phoneNumbers: phoneNumber, SignName: "diamond社交空间", TemplateCode: "SMS_183797211", Code: code });
-            await app.redis.set(`${phoneNumber}-signUp`, code, 'EX', 60 * 5);
+            await ctx.sendSms({ phoneNumbers: phoneNumber, SignName: "diamond社交空间", TemplateCode: "SMS_183762829", Code: code });
+            await app.redis.set(`${phoneNumber}-updatePhoneSms`, code, 'EX', 60 * 5);
             ctx.send("验证码已发送")
         } catch (error) {
+
         }
     }
 }

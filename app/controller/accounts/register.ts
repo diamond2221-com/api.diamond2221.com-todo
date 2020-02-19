@@ -42,7 +42,7 @@ export default class RegisterController extends Controller {
             return ctx.send("两次密码不相同", 400);
         }
 
-        const code: string | null = await app.redis.get(`${RegisterParams.phoneNumber}`);
+        const code: string | null = await app.redis.get(`${RegisterParams.phoneNumber}-signUp`);
 
         if (!code ) {
             return ctx.send('验证码已失效,请重新获取', 400);

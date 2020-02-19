@@ -324,6 +324,27 @@ export default class UserService extends Service {
         })
         return Boolean(res);
     }
+
+    /**
+     * @description 验证当前手机号  是否已被其他用户使用
+     * @author ZhangYu
+     * @date 2020-02-19
+     * @param {string} user_id
+     * @param {string} user_phone
+     * @memberof UserService
+     */
+    public async verifyRepeatPhoneNumber(user_id: string, phone_number: string) {
+        const { User } = this.app.model;
+        const res = await User.findOne({
+            where: {
+                user_id: {
+                    [Sequelize.Op.ne]: user_id
+                },
+                phone_number
+            }
+        })
+        return Boolean(res);
+    }
 }
 
 

@@ -22,6 +22,9 @@ import ExportUsersSearch from '../../../app/controller/users/search';
 import ExportUsersUpdate from '../../../app/controller/users/update';
 import ExportAccountsSignUpSms from '../../../app/controller/accounts/signUp/sms';
 import ExportAccountsSignUpVerify from '../../../app/controller/accounts/signUp/verify';
+import ExportUsersPhoneSms from '../../../app/controller/users/phone/sms';
+import ExportUsersPhoneUpdate from '../../../app/controller/users/phone/update';
+import ExportUsersPhoneVerify from '../../../app/controller/users/phone/verify';
 
 declare module 'egg' {
   interface IController {
@@ -54,6 +57,11 @@ declare module 'egg' {
       info: ExportUsersInfo;
       search: ExportUsersSearch;
       update: ExportUsersUpdate;
+      phone: {
+        sms: ExportUsersPhoneSms;
+        update: ExportUsersPhoneUpdate;
+        verify: ExportUsersPhoneVerify;
+      }
     }
   }
 }
