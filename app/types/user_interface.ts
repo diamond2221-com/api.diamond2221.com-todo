@@ -15,6 +15,7 @@ export interface UserInfo {
     img: string;
     name: string | null;
     signature: string | null;
+    phoneNumber: string;
     userId: string;
     userName: string;
     website: string | null;

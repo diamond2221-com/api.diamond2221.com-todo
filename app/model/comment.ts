@@ -40,6 +40,26 @@ export class Comment extends Model<Comment> {
         comment: '用户评论的评论时间'
     })
     add_time: string;
+
+    static async fetchPostComments(post_id: number, size: number, page: number) {
+        return await this.findAll({
+            where: {
+                post_id
+            },
+            order: [["add_time", "desc"]],
+            limit: size,
+            offset: (page - 1) * size
+        })
+    }
+
+    static async createComment(post_id: number, user_id: string, content: string) {
+        return await this.create({
+            post_id,
+            user_id,
+            content,
+            add_time: Date.now()
+        })
+    }
 };
 export default () => {
     return Comment;

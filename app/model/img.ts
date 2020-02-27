@@ -34,6 +34,17 @@ export class Img extends Model<Img> {
         comment: '添加图片时的时间戳'
     })
     add_time: string;
+
+    static async fetchPostAllImgs(post_id: number) {
+        return await this.findAll({
+            where: {
+                post_id
+            },
+            order: [
+                ["add_time", "DESC"]
+            ]
+        })
+    }
 };
 export default () => {
     return Img;

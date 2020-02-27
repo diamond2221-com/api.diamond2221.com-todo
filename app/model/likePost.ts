@@ -34,6 +34,26 @@ export class LikePost extends Model<LikePost> {
         comment: '点赞的时间'
     })
     add_time: string;
+
+    static async countLikePost(post_id: number) {
+        return await this.count({
+            where: {
+                post_id
+            }
+        })
+    }
+
+    static async getUserLikePost(user_id: string, post_id: number) {
+        return await this.count({ where: { user_id, post_id } })
+    }
+
+    static async createUserLikePost(post_id: number, user_id: string) {
+        return await this.create({ post_id, user_id, add_time: Date.now() })
+    }
+
+    static async delUserLikePost(post_id: number, user_id: string) {
+        return await this.destroy({ where: { post_id, user_id, }})
+    }
 };
 export default () => {
     return LikePost;

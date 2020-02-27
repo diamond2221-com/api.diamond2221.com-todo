@@ -20,6 +20,7 @@ export interface UserInfo {
   website: string | null;
   addTime: string;
   lastTime: string;
+  phoneNumber: string;
 }
 
 export interface AllUserInfo extends UserInfo {

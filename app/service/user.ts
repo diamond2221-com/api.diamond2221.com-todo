@@ -1,7 +1,6 @@
 import { Service } from "egg";
 import { UserInfo } from '../types/account_interface';
 import { IUser, IFans } from "../types/user_interface";
-import * as Sequelize from "sequelize"
 
 export default class UserService extends Service {
     /**
@@ -9,11 +8,7 @@ export default class UserService extends Service {
      * @param userId
      */
     public async getUserInfoByUserId(userId: string): Promise<UserInfo> {
-        const user = await this.app.model.User.findOne({
-            where: {
-                user_id: userId
-            }
-        })
+        const user = await this.app.model.User.getUserInfoByUserId(userId);
         return {
             userName: user ? user.user_name : '',
             name: user ? user.name : '',
@@ -24,7 +19,8 @@ export default class UserService extends Service {
             signature: user ? user.signature : '',
             lastTime: user ? user.last_time : '',
             password: user ? user.pass_word : '',
-            addTime: user ? user.add_time : ''
+            addTime: user ? user.add_time : '',
+            phoneNumber: user ? user.phone_number : ''
         }
     }
 
@@ -33,11 +29,7 @@ export default class UserService extends Service {
      * @param userName
      */
     public async getUserInfoByUsername(userName: string): Promise<UserInfo | null> {
-        const user = await this.app.model.User.findOne({
-            where: {
-                user_name: userName
-            }
-        })
+        const user = await this.app.model.User.getUserInfoByUserName(userName);
         if (user) {
 
             return {
@@ -50,7 +42,8 @@ export default class UserService extends Service {
                 signature: user ? user.signature : '',
                 lastTime: user ? user.last_time : '',
                 password: user ? user.pass_word : '',
-                addTime: user ? user.add_time : ''
+                addTime: user ? user.add_time : '',
+                phoneNumber: user ? user.phone_number : ''
             }
         } else {
             return null
@@ -63,7 +56,7 @@ export default class UserService extends Service {
      * @param newUserInfo
      */
     public async changeUserInfoByUserId(userId: string, newUserInfo) {
-        await this.app.model.User.update(newUserInfo, { where: { user_id: userId } })
+        await this.app.model.User.updateUserInfo(newUserInfo, userId)
         return newUserInfo;
     }
 
@@ -274,13 +267,7 @@ export default class UserService extends Service {
         `;
 
 
-        let users = await User.findAll({
-            where: {
-                user_name: {
-                    [Sequelize.Op.like]: `%${userName}%`
-                }
-            }
-        })
+        let users = await User.findAllUsersOrLikeUserName(userName);
         let result: IUser[] = [];
         for (let i = 0; i < users.length; i++) {
             let user = users[i];
@@ -314,14 +301,7 @@ export default class UserService extends Service {
      */
     public async verifyRepeatUserName(user_id: string, user_name: string): Promise<boolean> {
         const { User } = this.app.model;
-        const res = await User.findOne({
-            where: {
-                user_id: {
-                    [Sequelize.Op.ne]: user_id
-                },
-                user_name
-            }
-        })
+        const res = await User.findUserOrNotEqUserIdAndUserName(user_id, user_name);
         return Boolean(res);
     }
 
@@ -335,14 +315,7 @@ export default class UserService extends Service {
      */
     public async verifyRepeatPhoneNumber(user_id: string, phone_number: string) {
         const { User } = this.app.model;
-        const res = await User.findOne({
-            where: {
-                user_id: {
-                    [Sequelize.Op.ne]: user_id
-                },
-                phone_number
-            }
-        })
+        const res = await User.findUserOrNotEqUserIdAndPhoneNumber(user_id, phone_number);
         return Boolean(res);
     }
 }

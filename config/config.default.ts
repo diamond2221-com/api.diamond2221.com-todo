@@ -79,7 +79,8 @@ export default (appInfo: EggAppInfo) => {
         convert: true,
     }
 
-    config.postImgConf = "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/format,jpg/watermark,text_ZGlhbW9uZDIyMjEuY29t,color_ffffff,size_10,shadow_100,x_1,y_1";
+    config.postImgConf = "";
+    // "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_20/format,jpg/watermark,text_ZGlhbW9uZDIyMjEuY29t,color_ffffff,size_10,shadow_100,x_1,y_1";
 
     // 不需要验证token的 路由白名单
     config.authWhiteList = [

@@ -21,14 +21,7 @@ export default class AccountsService extends Service {
      */
     public async Register(RegisterParams: RegisterParams): Promise<boolean> {
         const userId: string = `uu${uuid.v4().replace(/-/g, "")}`;
-        const res = await this.app.model.User.create({
-            user_id: userId,
-            user_name: RegisterParams.userName,
-            phone_number: `${RegisterParams.phoneNumber}`,
-            pass_word: RegisterParams.passWord,
-            add_time: Date.now(),
-            last_time: Date.now()
-        })
+        const res = await this.app.model.User.createUser(userId, RegisterParams.userName, `${RegisterParams.phoneNumber}`, RegisterParams.passWord)
         return res ? true : false;
     }
 
@@ -42,21 +35,12 @@ export default class AccountsService extends Service {
      * @memberof AccountService
      */
     public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<UserInfo | null> {
-        let user = await this.app.model.User.findOne({
-            where: {
-                "user_name": LoginParams.userName,
-                "pass_word": LoginParams.passWord
-            }
-        })
+        const UserModel = this.app.model.User;
+        let user = await UserModel.getUserInfoByUserName(LoginParams.userName);
         if (!user) {
-            user = await this.app.model.User.findOne({
-                where: {
-                    "phone_number": LoginParams.userName,
-                    "pass_word": LoginParams.passWord
-                }
-            })
+            user = await UserModel.getUserInfoByPhoneNumber(LoginParams.userName);
         }
-        if (user) {
+        if (user && user.pass_word === LoginParams.passWord) {
             return {
                 userName: user ? user.user_name : '',
                 name: user ? user.name : '',
@@ -67,7 +51,8 @@ export default class AccountsService extends Service {
                 signature: user ? user.signature : '',
                 lastTime: user ? user.last_time : '',
                 password: user ? user.pass_word : '',
-                addTime: user ? user.add_time : ''
+                addTime: user ? user.add_time : '',
+                phoneNumber: user ? user.phone_number : ''
             }
         } else {
             return null;
@@ -76,17 +61,11 @@ export default class AccountsService extends Service {
     }
 
     /**
-     *
+     * 更新用户最后一次登录时间
      * @param userId 用戶Id
      */
     public async updateLastLoginTime(userId: string) {
-        await this.app.model.User.update(
-            { "last_time": Date.now() },
-            {
-                where: {
-                    "user_id": userId
-                }
-            })
+        await this.app.model.User.updateLastLoginTime(userId);
     }
 
     /**
@@ -100,13 +79,12 @@ export default class AccountsService extends Service {
     public async verifyUserPassword(user_id: string, pass_word: string): Promise<boolean> {
 
         const { User } = this.app.model;
-        const res = await User.findOne({
-            where: {
-                user_id,
-                pass_word
-            }
-        })
-        return Boolean(res);
+        const userInfo = await User.getUserInfoByUserId(user_id);
+        if (userInfo && userInfo.pass_word === pass_word) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -120,7 +98,7 @@ export default class AccountsService extends Service {
     public async changepass_word(user_id: string, pass_word: string): Promise<boolean> {
         const { User } = this.app.model;
         try {
-            await User.update({ pass_word }, { where: { user_id } })
+            await User.updateUserInfo({ pass_word }, user_id);
         } catch (error) {
             return false
         }
@@ -136,11 +114,7 @@ export default class AccountsService extends Service {
      */
     public async verifyRepeatUserName(user_name: string): Promise<boolean> {
         const { User } = this.app.model;
-        const res = await User.findOne({
-            where: {
-                user_name
-            }
-        })
+        const res = await User.getUserInfoByUserName(user_name);
         return Boolean(res);
     }
 
@@ -154,11 +128,7 @@ export default class AccountsService extends Service {
      */
     public async verifyRepeatPhoneNumber(phone_number: number): Promise<boolean> {
         const { User } = this.app.model;
-        const res = await User.findOne({
-            where: {
-                phone_number: `${phone_number}`
-            }
-        })
+        const res = await User.getUserInfoByPhoneNumber(`${phone_number}`);
         return Boolean(res);
     }
 }

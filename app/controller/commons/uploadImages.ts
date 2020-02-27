@@ -9,10 +9,10 @@ export default class UploadImgsController extends Controller {
         const { ctx } = this;
 
         const client = new OssAli({
-            region: 'oss-ap-northeast-1',
+            region: 'oss-cn-beijing',
             accessKeyId: 'LTAInaRxcKVhzEN3',
             accessKeySecret: 'DYsHsKmn7Ovt8K26M8dlrG82cnsgcb',
-            bucket: 'instagram-web'
+            bucket: 'diamond2221-com'
         });
         const files = ctx.request.files;
 

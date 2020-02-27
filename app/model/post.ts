@@ -2,6 +2,7 @@
  * @desc 用户表
  */
 import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 const { STRING, INTEGER } = DataType;
 @Table({
@@ -34,24 +35,59 @@ export class Post extends Model<Post> {
         comment: '发帖的时间戳'
     })
     add_time: string;
+
+    static async fetchPostByPostId(post_id: number) {
+        return await this.findOne({
+            where: {
+                post_id
+            }
+        })
+    }
+
+    static async fetchPostsOpInPostIds(postIds: number[]) {
+        return await this.findAll({
+            where: {
+                post_id: {
+                    [Op.in]: postIds
+                }
+            }
+        })
+    }
+
+    static async fetchAllPosts(page: number, size: number) {
+        return await this.findAll({
+            order: [["add_time", "desc"]],
+            limit: size,
+            offset: (page - 1) * size
+        })
+    }
+
+    static async countUserPostsByUserId(user_id: string) {
+        return await this.count({ where: { user_id } })
+    }
+
+    static async createPost(content: string, user_id: string) {
+        return await this.create({
+            content,
+            user_id,
+            add_time: Date.now()
+        })
+    }
+
+    static async fetchPostsOpInUserId(userIds: string[], size: number, page: number) {
+        return await this.findAll({
+            where: {
+                user_id: {
+                    [Op.in]: userIds
+                }
+            },
+            order: [["add_time", "desc"]],
+            limit: size,
+            offset: (page - 1) * size
+        })
+    }
 };
 export default () => {
-    // let searchUser = async () => {
-    //     return await User.findAll({
-    //         attributes: [Sequelize.col('u.user_id'), 'name', 'img'],
-    //         include: [{
-    //             model: User,
-    //             as: 'u',
-    //             attributes: []
-    //         }],
-    //         where: {
-    //             "pass_word": '615bacc7f5c37188391a971cb8efadcc',
-    //             '$u.add_time$': 1566051869856
-    //         },
-    //         raw: true
-    //     })
-    // }
-
     return Post;
 };
 

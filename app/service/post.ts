@@ -1,7 +1,6 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
 import { BasePost, PostComment, PostAllInfo, IPostComment, UserInfo } from "../types/post_interface";
-import { Op } from "sequelize"
 
 
 export default class PostService extends Service {
@@ -14,13 +13,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostsByPostId(postIds: number[]): Promise<BasePost[]> {
-        const res = await this.app.model.Post.findAll({
-            where: {
-                post_id: {
-                    [Op.in]: postIds
-                }
-            }
-        })
+        const res = await this.app.model.Post.fetchPostsOpInPostIds(postIds);
         return res.map(post => {
             return {
                 postId: post.post_id,
@@ -76,15 +69,7 @@ export default class PostService extends Service {
      * @param page
      */
     public async getUserMarkPostsByUserId(userId: string, size: number, page: number) {
-        const res = await this.app.model.MarkPost.findAll({
-            where: {
-                user_id: userId
-            },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size,
-            attributes: ["post_id"]
-        })
+        const res = await this.app.model.MarkPost.fetchUserMarkPostsByUserId(userId, size, page)
         const basePosts = await this.service.post.getPostsByPostId(res.map(post => post.post_id));
         const posts: PostAllInfo[] = await this.service.post.getPostsInfo(basePosts, userId)
         return posts
@@ -95,14 +80,8 @@ export default class PostService extends Service {
      * @param userId
      */
     public async getUserPostsCountByUserId(userId: string): Promise<number> {
-        const res = await this.app.model.Post.count({ where: { user_id: userId } })
+        const res = await this.app.model.Post.countUserPostsByUserId(userId);
         return res;
-    }
-    /**
-     * getUserPostsCountByUserId1
-     */
-    public async getUserPostsCountByUserId1(userId: string): Promise<number> {
-        return await this.app.model.Post.count({ where: { user_id: userId } })
     }
 
     /**
@@ -110,7 +89,7 @@ export default class PostService extends Service {
      * @param postId
      */
     public async getPostImgsByPostId(postId: number): Promise<string[]> {
-        const res = await this.app.model.Img.findAll({ where: { post_id: postId }, order: [["add_time", "DESC"]] })
+        const res = await this.app.model.Img.fetchPostAllImgs(postId);
         return res.map(img => img.src + this.app.config.postImgConf);
     }
 
@@ -121,14 +100,7 @@ export default class PostService extends Service {
      * @param page
      */
     public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<PostComment[]> {
-        const comments = await this.app.model.Comment.findAll({
-            where: {
-                post_id: postId
-            },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
+        const comments = await this.app.model.Comment.fetchPostComments(postId, size, page)
 
         return comments.map(comment => {
             return {
@@ -149,12 +121,7 @@ export default class PostService extends Service {
      * @param content
      */
     public async addComments(postId: number, userId: string, content: string) {
-        const comment = await this.app.model.Comment.create({
-            post_id: postId,
-            user_id: userId,
-            content,
-            add_time: Date.now()
-        })
+        const comment = await this.app.model.Comment.createComment(postId, userId, content)
 
         return {
             id: comment.id,
@@ -173,12 +140,7 @@ export default class PostService extends Service {
      * @param userId
      */
     public async addPost(content: string, imgs: string[], userId: string) {
-        const post = {
-            content,
-            user_id: userId,
-            add_time: Date.now()
-        }
-        const res = await this.app.model.Post.create(post)
+        const res = await this.app.model.Post.createPost(content, userId);
         const postId: number = res.post_id;
         if (imgs.length) {
             for (const img of imgs) {
@@ -209,11 +171,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPosts(size: number, page: number): Promise<BasePost[]> {
-        const posts = await this.app.model.Post.findAll({
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
+        const posts = await this.app.model.Post.fetchAllPosts(page, size);
         return posts.map(post => {
             return {
                 postId: post.post_id,
@@ -233,11 +191,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPostLikeNums(postId: number): Promise<number> {
-        return await this.app.model.LikePost.count({
-            where: {
-                post_id: postId
-            }
-        })
+        return await this.app.model.LikePost.countLikePost(postId);
     }
 
     /**
@@ -252,7 +206,7 @@ export default class PostService extends Service {
      */
     public async getUserLikedPost(user_id: string, post_id: number): Promise<boolean> {
         const { LikePost } = this.app.model;
-        const res = await LikePost.count({ where: { user_id, post_id } })
+        const res = await LikePost.getUserLikePost(user_id, post_id);
         return Boolean(res);
     }
 
@@ -267,18 +221,14 @@ export default class PostService extends Service {
      * @memberof UserService
      */
     public async getUserMarkedPost(userId: string, postId: number): Promise<boolean> {
-        let result = await this.app.model.MarkPost.findOne({ where: { post_id: postId, user_id: userId } })
+        let result = await this.app.model.MarkPost.getUserMarkPosst(userId, postId);
         return Boolean(result)
     }
 
     public async getPostUserFocusedUser(user_id: string, focus_user_id: string): Promise<boolean> {
         const { Focus } = this.app.model;
-        const res = await Focus.count({
-            where: {
-                user_id,
-                focus_user_id
-            }
-        })
+        const res = await Focus.getUserFocusUser(user_id,
+            focus_user_id);
         return Boolean(res);
     }
 
@@ -293,11 +243,7 @@ export default class PostService extends Service {
      */
     public async getBasePost(post_id: number): Promise<BasePost> {
         const { Post } = this.app.model;
-        const post = await Post.findOne({
-            where: {
-                post_id
-            }
-        })
+        const post = await Post.fetchPostByPostId(post_id);
         if (post) {
             return {
                 postId: post.post_id,
@@ -440,7 +386,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async markPostByPostId(postId: number, userId: string) {
-        await this.app.model.MarkPost.create({ post_id: postId, user_id: userId, add_time: Date.now() })
+        await this.app.model.MarkPost.createUserMarkPost(postId, userId);
     }
 
     /**
@@ -452,7 +398,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async cancelMarkPostByPostId(postId: number, userId: string) {
-        await this.app.model.MarkPost.destroy({ where: { post_id: postId, user_id: userId } })
+        await this.app.model.MarkPost.delUserMarkPost(postId, userId);
     }
 
     /**
@@ -464,7 +410,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async likePostByPostId(postId: number, userId: string) {
-        await this.app.model.LikePost.create({ post_id: postId, user_id: userId, add_time: Date.now() })
+        await this.app.model.LikePost.createUserLikePost(postId, userId);
     }
 
     /**
@@ -476,22 +422,13 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async cancelLikePostByPostId(postId: number, userId: string) {
-        await this.app.model.LikePost.destroy({ where: { post_id: postId, user_id: userId } })
+        await this.app.model.LikePost.delUserLikePost(postId, userId);
     }
 
     public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<PostAllInfo[]> {
         const postModel = this.app.model.Post;
         const postService = this.service.post;
-        const posts = await postModel.findAll({
-            where: {
-                user_id: {
-                    [Op.in]: userIds
-                }
-            },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
+        const posts = await postModel.fetchPostsOpInUserId(userIds, size, page)
         let basePosts: BasePost[] = posts.map(post => {
             return {
                 postId: post.post_id,

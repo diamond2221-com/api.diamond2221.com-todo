@@ -41,5 +41,15 @@ export default () => {
       raw: true
     }
   }
+
+  // redis本地配置
+  config.redis = {
+    client: {
+      port: 6379,          // Redis port
+      host: '127.0.0.1',   // Redis host
+      password: '981220Zy+++',
+      db: 0
+    }
+  }
   return config;
 };

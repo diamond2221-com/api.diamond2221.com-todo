@@ -39,6 +39,15 @@ export class Focus extends Model<Focus> {
 
     // @BelongsTo(() => User, "user_id")
     // focus_user: Focus
+
+    static async getUserFocusUser(user_id: string, focus_user_id: string) {
+        return await this.count({
+            where: {
+                user_id,
+                focus_user_id
+            }
+        })
+    }
 };
 export default () => {
 

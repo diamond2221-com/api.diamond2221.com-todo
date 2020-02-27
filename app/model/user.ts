@@ -2,6 +2,7 @@
  * @desc 用户表
  */
 import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import * as Sequelize from "sequelize"
 // import { Focus } from './focus';
 
 const { STRING, INTEGER, CHAR } = DataType;
@@ -79,12 +80,90 @@ export class User extends Model<User> {
     })
     last_time: string;
 
+    static async getUserInfoByUserId(user_id: string) {
+        return await this.findOne({
+            where: {
+                user_id
+            }
+        });
+    }
 
+    static async getUserInfoByPhoneNumber(phone_number: string) {
+        return await this.findOne({
+            where: {
+                phone_number
+            }
+        });
+    }
 
-    // @HasMany(() => Focus, "user_id")
-    // focus_users: Focus[];
+    static async getUserInfoByUserName(user_name: string) {
+        return await this.findOne({
+            where: {
+                user_name
+            }
+        });
+    }
+
+    static async updateUserInfo(newUserInfo, user_id: string) {
+        return await this.update(newUserInfo, { where: { user_id } })
+    }
+
+    static async findAllUsersOrLikeUserName(userName: string) {
+        return await this.findAll({
+            where: {
+                user_name: {
+                    [Sequelize.Op.like]: `%${userName}%`
+                }
+            }
+        })
+    }
+
+    static async findUserOrNotEqUserIdAndUserName(user_id: string, user_name: string) {
+        return await this.findOne({
+            where: {
+                user_id: {
+                    [Sequelize.Op.ne]: user_id
+                },
+                user_name
+            }
+        })
+    }
+
+    static async findUserOrNotEqUserIdAndPhoneNumber(user_id: string, phone_number: string) {
+        return await this.findOne({
+            where: {
+                user_id: {
+                    [Sequelize.Op.ne]: user_id
+                },
+                phone_number
+            }
+        })
+    }
+
+    static async createUser(user_id: string, user_name, phone_number: string, pass_word: string) {
+        return this.create({
+            user_id,
+            user_name,
+            phone_number,
+            pass_word,
+            add_time: Date.now(),
+            last_time: Date.now()
+        })
+    }
+
+    static async updateLastLoginTime(user_id) {
+        return this.update(
+            { "last_time": Date.now() },
+            {
+                where: {
+                    user_id
+                }
+            }
+        )
+    }
+
 };
 
 export default () => {
-    return User
+    return User;
 }
