@@ -1,6 +1,6 @@
 import { Controller } from 'egg';
 
-import { BasePost, PostAllInfo } from "../../types/post_interface";
+import { IBasePost, PostAllInfo } from "../../types/post_interface";
 
 export default class AllController extends Controller {
     /**
@@ -25,7 +25,7 @@ export default class AllController extends Controller {
 
         const { page, size } = ctx.query;
 
-        let posts: BasePost[] = await service.post.getPosts(size, page);
+        let posts: IBasePost[] = await service.post.getPosts(size, page);
         const user_id: string = this.ctx.request.header["client-uid"]
 
         let dealPosts: PostAllInfo[] = await service.post.getPostsInfo(posts, user_id);

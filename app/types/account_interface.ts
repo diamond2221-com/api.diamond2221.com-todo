@@ -8,23 +8,3 @@ export interface RegisterParams extends LoginParams {
   rePassWord: string;
   verifyCode: string
 }
-
-export interface UserInfo {
-  badge: number;
-  img: string;
-  name: string | null;
-  password: string;
-  signature: string | null;
-  userId: string;
-  userName: string;
-  website: string | null;
-  addTime: string;
-  lastTime: string;
-  phoneNumber: string;
-}
-
-export interface AllUserInfo extends UserInfo {
-  postNum: number;
-  fansNum: number;
-  focusNum: number;
-}

@@ -1,49 +1,49 @@
 import { Service } from "egg";
-import { UserInfo } from '../types/account_interface';
-import { IUser, IFans } from "../types/user_interface";
+import { IUser, IFans, IUserInfo } from "../types/user_interface";
 
 export default class UserService extends Service {
     /**
      * 通过用户Id 来获取用户的 信息
      * @param userId
      */
-    public async getUserInfoByUserId(userId: string): Promise<UserInfo> {
+    public async getUserInfoByUserId(userId: string): Promise<IUserInfo | null> {
         const user = await this.app.model.User.getUserInfoByUserId(userId);
-        return {
-            userName: user ? user.user_name : '',
-            name: user ? user.name : '',
-            userId: user ? user.user_id : '',
-            img: user ? user.img : '',
-            website: user ? user.website : '',
-            badge: user ? user.badge : 0,
-            signature: user ? user.signature : '',
-            lastTime: user ? user.last_time : '',
-            password: user ? user.pass_word : '',
-            addTime: user ? user.add_time : '',
-            phoneNumber: user ? user.phone_number : ''
-        }
+        return this.service.user.getUserInfo(user);
     }
 
     /**
      * 通过用户username 来获取用户的 信息
      * @param userName
      */
-    public async getUserInfoByUsername(userName: string): Promise<UserInfo | null> {
+    public async getUserInfoByUsername(userName: string): Promise<IUserInfo | null> {
         const user = await this.app.model.User.getUserInfoByUserName(userName);
-        if (user) {
+        return this.service.user.getUserInfo(user);
+    }
 
+
+    /**
+     * 通过用户phoneNumber 来获取用户的 信息
+     * @param phoneNumber
+     */
+    public async getUserInfoByPhoneNumber(phoneNumber: string): Promise<IUserInfo | null> {
+        const user = await this.app.model.User.getUserInfoByPhoneNumber(phoneNumber);
+        return this.service.user.getUserInfo(user);
+    }
+
+    private getUserInfo(user): IUserInfo | null {
+        if (user) {
             return {
-                userName: user ? user.user_name : '',
-                name: user ? user.name : '',
-                userId: user ? user.user_id : '',
-                img: user ? user.img : '',
-                website: user ? user.website : '',
-                badge: user ? user.badge : 0,
-                signature: user ? user.signature : '',
-                lastTime: user ? user.last_time : '',
-                password: user ? user.pass_word : '',
-                addTime: user ? user.add_time : '',
-                phoneNumber: user ? user.phone_number : ''
+                userName: user.user_name,
+                name: user.name,
+                userId: user.user_id,
+                img: user.img,
+                website: user.website,
+                badge: user.badge,
+                signature: user.signature,
+                lastTime: user.last_time,
+                password: user.pass_word,
+                addTime: user.add_time,
+                phoneNumber: user.phone_number
             }
         } else {
             return null
@@ -162,8 +162,8 @@ export default class UserService extends Service {
         let result: IFans[] = [];
 
         for (const user of users) {
-            const { addTime, img, name, signature, userId, userName, website } = await service.user.getUserInfoByUserId(user.user_id);
-            const fan: IFans = { addTime, img, name, signature, userId, userName, website, followed: true }
+            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.user_id) as IUserInfo;
+            const fan: IFans = { img, name, signature, userId, userName, website, badge, followed: true }
             result = [...result, fan];
         }
         return result;
@@ -190,9 +190,9 @@ export default class UserService extends Service {
         })
         let result: IFans[] = [];
         for (const user of users) {
-            const { addTime, img, name, signature, userId, userName, website } = await service.user.getUserInfoByUserId(user.focus_user_id);
+            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.focus_user_id) as IUserInfo;
             const followed: boolean = await service.user.floowedByUserId(userId, focusUserId);
-            const fan: IFans = { addTime, img, name, signature, userId, userName, website, followed }
+            const fan: IFans = { img, name, signature, userId, userName, website, badge, followed }
             result = [...result, fan];
         }
         return result;
@@ -221,7 +221,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async searchUser(userName: string): Promise<IUser[]> {
-        const { User, Focus } = this.app.model;
+        const { User, /* Focus */ } = this.app.model;
 
         // User.hasMany(Focus)
         // let res = await User.findAll({
@@ -271,9 +271,8 @@ export default class UserService extends Service {
         let result: IUser[] = [];
         for (let i = 0; i < users.length; i++) {
             let user = users[i];
-            let fansNum = await Focus.count({ where: { user_id: user.user_id } })
-            let focusNum = await Focus.count({ where: { focus_user_id: user.user_id } })
-            // ...user,
+            // let fansNum = await Focus.count({ where: { user_id: user.user_id } })
+            // let focusNum = await Focus.count({ where: { focus_user_id: user.user_id } })
             result.push({
                 userId: user.user_id,
                 userName: user.user_name,
@@ -282,11 +281,8 @@ export default class UserService extends Service {
                 signature: user.signature,
                 website: user.website,
                 badge: user.badge,
-                fansNum,
-                focusNum
             })
         }
-
         return result
     }
 

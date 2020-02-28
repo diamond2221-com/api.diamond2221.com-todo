@@ -1,10 +1,10 @@
-export interface BasePost {
+export interface IBasePost {
     postId: number;
     userId: string;
     content: string;
     addTime: string;
 }
-export interface PostAllInfo extends BasePost {
+export interface PostAllInfo extends IBasePost {
     imgs?: string[];
     userName: string;
     img: string;
@@ -21,19 +21,6 @@ export interface IPostComment {
     userImg: string;
     userId: string;
     addTime: string;
-}
-
-export interface UserInfo {
-    addTime: string;
-    badge: number;
-    img: string;
-    name: string | null;
-    password: string;
-    signature: string | null;
-    userId: string;
-    userName: string;
-    website: string | null;
-    lastTime: string;
 }
 
 export interface PostComment {

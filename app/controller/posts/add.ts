@@ -2,7 +2,8 @@ import { Controller } from "egg";
 
 import { timestampToTime } from "../../utils/common";
 
-import { PostAllInfo, UserInfo } from "../../types/post_interface";
+import { PostAllInfo } from "../../types/post_interface";
+import { IUserInfo } from "../../types/user_interface";
 
 export default class AddController extends Controller {
     /**
@@ -27,7 +28,7 @@ export default class AddController extends Controller {
         const userId = ctx.request.header["client-uid"];
 
         let newPost = await post.addPost(content, imgs, userId);
-        const userInfo: UserInfo = await service.user.getUserInfoByUserId(newPost.userId);
+        const userInfo: IUserInfo = await service.user.getUserInfoByUserId(newPost.userId) as IUserInfo;
         /* TODO */
         const focused: boolean = false;
         const result: PostAllInfo = {
