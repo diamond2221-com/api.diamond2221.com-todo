@@ -14,6 +14,7 @@ export default (options: object, app: Application) => {
             请求的Token: ${token}
             \n\n
         `)
+
         if (token !== signToken) {
             return ctx.send("账号已在别处,请您重新登录", 17);
         }

@@ -9,6 +9,7 @@ import ExportLikePost from '../../../app/model/likePost';
 import ExportMarkPost from '../../../app/model/markPost';
 import ExportPost from '../../../app/model/post';
 import ExportUser from '../../../app/model/user';
+import ExportVisitRecord from '../../../app/model/visitRecord';
 
 declare module 'egg' {
   interface IModel {
@@ -19,5 +20,6 @@ declare module 'egg' {
     MarkPost: ReturnType<typeof ExportMarkPost>;
     Post: ReturnType<typeof ExportPost>;
     User: ReturnType<typeof ExportUser>;
+    VisitRecord: ReturnType<typeof ExportVisitRecord>;
   }
 }

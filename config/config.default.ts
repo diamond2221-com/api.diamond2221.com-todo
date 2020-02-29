@@ -41,11 +41,11 @@ export default (appInfo: EggAppInfo) => {
     config.jwtSecret = "ins_zhangyu"
 
     config.keys = appInfo.name + '_1563628739386_852';
-''
+    ''
     // add your egg config in here
     // 使用koa的中间件
     // config.middleware = [];
-    config.middleware = [ "authorization", "singleSign" ];
+    config.middleware = ["authorization", "singleSign"];
 
     config.multipart = {
         mode: "file"
@@ -97,7 +97,7 @@ export default (appInfo: EggAppInfo) => {
         sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
     };
 
-
+    config.PrefixV1Url = "/api/v1";
     // the return config will combines to EggAppConfig
     return {
         ...config,
