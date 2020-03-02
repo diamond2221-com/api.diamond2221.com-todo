@@ -1,6 +1,6 @@
 import { Service } from "egg";
-import { LoginParams, RegisterParams } from '../types/account_interface';
-import {IUserInfo} from "../types/user_interface"
+import { LoginParams } from '../types/account_interface';
+import { IUserInfo } from "../types/user_interface"
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
 // import * as Sequelize from "sequelize"
@@ -20,9 +20,9 @@ export default class AccountsService extends Service {
      * @returns {Promise<boolean>}
      * @memberof LoginService
      */
-    public async Register(RegisterParams: RegisterParams): Promise<boolean> {
+    public async Register(userName: string, phoneNumber: number, passWord: string): Promise<boolean> {
         const userId: string = `uu${uuid.v4().replace(/-/g, "")}`;
-        const res = await this.app.model.User.createUser(userId, RegisterParams.userName, `${RegisterParams.phoneNumber}`, RegisterParams.passWord)
+        const res = await this.app.model.User.createUser(userId, userName, `${phoneNumber}`, passWord)
         return res ? true : false;
     }
 
@@ -38,7 +38,7 @@ export default class AccountsService extends Service {
     public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<IUserInfo | null> {
         let user: IUserInfo | null = await this.service.user.getUserInfoByUsername(LoginParams.userName)
         if (!user) {
-            user = await this.service.getUserInfoByPhoneNumber(LoginParams.userName);
+            user = await this.service.user.getUserInfoByPhoneNumber(LoginParams.userName);
         }
         if (user && user.password === LoginParams.passWord) {
             return user;

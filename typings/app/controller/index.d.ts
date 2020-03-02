@@ -19,6 +19,7 @@ import ExportUsersFans from '../../../app/controller/users/fans';
 import ExportUsersFocus from '../../../app/controller/users/focus';
 import ExportUsersIndex from '../../../app/controller/users/index';
 import ExportUsersInfo from '../../../app/controller/users/info';
+import ExportUsersRecommend from '../../../app/controller/users/recommend';
 import ExportUsersSearch from '../../../app/controller/users/search';
 import ExportUsersUpdate from '../../../app/controller/users/update';
 import ExportAccountsSignUpSms from '../../../app/controller/accounts/signUp/sms';
@@ -59,6 +60,7 @@ declare module 'egg' {
       focus: ExportUsersFocus;
       index: ExportUsersIndex;
       info: ExportUsersInfo;
+      recommend: ExportUsersRecommend;
       search: ExportUsersSearch;
       update: ExportUsersUpdate;
       phone: {

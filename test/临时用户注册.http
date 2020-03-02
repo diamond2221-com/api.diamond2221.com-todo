@@ -1,0 +1,10 @@
+GET http://127.0.0.1:7001/api/v1/accounts/register?userName=wanglaowu
+Content-Type: application/json
+
+# {
+#     "userName": "wanglaowu",
+#     "phoneNumber": "17535192533",
+#     "passWord": "615bacc7f5c37188391a971cb8efadcc",
+#     "rePassWord": "615bacc7f5c37188391a971cb8efadcc",
+#     "verifyCode": ""
+}

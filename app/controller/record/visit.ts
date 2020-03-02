@@ -8,7 +8,7 @@ export default class VisitController extends Controller {
 
         // 定义创建接口的请求参数规则
         const rules = {
-            visit_user_id: "string",
+            user_id: "string",
             type: [1, 2],
         }
         try {
@@ -17,8 +17,8 @@ export default class VisitController extends Controller {
             return ctx.send('参数错误', 400);
         }
 
-        const user_id: string = ctx.getUid();
-        const visit_user_id: string = body.visit_user_id;
+        const visit_user_id: string = ctx.getUid();
+        const user_id: string = body.user_id;
         const type: IVisitRecordType = body.type;
         if (user_id === visit_user_id) {
             return ctx.send("OK", 200)

@@ -140,7 +140,7 @@ export class User extends Model<User> {
         })
     }
 
-    static async createUser(user_id: string, user_name, phone_number: string, pass_word: string) {
+    static async createUser(user_id: string, user_name: string, phone_number: string, pass_word: string) {
         return this.create({
             user_id,
             user_name,
@@ -164,6 +164,7 @@ export class User extends Model<User> {
 
 };
 
+export type IUser = User;
 export default () => {
     return User;
 }

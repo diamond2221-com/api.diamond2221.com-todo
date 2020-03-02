@@ -1,7 +1,38 @@
 import { Service } from "egg";
-import { IUser, IFans, IUserInfo } from "../types/user_interface";
+import { IUser, IFans, IUserInfo, IOtherUser, IOwnUser } from "../types/user_interface";
 
 export default class UserService extends Service {
+
+    public async getUserDetailInfo(user_id: string, type: 'user_id' | 'user_name', myUser_id: string) {
+        const { service } = this;
+        let userInfo: IUserInfo | null = null;
+        if (type === 'user_id') {
+            userInfo = await service.user.getUserInfoByUserId(user_id);
+        } else if (type === 'user_name') {
+            userInfo = await service.user.getUserInfoByUsername(user_id);
+        }
+        if (!userInfo) {
+            return null
+        }
+        if (myUser_id && myUser_id !== userInfo.userId) {
+            delete userInfo.phoneNumber
+        }
+        delete userInfo.addTime
+        delete userInfo.lastTime
+        delete userInfo.password
+        let result: IOtherUser | IOwnUser = {
+            ...userInfo,
+            postNum: 0,
+            fansNum: 0,
+            focusNum: 0,
+            focused: false
+        }
+        result.postNum = await service.post.getUserPostsCountByUserId(userInfo.userId);
+        result.fansNum = await service.user.getUserFansCountByUserId(userInfo.userId);
+        result.focusNum = await service.user.getUserFocusCountByfocusUserId(userInfo.userId);
+        result.focused = await service.user.floowedByUserId(userInfo.userId, myUser_id)
+        return result;
+    }
     /**
      * 通过用户Id 来获取用户的 信息
      * @param userId
@@ -313,6 +344,34 @@ export default class UserService extends Service {
         const { User } = this.app.model;
         const res = await User.findUserOrNotEqUserIdAndPhoneNumber(user_id, phone_number);
         return Boolean(res);
+    }
+
+    public async getRecommendUser(page: number, size: number, user_id: string): Promise<IOtherUser[]> {
+        const sql: string = `SELECT
+                            vr.user_id,
+                            COUNT( vr.user_id ) AS counts
+                        FROM
+                            tbl_visit_record AS vr
+                        WHERE
+                            vr.visit_user_id IN ( SELECT fu.user_id FROM tbl_focus AS fu WHERE fu.focus_user_id = 'uuf8d02ff572e3426d8e06bf7f532e7db2' ORDER BY fu.add_time DESC )
+                            AND vr.add_time >= '1582992000000'
+                            AND vr.user_id != 'uuf8d02ff572e3426d8e06bf7f532e7db2'
+                        GROUP BY
+                            vr.user_id
+                        ORDER BY
+                            counts DESC
+                            LIMIT ${(page - 1) * size},
+                            ${size}`
+        const res: { user_id: string, counts: number }[] = await this.app.mysql.query(sql);
+        const userList: IOtherUser[] = [];
+        for (let index = 0; index < res.length; index++) {
+            res[index];
+            const user: IOtherUser | null = await this.service.user.getUserDetailInfo(res[index].user_id, 'user_id', user_id)
+            if (user) {
+                userList.push(user)
+            }
+        }
+        return userList;
     }
 }
 

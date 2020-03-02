@@ -27,4 +27,11 @@ export default class UploadImgsController extends Controller {
 
         ctx.send(result, 200, "")
     }
+
+    public async index() {
+        const { ctx } = this;
+        console.log(ctx.request)
+        console.log(ctx.query);
+        ctx.send("OK", 200)
+    }
 }

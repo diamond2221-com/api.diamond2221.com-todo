@@ -44,7 +44,7 @@ export default class RegisterController extends Controller {
 
         const code: string | null = await app.redis.get(`${RegisterParams.phoneNumber}-signUp`);
 
-        if (!code ) {
+        if (!code) {
             return ctx.send('验证码已失效,请重新获取', 400);
         }
 
@@ -52,7 +52,7 @@ export default class RegisterController extends Controller {
             return ctx.send('验证码不正确', 400);
         }
 
-        const res: boolean = await service.accounts.Register(RegisterParams);
+        const res: boolean = await service.accounts.Register(RegisterParams.userName, RegisterParams.phoneNumber, RegisterParams.passWord);
 
         if (res) {
             await app.redis.del(`${RegisterParams.phoneNumber}`);
@@ -61,5 +61,12 @@ export default class RegisterController extends Controller {
 
         return ctx.send("服务异常，请稍后再试", 99)
     }
+
+    // public async index() {
+    //     const { ctx, service } = this;
+    //     const RegisterParams: { userName: string; phoneNumber: string; passWord: string; } = ctx.query;
+    //     await service.accounts.Register(RegisterParams.userName, Number(RegisterParams.phoneNumber), RegisterParams.passWord);
+    //     ctx.send('OK', 200)
+    // }
 
 }
