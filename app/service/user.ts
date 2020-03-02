@@ -1,5 +1,6 @@
 import { Service } from "egg";
 import { IUser, IFans, IUserInfo, IOtherUser, IOwnUser } from "../types/user_interface";
+import { getNDay } from "../utils/common";
 
 export default class UserService extends Service {
 
@@ -347,15 +348,16 @@ export default class UserService extends Service {
     }
 
     public async getRecommendUser(page: number, size: number, user_id: string): Promise<IOtherUser[]> {
+
         const sql: string = `SELECT
                             vr.user_id,
                             COUNT( vr.user_id ) AS counts
                         FROM
                             tbl_visit_record AS vr
                         WHERE
-                            vr.visit_user_id IN ( SELECT fu.user_id FROM tbl_focus AS fu WHERE fu.focus_user_id = 'uuf8d02ff572e3426d8e06bf7f532e7db2' ORDER BY fu.add_time DESC )
-                            AND vr.add_time >= '1582992000000'
-                            AND vr.user_id != 'uuf8d02ff572e3426d8e06bf7f532e7db2'
+                            vr.visit_user_id IN ( SELECT fu.user_id FROM tbl_focus AS fu WHERE fu.focus_user_id = '${user_id}' ORDER BY fu.add_time DESC )
+                            AND vr.add_time >= '${getNDay(3)}'
+                            AND vr.user_id != '${user_id}'
                         GROUP BY
                             vr.user_id
                         ORDER BY

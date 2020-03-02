@@ -2,7 +2,7 @@
  * @Author: ZhangYu
  * @Date:   2018-12-29 14:54:27
  * @Last Modified by: zhangyu
- * @Last Modified time: 2020-01-05 01:55:57
+ * @Last Modified time: 2020-03-02 22:16:14
  */
 
 export const timestampToTime = (timestamp: number | string): string => {
@@ -126,4 +126,20 @@ export function MathRand(): string {
         Num += Math.floor(Math.random() * 10);
     };
     return Num;
+}
+
+
+/**
+ * @description　获取　ｎ　天之前的日期　返回　时间戳
+ * @author ZhangYu
+ * @date 2020-03-02
+ * @export
+ * @param {number} n
+ * @returns {number}
+ */
+export function getNDay(n: number): number {
+    let now = Date.now();
+    let day = new Date(now - 60 * 60 * 24 * n * 1000);
+    day.setHours(0, 0, 0, 0)
+    return day.getTime()
 }
