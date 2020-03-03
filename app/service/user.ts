@@ -347,17 +347,19 @@ export default class UserService extends Service {
         return Boolean(res);
     }
 
-    public async getRecommendUser(page: number, size: number, user_id: string): Promise<IOtherUser[]> {
+    public async getSuggestedUser(page: number, size: number, user_id: string): Promise<IOtherUser[]> {
 
+        const focusSql: string = `SELECT fu.user_id FROM tbl_focus AS fu WHERE fu.focus_user_id = '${user_id}' ORDER BY fu.add_time DESC`;
         const sql: string = `SELECT
                             vr.user_id,
                             COUNT( vr.user_id ) AS counts
                         FROM
                             tbl_visit_record AS vr
                         WHERE
-                            vr.visit_user_id IN ( SELECT fu.user_id FROM tbl_focus AS fu WHERE fu.focus_user_id = '${user_id}' ORDER BY fu.add_time DESC )
+                            vr.visit_user_id IN (${focusSql})
                             AND vr.add_time >= '${getNDay(3)}'
                             AND vr.user_id != '${user_id}'
+                            AND vr.user_id NOT IN (${focusSql})
                         GROUP BY
                             vr.user_id
                         ORDER BY
@@ -373,6 +375,9 @@ export default class UserService extends Service {
                 userList.push(user)
             }
         }
+
+        // console.log(getNDay(3))
+
         return userList;
     }
 }

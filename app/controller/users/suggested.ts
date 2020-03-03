@@ -1,6 +1,6 @@
 import { Controller } from "egg";
 
-export default class RecommendController extends Controller {
+export default class SuggestedController extends Controller {
     public async index() {
         const { ctx, service } = this;
         const { query } = ctx;
@@ -17,6 +17,6 @@ export default class RecommendController extends Controller {
         const page: number = Number(query.page);
         const size: number = Number(query.size);
         const user_id: string = ctx.getUid();
-        ctx.send(await service.user.getRecommendUser(page, size, user_id), 200);
+        ctx.send(await service.user.getSuggestedUser(page, size, user_id), 200);
     }
 }

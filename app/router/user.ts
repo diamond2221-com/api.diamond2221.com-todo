@@ -31,7 +31,7 @@ export default (app: Application) => {
     router.resources("searchUser", `${PrefixV1Url}/users/search`, users.search);
 
     // 获取推荐用户
-    router.resources('recommendUserList', `${PrefixV1Url}/users/recommend`, users.recommend)
+    router.resources('suggestedUserList', `${PrefixV1Url}/users/suggested`, users.suggested)
 
     // // 获取登录用户关注
     // router.get(`${PrefixV1Url}/getLoginUserFocus`, login.login)
