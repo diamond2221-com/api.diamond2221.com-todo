@@ -13,40 +13,50 @@ export class Img extends Model<Img> {
     @AutoIncrement
     @Column({
         type: INTEGER("255"),
-        comment: '图片的ID'
+        comment: '图片的ID',
+        field: "img_id"
     })
-    img_id: number;
+    imgId: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: "当前图片对应的帖子ID"
+        comment: "当前图片对应的帖子ID",
+        field: "post_id"
     })
-    post_id: number;
+    postId: number;
 
     @Column({
         type: STRING(255),
-        comment: '当前图片的地址'
+        comment: '当前图片的地址',
+        field: "src"
     })
     src: string;
 
     @Column({
         type: STRING(13),
-        comment: '添加图片时的时间戳'
+        comment: '添加图片时的时间戳',
+        field: "add_time"
     })
-    add_time: string;
+    addTime: string;
 
-    static async fetchPostAllImgs(post_id: number) {
+    static async fetchPostAllImgs(postId: number) {
         return await this.findAll({
             where: {
-                post_id
+                postId
             },
             order: [
                 ["add_time", "DESC"]
             ]
         })
     }
-};
-export default () => {
-    return Img;
+
+    static async createImg(postId: number, img: string) {
+        return await this.create({
+            postId,
+            src: img,
+            addTime: Date.now()
+        })
+    }
 };
 
+export default () => Img;

@@ -22,11 +22,3 @@ export interface IPostComment {
     userId: string;
     addTime: string;
 }
-
-export interface PostComment {
-    commentId: number;
-    postId: number;
-    userId: string;
-    content: string;
-    addTime: string;
-}

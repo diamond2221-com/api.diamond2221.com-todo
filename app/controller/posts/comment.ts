@@ -3,7 +3,7 @@ import { Controller } from "egg";
 import { timestampToTime } from "../../utils/common";
 
 import { IPostComment } from "../../types/post_interface";
-import { IUserInfo } from "../../types/user_interface";
+import { User } from "../../model/user";
 
 export default class CommentsController extends Controller {
 
@@ -29,11 +29,13 @@ export default class CommentsController extends Controller {
 
         const comment = await service.post.addComments(postId, userId, content);
 
-        let userInfo: IUserInfo = await service.user.getUserInfoByUserId(comment.userId) as IUserInfo;
+        let userInfo: User = await service.user.getUserInfoByUserId(comment.userId) as User;
 
         if (comment) {
             const result: IPostComment = {
-                ...comment,
+                id: comment.commentId,
+                content: comment.content,
+                userId: comment.userId,
                 addTime: timestampToTime(Number(comment.addTime)),
                 userName: userInfo.userName,
                 userImg: userInfo.img

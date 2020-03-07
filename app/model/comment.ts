@@ -13,38 +13,43 @@ export class Comment extends Model<Comment> {
     @AutoIncrement
     @Column({
         type: INTEGER("255"),
-        comment: '用户评论的ID'
+        comment: '用户评论的ID',
+        field: "comment_id"
     })
-    comment_id: number;
+    commentId: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: "评论所属帖子的帖子Id"
+        comment: "评论所属帖子的帖子Id",
+        field: "post_id"
     })
-    post_id: number;
+    postId: number;
 
     @Column({
         type: STRING("255"),
-        comment: "评论的所属者ID"
+        comment: "评论的所属者ID",
+        field: "user_id"
     })
-    user_id: string;
+    userId: string;
 
     @Column({
         type: STRING(300),
-        comment: '用户评论的内容'
+        comment: '用户评论的内容',
+        field: "content"
     })
     content: string;
 
     @Column({
         type: STRING(13),
-        comment: '用户评论的评论时间'
+        comment: '用户评论的评论时间',
+        field: "add_time"
     })
-    add_time: string;
+    addTime: string;
 
-    static async fetchPostComments(post_id: number, size: number, page: number) {
+    static async fetchPostComments(postId: number, size: number, page: number) {
         return await this.findAll({
             where: {
-                post_id
+                postId
             },
             order: [["add_time", "desc"]],
             limit: size,
@@ -52,16 +57,16 @@ export class Comment extends Model<Comment> {
         })
     }
 
-    static async createComment(post_id: number, user_id: string, content: string) {
+    static async createComment(postId: number, userId: string, content: string) {
         return await this.create({
-            post_id,
-            user_id,
+            postId,
+            userId,
             content,
-            add_time: Date.now()
+            addTime: Date.now()
         })
     }
 };
-export default () => {
-    return Comment;
-};
 
+export default () => {
+    return Comment
+}

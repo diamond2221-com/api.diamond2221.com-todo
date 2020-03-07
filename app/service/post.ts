@@ -1,7 +1,10 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
-import { IBasePost, PostComment, PostAllInfo, IPostComment } from "../types/post_interface";
-import { IUserInfo } from "../types/user_interface"
+import { IBasePost, /* PostComment */ PostAllInfo, IPostComment } from "../types/post_interface";
+// import { IUserInfo } from "../types/user_interface"
+import { User } from "../model/user";
+import { Post } from "../model/post";
+import { Comment } from "../model/comment";
 
 
 export default class PostService extends Service {
@@ -13,16 +16,8 @@ export default class PostService extends Service {
      * @returns {(Promise<IBasePost | null>)}
      * @memberof PostService
      */
-    public async getPostsByPostId(postIds: number[]): Promise<IBasePost[]> {
-        const res = await this.app.model.Post.fetchPostsOpInPostIds(postIds);
-        return res.map(post => {
-            return {
-                postId: post.post_id,
-                userId: post.user_id,
-                content: post.content,
-                addTime: post.add_time
-            }
-        })
+    public async getPostsByPostId(postIds: number[]) {
+        return await this.app.model.Post.fetchPostsOpInPostIds(postIds);
     }
 
     /**
@@ -71,8 +66,16 @@ export default class PostService extends Service {
      */
     public async getUserMarkPostsByUserId(userId: string, size: number, page: number) {
         const res = await this.app.model.MarkPost.fetchUserMarkPostsByUserId(userId, size, page)
-        const basePosts = await this.service.post.getPostsByPostId(res.map(post => post.post_id));
-        const posts: PostAllInfo[] = await this.service.post.getPostsInfo(basePosts, userId)
+        const postIds: number[] = res.map(post => post.postId);
+        let basePosts: Post[] = await this.service.post.getPostsByPostId(postIds);
+        let sortBasePosts: Post[] = [];
+        for (let index = 0; index < postIds.length; index++) {
+            const basePost = basePosts.find(post => post.postId === postIds[index]);
+            if (basePost) {
+                sortBasePosts.push(basePost)
+            }
+        }
+        const posts: PostAllInfo[] = await this.service.post.getPostsInfo(sortBasePosts, userId)
         return posts
     }
 
@@ -100,17 +103,11 @@ export default class PostService extends Service {
      * @param size
      * @param page
      */
-    public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<PostComment[]> {
+    public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<Comment[]> {
         const comments = await this.app.model.Comment.fetchPostComments(postId, size, page)
 
         return comments.map(comment => {
-            return {
-                commentId: comment.comment_id,
-                postId: comment.post_id,
-                userId: comment.user_id,
-                content: comment.content,
-                addTime: comment.add_time
-            };
+            return comment
         })
 
     }
@@ -121,16 +118,8 @@ export default class PostService extends Service {
      * @param userId
      * @param content
      */
-    public async addComments(postId: number, userId: string, content: string) {
-        const comment = await this.app.model.Comment.createComment(postId, userId, content)
-
-        return {
-            id: comment.id,
-            userId: comment.user_id,
-            postId: comment.post_id,
-            content: comment.content,
-            addTime: comment.add_time
-        };
+    public async addComments(postId: number, userId: string, content: string): Promise<Comment> {
+        return await this.app.model.Comment.createComment(postId, userId, content)
     }
 
 
@@ -142,21 +131,17 @@ export default class PostService extends Service {
      */
     public async addPost(content: string, imgs: string[], userId: string) {
         const res = await this.app.model.Post.createPost(content, userId);
-        const postId: number = res.post_id;
+        const postId: number = res.postId;
         if (imgs.length) {
             for (const img of imgs) {
-                await this.app.model.Img.create({
-                    post_id: postId,
-                    src: img,
-                    add_time: Date.now()
-                })
+                await this.app.model.Img.createImg(postId, img)
             }
         }
         return {
-            postId: res.post_id,
-            userId: res.user_id,
-            addTime: res.add_time,
+            postId: res.postId,
             content: res.content,
+            userId: res.userId,
+            addTime: res.addTime,
             imgs: imgs.map(img => {
                 return img + this.app.config.postImgConf
             })
@@ -171,16 +156,8 @@ export default class PostService extends Service {
      * @param {number} page
      * @memberof PostService
      */
-    public async getPosts(size: number, page: number): Promise<IBasePost[]> {
-        const posts = await this.app.model.Post.fetchAllPosts(page, size);
-        return posts.map(post => {
-            return {
-                postId: post.post_id,
-                userId: post.user_id,
-                content: post.content,
-                addTime: post.add_time
-            }
-        })
+    public async getPosts(size: number, page: number) {
+        return await this.app.model.Post.fetchAllPosts(page, size);
     }
 
 
@@ -226,13 +203,6 @@ export default class PostService extends Service {
         return Boolean(result)
     }
 
-    public async getPostUserFocusedUser(user_id: string, focus_user_id: string): Promise<boolean> {
-        const { Focus } = this.app.model;
-        const res = await Focus.getUserFocusUser(user_id,
-            focus_user_id);
-        return Boolean(res);
-    }
-
 
     /**
      * @description 获取单个帖子的基本信息
@@ -242,24 +212,9 @@ export default class PostService extends Service {
      * @returns {Promise<IBasePost>}
      * @memberof PostService
      */
-    public async getBasePost(post_id: number): Promise<IBasePost> {
-        const { Post } = this.app.model;
-        const post = await Post.fetchPostByPostId(post_id);
-        if (post) {
-            return {
-                postId: post.post_id,
-                userId: post.user_id,
-                content: post.content,
-                addTime: post.add_time,
-            }
-        } else {
-            return {
-                postId: 0,
-                userId: "",
-                content: "",
-                addTime: ""
-            }
-        }
+    public async getBasePost(post_id: number) {
+        const PostModel = this.app.model.Post;
+        return await PostModel.fetchPostByPostId(post_id) as Post;
     }
 
     /**
@@ -276,13 +231,13 @@ export default class PostService extends Service {
         const post = await postService.getBasePost(post_id);
         let dealPosts: PostAllInfo;
         const imgs = await postService.getPostImgsByPostId(post.postId);
-        const userInfo: IUserInfo = await userService.getUserInfoByUserId(post.userId) as IUserInfo;
+        const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
 
         let dealComments: IPostComment[] = [];
         const comments = await postService.getPostCommentsByPostId(post.postId, 20, 1);
 
         for (const comment of comments) {
-            let userInfo: IUserInfo = await userService.getUserInfoByUserId(comment.userId) as IUserInfo;
+            let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
             dealComments = [
                 ...dealComments,
                 {
@@ -333,13 +288,13 @@ export default class PostService extends Service {
         for (let post of posts) {
             // this.app.logger.warn("单个帖子基本信息", post)
             const imgs = await postService.getPostImgsByPostId(post.postId);
-            const userInfo: IUserInfo = await userService.getUserInfoByUserId(post.userId) as IUserInfo;
+            const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
 
             let dealComments: IPostComment[] = [];
             const comments = await postService.getPostCommentsByPostId(post.postId, 20, 1);
 
             for (const comment of comments) {
-                let userInfo: IUserInfo = await userService.getUserInfoByUserId(comment.userId) as IUserInfo;
+                let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
                 dealComments = [
                     ...dealComments,
                     {
@@ -430,15 +385,7 @@ export default class PostService extends Service {
         const postModel = this.app.model.Post;
         const postService = this.service.post;
         const posts = await postModel.fetchPostsOpInUserId(userIds, size, page)
-        let basePosts: IBasePost[] = posts.map(post => {
-            return {
-                postId: post.post_id,
-                userId: post.user_id,
-                content: post.content,
-                addTime: post.add_time
-            }
-        })
-        const detailPosts: PostAllInfo[] = await postService.getPostsInfo(basePosts, user_id);
+        const detailPosts: PostAllInfo[] = await postService.getPostsInfo(posts, user_id);
         return detailPosts
     }
 }

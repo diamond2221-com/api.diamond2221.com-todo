@@ -59,7 +59,7 @@ export default class RegisterController extends Controller {
             return ctx.send("注册成功", 200)
         }
 
-        return ctx.send("服务异常，请稍后再试", 99)
+        return ctx.send("服务异常", 99)
     }
 
     // public async index() {

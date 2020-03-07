@@ -1,6 +1,7 @@
 import { Service } from "egg";
 import { LoginParams } from '../types/account_interface';
-import { IUserInfo } from "../types/user_interface"
+// import { IUserInfo } from "../types/user_interface"
+import {User} from "../model/user"
 import * as uuid from "uuid";
 import * as jwt from "jsonwebtoken";
 // import * as Sequelize from "sequelize"
@@ -35,12 +36,12 @@ export default class AccountsService extends Service {
      * @returns
      * @memberof AccountService
      */
-    public async getUserByUserNamePassWord(LoginParams: LoginParams): Promise<IUserInfo | null> {
-        let user: IUserInfo | null = await this.service.user.getUserInfoByUsername(LoginParams.userName)
+    public async getUserByUserNamePassWord(LoginParams: LoginParams) {
+        let user: User | null = await this.service.user.getUserInfoByUsername(LoginParams.userName)
         if (!user) {
             user = await this.service.user.getUserInfoByPhoneNumber(LoginParams.userName);
         }
-        if (user && user.password === LoginParams.passWord) {
+        if (user && user.passWord === LoginParams.passWord) {
             return user;
         } else {
             return null;
@@ -68,7 +69,7 @@ export default class AccountsService extends Service {
 
         const { User } = this.app.model;
         const userInfo = await User.getUserInfoByUserId(user_id);
-        if (userInfo && userInfo.pass_word === pass_word) {
+        if (userInfo && userInfo.passWord === pass_word) {
             return true;
         } else {
             return false;

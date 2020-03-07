@@ -13,32 +13,36 @@ export class MarkPost extends Model<MarkPost> {
     @AutoIncrement
     @Column({
         type: INTEGER("255"),
-        comment: '帖子id 唯一'
+        comment: '帖子id 唯一',
+        field: "id"
     })
     id: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: "收藏帖子的Id"
+        comment: "收藏帖子的Id",
+        field: "post_id"
     })
-    post_id: number;
+    postId: number;
 
     @Column({
         type: STRING(255),
-        comment: '收藏者Id'
+        comment: '收藏者Id',
+        field: "user_id"
     })
-    user_id: string;
+    userId: string;
 
     @Column({
         type: STRING(13),
-        comment: '收藏帖子的时间'
+        comment: '收藏帖子的时间',
+        field: "add_time"
     })
-    add_time: string;
+    addTime: string;
 
-    static async fetchUserMarkPostsByUserId(user_id: string, size: number, page: number) {
+    static async fetchUserMarkPostsByUserId(userId: string, size: number, page: number) {
         return await this.findAll({
             where: {
-                user_id
+                userId
             },
             order: [["add_time", "desc"]],
             limit: size,
@@ -46,19 +50,17 @@ export class MarkPost extends Model<MarkPost> {
         })
     }
 
-    static async getUserMarkPosst(user_id: string, post_id: number) {
-        return await this.findOne({ where: { post_id, user_id } })
+    static async getUserMarkPosst(userId: string, postId: number) {
+        return await this.findOne({ where: { postId, userId } })
     }
 
-    static async createUserMarkPost(post_id: number, user_id: string) {
-        return await this.create({ post_id, user_id, add_time: Date.now() })
+    static async createUserMarkPost(postId: number, userId: string) {
+        return await this.create({ postId, userId, addTime: Date.now() })
     }
 
-    static async delUserMarkPost(post_id: number, user_id: string) {
-        return await this.destroy({ where: { post_id, user_id } })
+    static async delUserMarkPost(postId: number, userId: string) {
+        return await this.destroy({ where: { postId, userId } })
     }
 };
-export default () => {
-    return MarkPost;
-};
 
+export default () => MarkPost;

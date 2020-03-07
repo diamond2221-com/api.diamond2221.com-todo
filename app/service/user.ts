@@ -1,12 +1,13 @@
 import { Service } from "egg";
-import { IUser, IFans, IUserInfo, IOtherUser, IOwnUser } from "../types/user_interface";
+import { IUser, IFans, IOtherUser, IOwnUser } from "../types/user_interface";
 import { getNDay } from "../utils/common";
+import { User } from "../model/user"
 
 export default class UserService extends Service {
 
     public async getUserDetailInfo(user_id: string, type: 'user_id' | 'user_name', myUser_id: string) {
         const { service } = this;
-        let userInfo: IUserInfo | null = null;
+        let userInfo: User | null = null;
         if (type === 'user_id') {
             userInfo = await service.user.getUserInfoByUserId(user_id);
         } else if (type === 'user_name') {
@@ -20,7 +21,7 @@ export default class UserService extends Service {
         }
         delete userInfo.addTime
         delete userInfo.lastTime
-        delete userInfo.password
+        delete userInfo.passWord
         let result: IOtherUser | IOwnUser = {
             ...userInfo,
             postNum: 0,
@@ -38,18 +39,16 @@ export default class UserService extends Service {
      * 通过用户Id 来获取用户的 信息
      * @param userId
      */
-    public async getUserInfoByUserId(userId: string): Promise<IUserInfo | null> {
-        const user = await this.app.model.User.getUserInfoByUserId(userId);
-        return this.service.user.getUserInfo(user);
+    public async getUserInfoByUserId(userId: string) {
+        return await this.app.model.User.getUserInfoByUserId(userId);
     }
 
     /**
      * 通过用户username 来获取用户的 信息
      * @param userName
      */
-    public async getUserInfoByUsername(userName: string): Promise<IUserInfo | null> {
-        const user = await this.app.model.User.getUserInfoByUserName(userName);
-        return this.service.user.getUserInfo(user);
+    public async getUserInfoByUsername(userName: string) {
+        return await this.app.model.User.getUserInfoByUserName(userName);
     }
 
 
@@ -57,30 +56,10 @@ export default class UserService extends Service {
      * 通过用户phoneNumber 来获取用户的 信息
      * @param phoneNumber
      */
-    public async getUserInfoByPhoneNumber(phoneNumber: string): Promise<IUserInfo | null> {
-        const user = await this.app.model.User.getUserInfoByPhoneNumber(phoneNumber);
-        return this.service.user.getUserInfo(user);
+    public async getUserInfoByPhoneNumber(phoneNumber: string) {
+        return await this.app.model.User.getUserInfoByPhoneNumber(phoneNumber);
     }
 
-    private getUserInfo(user): IUserInfo | null {
-        if (user) {
-            return {
-                userName: user.user_name,
-                name: user.name,
-                userId: user.user_id,
-                img: user.img,
-                website: user.website,
-                badge: user.badge,
-                signature: user.signature,
-                lastTime: user.last_time,
-                password: user.pass_word,
-                addTime: user.add_time,
-                phoneNumber: user.phone_number
-            }
-        } else {
-            return null
-        }
-    }
 
     /**
      * 通过用户Id 来修改用户信息
@@ -102,32 +81,23 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async isSelfPost(postId: number, userId: string): Promise<boolean> {
-        let result = await this.app.model.Post.findOne({ where: { post_id: postId, user_id: userId } })
-        return Boolean(result);
+        return Boolean(await this.app.model.Post.checkIsSelfPost(postId, userId));
     }
 
     /**
      * 通过用户Id 获取 粉丝总数
      * @param userId
      */
-    public async getUserFansCountByUserId(
-        userId: string
-    ): Promise<number> {
-        return await this.app.model.Focus.count({ where: { user_id: userId } })
+    public async getUserFansCountByUserId(userId: string): Promise<number> {
+        return await this.app.model.Focus.getUserFansNum(userId)
     }
 
     /**
      * 通过用户Id 获取 关注总数
      * @param focusUserId
      */
-    public async getUserFocusCountByfocusUserId(
-        focusUserId: string
-    ): Promise<number> {
-        return await this.app.model.Focus.count({
-            where: {
-                focus_user_id: focusUserId
-            }
-        })
+    public async getUserFocusCountByfocusUserId(focusUserId: string): Promise<number> {
+        return await this.app.model.Focus.getUserFocusNum(focusUserId);
     }
 
     /**
@@ -139,21 +109,12 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async focusUserByUserId(userId: string, focusUserId: string): Promise<number> {
-        const res = await this.app.model.Focus.findOne({
-            where: {
-                user_id: userId,
-                focus_user_id: focusUserId
-            }
-        })
+        const res = await this.app.model.Focus.findFocusUser(userId, focusUserId)
         if (res) {
             return 1;
         } else {
             try {
-                await this.app.model.Focus.create({
-                    user_id: userId,
-                    focus_user_id: focusUserId,
-                    add_time: Date.now()
-                })
+                await this.app.model.Focus.createFocus(userId, focusUserId)
             } catch (error) {
                 return 2;
             }
@@ -170,7 +131,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async cancelFocusUserByUserId(userId: string, focusUserId: string) {
-        await this.app.model.Focus.destroy({ where: { user_id: userId, focus_user_id: focusUserId } })
+        await this.app.model.Focus.destroyFocus(userId, focusUserId)
     }
 
     /**
@@ -184,17 +145,12 @@ export default class UserService extends Service {
      */
     public async getFocusListByUserId(focusUserId: string, page: number, size: number): Promise<IFans[]> {
         const { app, service } = this;
-        let users = await app.model.Focus.findAll({
-            where: { focus_user_id: focusUserId },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
+        let users = await app.model.Focus.fetchFocusList(focusUserId, page, size)
 
         let result: IFans[] = [];
 
         for (const user of users) {
-            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.user_id) as IUserInfo;
+            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.userId) as User;
             const fan: IFans = { img, name, signature, userId, userName, website, badge, followed: true }
             result = [...result, fan];
         }
@@ -214,15 +170,11 @@ export default class UserService extends Service {
     public async getFansListByUserId(focusUserId: string, page: number, size: number): Promise<IFans[]> {
         const { app, service } = this;
 
-        let users = await app.model.Focus.findAll({
-            where: { user_id: focusUserId },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
+        let users = await app.model.Focus.fetchFansList(focusUserId, page, size)
+
         let result: IFans[] = [];
         for (const user of users) {
-            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.focus_user_id) as IUserInfo;
+            const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.focusUserId) as User;
             const followed: boolean = await service.user.floowedByUserId(userId, focusUserId);
             const fan: IFans = { img, name, signature, userId, userName, website, badge, followed }
             result = [...result, fan];
@@ -240,7 +192,7 @@ export default class UserService extends Service {
      */
     public async floowedByUserId(userId: string, focusUserId: string): Promise<boolean> {
 
-        const res = await this.app.model.Focus.count({ where: { user_id: userId, focus_user_id: focusUserId } })
+        const res = await this.app.model.Focus.getUserFocusUser(userId, focusUserId);
         return Boolean(res);
     }
 
@@ -306,8 +258,8 @@ export default class UserService extends Service {
             // let fansNum = await Focus.count({ where: { user_id: user.user_id } })
             // let focusNum = await Focus.count({ where: { focus_user_id: user.user_id } })
             result.push({
-                userId: user.user_id,
-                userName: user.user_name,
+                userId: user.userId,
+                userName: user.userName,
                 img: user.img,
                 name: user.name,
                 signature: user.signature,

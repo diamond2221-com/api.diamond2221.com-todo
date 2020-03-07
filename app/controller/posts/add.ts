@@ -3,7 +3,7 @@ import { Controller } from "egg";
 import { timestampToTime } from "../../utils/common";
 
 import { PostAllInfo } from "../../types/post_interface";
-import { IUserInfo } from "../../types/user_interface";
+import { User } from "../../model/user";
 
 export default class AddController extends Controller {
     /**
@@ -28,21 +28,25 @@ export default class AddController extends Controller {
         const userId = ctx.request.header["client-uid"];
 
         let newPost = await post.addPost(content, imgs, userId);
-        const userInfo: IUserInfo = await service.user.getUserInfoByUserId(newPost.userId) as IUserInfo;
-        /* TODO */
-        const focused: boolean = false;
-        const result: PostAllInfo = {
-            ...newPost,
-            userName: userInfo.userName,
-            img: userInfo.img,
-            addTime: timestampToTime(newPost.addTime),
-            comments: [],
-            likeNum: 0,
-            marked: false,
-            liked: false,
-            focused
-        }
+        try {
+            const userInfo: User = await service.user.getUserInfoByUserId(newPost.userId) as User;
+            const focused: boolean = false;
+            const result: PostAllInfo = {
+                ...newPost,
+                userName: userInfo.userName,
+                img: userInfo.img,
+                addTime: timestampToTime(newPost.addTime),
+                comments: [],
+                likeNum: 0,
+                marked: false,
+                liked: false,
+                focused
+            }
 
-        ctx.send(result, 200, "发帖成功");
+            ctx.send(result, 200, "发帖成功");
+        } catch (error) {
+            this.app.logger.error(error);
+            ctx.send("服务异常", 99)
+        }
     }
 }

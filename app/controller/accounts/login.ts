@@ -1,6 +1,6 @@
 import { Controller } from "egg";
 import { LoginParams } from '../../types/account_interface';
-import { IUserInfo } from "../../types/user_interface"
+import { User } from "../../model/user"
 
 
 export default class LoginController extends Controller {
@@ -26,7 +26,7 @@ export default class LoginController extends Controller {
 
         const LoginParams: LoginParams = ctx.request.body;
 
-        let user: IUserInfo | null = await service.accounts.getUserByUserNamePassWord(LoginParams);
+        let user: User | null = await service.accounts.getUserByUserNamePassWord(LoginParams);
         if (user) {
             let token: string = await service.accounts.Login(user.userName, user.userId);
 

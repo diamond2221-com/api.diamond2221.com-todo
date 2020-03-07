@@ -14,32 +14,36 @@ export class Post extends Model<Post> {
     @AutoIncrement
     @Column({
         type: INTEGER("100"),
-        comment: '帖子id 唯一'
+        comment: '帖子id 唯一',
+        field: 'post_id'
     })
-    post_id: number;
+    postId: number;
 
     @Column({
         type: STRING,
-        comment: "关联用户的id"
+        comment: "关联用户的id",
+        field: 'user_id'
     })
-    user_id: string;
+    userId: string;
 
     @Column({
         type: STRING(100),
-        comment: '发帖时的文本内容'
+        comment: '发帖时的文本内容',
+        field: 'content'
     })
     content: string;
 
     @Column({
         type: STRING(13),
-        comment: '发帖的时间戳'
+        comment: '发帖的时间戳',
+        field: 'add_time'
     })
-    add_time: string;
+    addTime: string;
 
-    static async fetchPostByPostId(post_id: number) {
+    static async fetchPostByPostId(postId: number) {
         return await this.findOne({
             where: {
-                post_id
+                postId
             }
         })
     }
@@ -47,7 +51,7 @@ export class Post extends Model<Post> {
     static async fetchPostsOpInPostIds(postIds: number[]) {
         return await this.findAll({
             where: {
-                post_id: {
+                postId: {
                     [Op.in]: postIds
                 }
             }
@@ -62,22 +66,22 @@ export class Post extends Model<Post> {
         })
     }
 
-    static async countUserPostsByUserId(user_id: string) {
-        return await this.count({ where: { user_id } })
+    static async countUserPostsByUserId(userId: string) {
+        return await this.count({ where: { userId } })
     }
 
-    static async createPost(content: string, user_id: string) {
+    static async createPost(content: string, userId: string) {
         return await this.create({
             content,
-            user_id,
-            add_time: Date.now()
+            userId,
+            addTime: Date.now()
         })
     }
 
     static async fetchPostsOpInUserId(userIds: string[], size: number, page: number) {
         return await this.findAll({
             where: {
-                user_id: {
+                userId: {
                     [Op.in]: userIds
                 }
             },
@@ -86,8 +90,13 @@ export class Post extends Model<Post> {
             offset: (page - 1) * size
         })
     }
-};
-export default () => {
-    return Post;
+
+    static async checkIsSelfPost(postId: number, userId: string) {
+        return await this.findOne({ where: { postId, userId } })
+    }
 };
 
+export default () => {
+
+    return Post
+}

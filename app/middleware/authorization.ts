@@ -30,8 +30,12 @@ export default (options: any, app: Application) => {
                 ctx.send("您未登录，请登录后再试", 401)
                 return;
             }
-            // ctx.request.header["client-uid"] = info.userId
-            await next(options);
+
+            if (await app.model.User.getUserInfoByUserId(ctx.request.header["client-uid"])) {
+                await next(options);
+            } else {
+                ctx.send("用户不存在", 10)
+            }
         }
     }
 }

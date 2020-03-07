@@ -27,7 +27,8 @@ export default class VisitController extends Controller {
             await service.record.createVisitRecord(user_id, visit_user_id, type)
             return ctx.send('OK', 200)
         } catch (error) {
-            return ctx.send("服务异常", 400)
+            this.app.logger.error(error);
+            return ctx.send("服务异常", 99)
         }
     }
 }

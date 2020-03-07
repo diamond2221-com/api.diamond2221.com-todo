@@ -1,17 +1,3 @@
-export interface IUserInfo {
-    userName: string;
-    name: string;
-    userId: string;
-    img: string;
-    website: string;
-    badge: number;
-    signature: string;
-    lastTime: string;
-    password: string;
-    addTime: string;
-    phoneNumber: string;
-}
-
 export interface IFans extends IUser {
     followed?: boolean;
 }

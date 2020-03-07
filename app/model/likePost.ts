@@ -13,49 +13,52 @@ export class LikePost extends Model<LikePost> {
     @AutoIncrement
     @Column({
         type: INTEGER("255"),
-        comment: '喜欢的ID'
+        comment: '喜欢的ID',
+        field: "id"
     })
     id: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: "点赞的帖子ID"
+        comment: "点赞的帖子ID",
+        field: "post_id"
     })
-    post_id: number;
+    postId: number;
 
     @Column({
         type: STRING(255),
-        comment: '点赞的用户ID'
+        comment: '点赞的用户ID',
+        field: "user_id"
     })
-    user_id: string;
+    userId: string;
 
     @Column({
         type: STRING(13),
-        comment: '点赞的时间'
+        comment: '点赞的时间',
+        field: "add_time"
     })
-    add_time: string;
+    addTime: string;
 
-    static async countLikePost(post_id: number) {
+    static async countLikePost(postId: number) {
         return await this.count({
             where: {
-                post_id
+                postId
             }
         })
     }
 
-    static async getUserLikePost(user_id: string, post_id: number) {
-        return await this.count({ where: { user_id, post_id } })
+    static async getUserLikePost(userId: string, postId: number) {
+        return await this.count({ where: { userId, postId } })
     }
 
-    static async createUserLikePost(post_id: number, user_id: string) {
-        return await this.create({ post_id, user_id, add_time: Date.now() })
+    static async createUserLikePost(postId: number, userId: string) {
+        return await this.create({ postId, userId, addTime: Date.now() })
     }
 
-    static async delUserLikePost(post_id: number, user_id: string) {
-        return await this.destroy({ where: { post_id, user_id, }})
+    static async delUserLikePost(postId: number, userId: string) {
+        return await this.destroy({ where: { postId, userId, } })
     }
 };
-export default () => {
-    return LikePost;
-};
+
+export default () => LikePost
 

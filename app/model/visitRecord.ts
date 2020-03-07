@@ -14,44 +14,48 @@ export class VisitRecord extends Model<VisitRecord> {
     @AutoIncrement
     @Column({
         type: INTEGER("255"),
-        comment: '主键 表ID'
+        comment: '主键 表ID',
+        field: 'id'
     })
     id: number;
 
     @Column({
         type: STRING("255"),
-        comment: "访问者的userID(副)"
+        comment: "访问者的userID(副)",
+        field: 'user_id'
     })
-    user_id: string;
+    userId: string;
 
     @Column({
         type: STRING(255),
-        comment: '访问者的userID(主)'
+        comment: '访问者的userID(主)',
+        field: 'visit_user_id'
     })
-    visit_user_id: string;
+    visitUserId: string;
 
     @Column({
         type: INTEGER("2"),
-        comment: '记录的用户来访的类型 1 访问的是用户的信息页面 2 访问的是用户的帖子'
+        comment: '记录的用户来访的类型 1 访问的是用户的信息页面 2 访问的是用户的帖子',
+        field: 'type'
     })
     type: number;
 
     @Column({
         type: STRING(13),
-        comment: '添加的时间戳'
+        comment: '添加的时间戳',
+        field: 'add_time'
     })
-    add_time: string;
+    addTime: string;
 
-    static async createVisitRecord(user_id: string, visit_user_id: string, type: IVisitRecordType) {
+    static async createVisitRecord(userId: string, visitUserId: string, type: IVisitRecordType) {
         return await this.create({
-            user_id,
-            visit_user_id,
+            userId,
+            visitUserId,
             type,
-            add_time: `${Date.now()}`
+            addTime: `${Date.now()}`
         })
     }
 };
-export default () => {
-    return VisitRecord;
-};
+
+export default () => VisitRecord;
 
