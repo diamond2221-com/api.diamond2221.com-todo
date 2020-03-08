@@ -1,5 +1,5 @@
 {
-  "name": "instagram.api.com",
+  "name": "api.diamond2221.com",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -8,8 +8,8 @@
     "declarations": true
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-instagram.api.com",
-    "stop": "egg-scripts stop --title=egg-server-instagram.api.com",
+    "start": "npm run ci && egg-scripts start --daemon --title=egg-server-api.diamond2221.com",
+    "stop": "egg-scripts stop --title=egg-server-api.diamond2221.com",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug --inpsect=9230",
     "test-local": "egg-bin test",
