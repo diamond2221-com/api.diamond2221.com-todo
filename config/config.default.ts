@@ -7,27 +7,20 @@ export default (appInfo: EggAppInfo) => {
     // use for cookie sign key, should change to your own and keep security
 
     // 关闭安全威胁csrf的防范
-    // config.security = {
-    //   csrf: {
-    //     ignore: ctx => {
-    //       let ipReg = /^(172\.17|127\.0)/;
-    //       return ipReg.test(ctx.ip)
-    //     }
-    //   }
-    // }
-
     config.security = {
         csrf: {
+            enable: false
+        },
+        xframe: {
             enable: false,
-            // ignoreJSON: true
         },
         domainWhiteList: [
             'http://localhost:7001',
             'http://127.0.0.1:7001',
             "http://api.diamond2221.com",
             "https://api.diamond2221.com",
-            "http://instagram.api.cn",
-            "http://instagram.api.com"
+            "http://www.diamond2221.com",
+            "https://www.diamond2221.com"
         ]
     }
 
