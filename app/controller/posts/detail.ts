@@ -15,7 +15,11 @@ export default class DetailController extends Controller {
 
         const postId: number = ctx.query.postId;
         const userId: string = ctx.request.header["client-uid"]
-        const detailPost: PostAllInfo = await this.service.post.getPostInfo(postId, userId)
-        ctx.send(detailPost)
+        const detailPost: PostAllInfo | null = await this.service.post.getPostInfo(postId, userId)
+        if (detailPost) {
+            return ctx.send(detailPost)
+        } else {
+            ctx.send("找不到帖子了", 400)
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
-import { IBasePost, /* PostComment */ PostAllInfo, IPostComment } from "../types/post_interface";
+import { IBasePost, PostAllInfo } from "../types/post_interface";
 // import { IUserInfo } from "../types/user_interface"
 import { User } from "../model/user";
 import { Post } from "../model/post";
@@ -97,19 +97,22 @@ export default class PostService extends Service {
         return res.map(img => img.src + this.app.config.postImgConf);
     }
 
-    /**
-     * 通过帖子Id 获取 单个帖子的评论 （分页）
-     * @param postId
-     * @param size
-     * @param page
-     */
-    public async getPostCommentsByPostId(postId: number, size: number = 20, page: number = 1): Promise<Comment[]> {
-        const comments = await this.app.model.Comment.fetchPostComments(postId, size, page)
 
-        return comments.map(comment => {
-            return comment
-        })
+    public async getPostCommentsParentByPostId(postId: number, size: number = 20, page: number = 1) {
+        const comments = await this.app.model.Comment.fetchPostParentComments(postId, size, page);
+        return {
+            rows: this.service.transform.comment(comments.rows),
+            count: comments.count
+        };
+    }
 
+    public async getPostCommentsChildByPostId(postId: number, rId: number, size: number = 20, page: number = 1) {
+        const comments = await this.app.model.Comment.fetchPostChildComments(postId, rId, size, page);
+
+        return {
+            rows: this.service.transform.comment(comments.rows),
+            count: comments.count
+        };
     }
 
     /**
@@ -118,8 +121,8 @@ export default class PostService extends Service {
      * @param userId
      * @param content
      */
-    public async addComments(postId: number, userId: string, content: string): Promise<Comment> {
-        return await this.app.model.Comment.createComment(postId, userId, content)
+    public async addComments(postId: number, userId: string, content: string, rId: number, pId: number): Promise<Comment> {
+        return await this.app.model.Comment.createComment(postId, userId, content, rId, pId)
     }
 
 
@@ -228,48 +231,53 @@ export default class PostService extends Service {
     public async getPostInfo(post_id: number, user_id: string) {
         const postService = this.service.post;
         const userService = this.service.user;
+        const commentService = this.service.comment;
         const post = await postService.getBasePost(post_id);
-        let dealPosts: PostAllInfo;
-        const imgs = await postService.getPostImgsByPostId(post.postId);
-        const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
+        if (post) {
 
-        let dealComments: IPostComment[] = [];
-        const comments = await postService.getPostCommentsByPostId(post.postId, 20, 1);
+            let dealPosts: PostAllInfo;
+            const imgs = await postService.getPostImgsByPostId(post.postId);
+            const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
 
-        for (const comment of comments) {
-            let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
-            dealComments = [
-                ...dealComments,
-                {
-                    content: comment.content,
-                    id: comment.commentId,
-                    userName: userInfo.userName,
-                    userId: userInfo.userId,
-                    userImg: userInfo.img,
-                    addTime: timestampToTime(Number(comment.addTime))
-                }
-            ]
+            const comments = await commentService.getPostComments(post.postId, 1, 20);
 
+            // for (const comment of comments.edges) {
+            //     let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
+            //     dealComments = [
+            //         ...dealComments,
+            //         {
+            //             content: comment.content,
+            //             id: comment.id,
+            //             userName: userInfo.userName,
+            //             userId: userInfo.userId,
+            //             userImg: userInfo.img,
+            //             addTime: timestampToTime(Number(comment.addTime))
+            //         }
+            //     ]
+
+            // }
+            const likeNum: number = await postService.getPostLikeNums(post.postId);
+            const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
+            const marked: boolean = await postService.getUserMarkedPost(user_id, post.postId);
+            const focused: boolean = await userService.floowedByUserId(post.userId, user_id)
+            dealPosts =
+            {
+                ...post,
+                imgs,
+                userName: userInfo.userName,
+                img: userInfo.img,
+                comments,
+                addTime: timestampToTime(Number(post.addTime)),
+                likeNum,
+                liked,
+                marked,
+                focused
+            }
+            return dealPosts;
+        } else {
+            return null
         }
-        const likeNum: number = await postService.getPostLikeNums(post.postId);
-        const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
-        const marked: boolean = await postService.getUserMarkedPost(user_id, post.postId);
-        const focused: boolean = await userService.floowedByUserId(post.userId, user_id)
-        dealPosts =
-        {
-            ...post,
-            imgs,
-            userName: userInfo.userName,
-            img: userInfo.img,
-            comments: dealComments,
-            addTime: timestampToTime(Number(post.addTime)),
-            likeNum,
-            liked,
-            marked,
-            focused
-        }
 
-        return dealPosts;
     }
 
     /**
@@ -283,35 +291,19 @@ export default class PostService extends Service {
     public async getPostsInfo(posts: Array<IBasePost>, user_id: string) {
         const postService = this.service.post;
         const userService = this.service.user;
+        const commentService = this.service.comment;
         let dealPosts: PostAllInfo[] = [];
-        // this.app.logger.warn("帖子基本信息", posts)
         for (let post of posts) {
-            // this.app.logger.warn("单个帖子基本信息", post)
+            this.app.logger.info("单个帖子基本信息", post)
             const imgs = await postService.getPostImgsByPostId(post.postId);
             const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
 
-            let dealComments: IPostComment[] = [];
-            const comments = await postService.getPostCommentsByPostId(post.postId, 20, 1);
-
-            for (const comment of comments) {
-                let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
-                dealComments = [
-                    ...dealComments,
-                    {
-                        content: comment.content,
-                        id: comment.commentId,
-                        userName: userInfo.userName,
-                        userId: userInfo.userId,
-                        userImg: userInfo.img,
-                        addTime: timestampToTime(Number(comment.addTime))
-                    }
-                ]
-
-            }
+            const comments = await commentService.getPostComments(post.postId, 1, 20);
             const likeNum: number = await postService.getPostLikeNums(post.postId);
             const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
             const marked: boolean = await postService.getUserMarkedPost(user_id, post.postId);
             const focused: boolean = await userService.floowedByUserId(post.userId, user_id)
+
             dealPosts = [
                 ...dealPosts,
                 {
@@ -319,7 +311,7 @@ export default class PostService extends Service {
                     imgs,
                     userName: userInfo.userName,
                     img: userInfo.img,
-                    comments: dealComments,
+                    comments,
                     addTime: timestampToTime(Number(post.addTime)),
                     likeNum,
                     liked,

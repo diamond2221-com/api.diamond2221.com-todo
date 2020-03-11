@@ -1,7 +1,7 @@
 /**
  * @desc 用户表
  */
-import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, PrimaryKey, Table, AutoIncrement } from 'sequelize-typescript';
 import * as Sequelize from "sequelize"
 
 const { STRING, INTEGER, CHAR } = DataType;
@@ -11,7 +11,14 @@ const { STRING, INTEGER, CHAR } = DataType;
 export class User extends Model<User> {
 
     @PrimaryKey
-    // @AutoIncrement
+    @AutoIncrement
+    @Column({
+        type: INTEGER,
+        comment: '主键id',
+        field: 'id'
+    })
+    public id: string;
+
     @Column({
         type: STRING,
         comment: '用户ID user_id 唯一',
@@ -94,6 +101,9 @@ export class User extends Model<User> {
         return await this.findOne({
             where: {
                 userId
+            },
+            attributes: {
+                exclude: ["id"]
             }
         });
     }
@@ -102,6 +112,9 @@ export class User extends Model<User> {
         return await this.findOne({
             where: {
                 phoneNumber
+            },
+            attributes: {
+                exclude: ["id"]
             }
         });
     }
@@ -110,6 +123,9 @@ export class User extends Model<User> {
         return await this.findOne({
             where: {
                 userName
+            },
+            attributes: {
+                exclude: ["id"]
             }
         });
     }
@@ -124,6 +140,9 @@ export class User extends Model<User> {
                 userName: {
                     [Sequelize.Op.like]: `%${userName}%`
                 }
+            },
+            attributes: {
+                exclude: ["id"]
             }
         })
     }
@@ -135,6 +154,9 @@ export class User extends Model<User> {
                     [Sequelize.Op.ne]: userId
                 },
                 userName
+            },
+            attributes: {
+                exclude: ["id"]
             }
         })
     }
@@ -146,6 +168,9 @@ export class User extends Model<User> {
                     [Sequelize.Op.ne]: userId
                 },
                 phoneNumber
+            },
+            attributes: {
+                exclude: ["id"]
             }
         })
     }
@@ -173,7 +198,6 @@ export class User extends Model<User> {
     }
 
 };
-
 
 
 export default () => {
