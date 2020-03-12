@@ -1,11 +1,35 @@
 import { Controller } from "egg";
-
+import { User } from "../../model/user";
+import { IPostComment } from "../../types/post_interface";
 import { timestampToTime } from "../../utils/common";
 
-import { IPostComment } from "../../types/post_interface";
-import { User } from "../../model/user";
-
 export default class CommentsController extends Controller {
+
+
+    public async index() {
+        const { ctx, service } = this;
+        const rules = {
+            postId: "number",
+            rId: "number",
+            page: "number",
+            size: "number"
+        }
+        const { query } = ctx.request;
+
+        try {
+            ctx.validate(rules, query);
+        } catch (error) {
+            return ctx.send('参数错误', 400);
+        }
+
+        const postId: number = Number(query.postId);
+        const rId: number = Number(query.rId);
+        const page: number = Number(query.page);
+        const size: number = Number(query.size);
+
+        const res = await service.comment.getPostComments(postId, rId, page, size)
+        ctx.send(res)
+    }
 
     /**
      * 添加帖子评论
@@ -31,15 +55,17 @@ export default class CommentsController extends Controller {
         const pId: number = Number(body.pId);
         const userId = ctx.getUid();
 
-        const comment = await service.post.addComments(postId, userId, content, rId, pId);
+        const comment = await service.comment.addComments(postId, userId, content, rId, pId);
 
         let userInfo: User = await service.user.getUserInfoByUserId(comment.userId) as User;
 
         if (comment) {
             const result: IPostComment = {
-                id: comment.commentId,
+                id: comment.id,
+                postId: comment.postId,
                 content: comment.content,
                 userId: comment.userId,
+                rId: comment.rId,
                 addTime: timestampToTime(Number(comment.addTime)),
                 userName: userInfo.userName,
                 userImg: userInfo.img

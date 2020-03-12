@@ -36,7 +36,13 @@ export default class AddController extends Controller {
                 userName: userInfo.userName,
                 img: userInfo.img,
                 addTime: timestampToTime(newPost.addTime),
-                comments: [],
+                comment: {
+                    edges: {
+                        edges: [],
+                        count: 0
+                    },
+                    count: 0
+                },
                 likeNum: 0,
                 marked: false,
                 liked: false,

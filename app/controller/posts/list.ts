@@ -1,6 +1,6 @@
 import { Controller } from "egg";
 
-import { PostAllInfo } from "../../types/post_interface";
+import { IUserPost } from "../../types/post_interface";
 
 export default class ListController extends Controller {
     /**
@@ -25,10 +25,10 @@ export default class ListController extends Controller {
         const page: number = ctx.query.page;
         const size: number = ctx.query.size;
         const userId: string = ctx.query.userId;
-        const user_id = ctx.request.header["client-uid"];
 
-        let dealPosts: PostAllInfo[] = await service.post.getUserPostsByUserId(userId, user_id, size, page);
-        ctx.send(dealPosts);
+        const posts: IUserPost[] = await service.post.getUserPostsByUserId(userId, size, page);
+        this.app.logger.info(posts);
+        ctx.send(posts);
     }
 
 }

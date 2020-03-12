@@ -3,7 +3,7 @@ import { PostAllInfo } from "../../types/post_interface";
 
 export default class DetailController extends Controller {
     public async index() {
-        const { ctx, /* service */ } = this;
+        const { ctx, service } = this;
         const rules = {
             postId: "string"
         }
@@ -15,11 +15,14 @@ export default class DetailController extends Controller {
 
         const postId: number = ctx.query.postId;
         const userId: string = ctx.request.header["client-uid"]
-        const detailPost: PostAllInfo | null = await this.service.post.getPostInfo(postId, userId)
-        if (detailPost) {
-            return ctx.send(detailPost)
+        let detailPost: PostAllInfo[] | null = null;
+        const post = await this.app.model.Post.fetchPostByPostId(postId);
+
+        if (post) {
+            detailPost = await service.post.getPostsDetail([post], userId);
+            return ctx.send(detailPost[0]);
         } else {
-            ctx.send("找不到帖子了", 400)
+            return ctx.send("找不到帖子了", 400)
         }
     }
 }

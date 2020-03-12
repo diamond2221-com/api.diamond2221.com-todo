@@ -16,18 +16,18 @@ export class Comment extends Model<Comment> {
         comment: '用户评论的ID',
         field: "comment_id"
     })
-    commentId: number;
+    id: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: '回复的commentId 回复的是帖子 为0',
+        comment: '回复的id 回复的是帖子 为0',
         field: "r_id"
     })
     rId: number;
 
     @Column({
         type: INTEGER("255"),
-        comment: '回复的上级commentId 回复的是帖子 为0',
+        comment: '回复的上级id 回复的是帖子 为0',
         field: "p_id"
     })
     pId: number;
@@ -60,32 +60,7 @@ export class Comment extends Model<Comment> {
     })
     addTime: string;
 
-    static async fetchPostComments(postId: number, size: number, page: number) {
-        return await this.findAll({
-            where: {
-                postId
-            },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        })
-    }
-
-    static async fetchPostParentComments(postId: number, size: number, page: number) {
-        const comments = await this.findAndCountAll({
-            raw: true,
-            where: {
-                postId,
-                rId: 0
-            },
-            order: [["add_time", "desc"]],
-            limit: size,
-            offset: (page - 1) * size
-        });
-        return comments;
-    }
-
-    static async fetchPostChildComments(postId: number, rId: number, size: number, page: number) {
+    static async fetchPostComments(postId: number, rId: number, size: number, page: number) {
         return await this.findAndCountAll({
             raw: true,
             where: {
@@ -106,6 +81,14 @@ export class Comment extends Model<Comment> {
             rId,
             pId: 0,
             addTime: Date.now()
+        })
+    }
+
+    static async getPostCommentSize(postId: number) {
+        return await this.count({
+            where: {
+                postId
+            }
         })
     }
 };

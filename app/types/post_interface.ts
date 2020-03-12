@@ -4,12 +4,14 @@ export interface IBasePost {
     content: string;
     addTime: string;
 }
-export interface PostAllInfo extends IBasePost {
+export interface IUserPost extends IBasePost {
     imgs?: string[];
+    likeNum: number;
+    comment: IPostCommentRes
+}
+export interface PostAllInfo extends IUserPost {
     userName: string;
     img: string;
-    comments: IPostCommentRes;
-    likeNum: number;
     liked: boolean;
     marked: boolean;
     focused: boolean;
@@ -37,6 +39,9 @@ export interface IPostComments extends IPostComment {
 }
 
 export interface IPostCommentRes {
-    edges: IPostComments[];
+    edges: {
+        edges: IPostComments[],
+        count: number;
+    };
     count: number;
 }

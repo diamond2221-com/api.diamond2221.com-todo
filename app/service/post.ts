@@ -1,11 +1,9 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
-import { IBasePost, PostAllInfo } from "../types/post_interface";
+import { PostAllInfo, IUserPost, /* IBasePost */ } from "../types/post_interface";
 // import { IUserInfo } from "../types/user_interface"
 import { User } from "../model/user";
 import { Post } from "../model/post";
-import { Comment } from "../model/comment";
-
 
 export default class PostService extends Service {
     /**
@@ -27,7 +25,7 @@ export default class PostService extends Service {
      * @param size
      * @param page
      */
-    public async getUserPostsByUserId(userId1: string, userId2: string, size: number, page: number): Promise<PostAllInfo[]> {
+    public async getUserPostsByUserId(userId: string, size: number, page: number): Promise<IUserPost[]> {
         // const res = await this.app.model.Post.findAll({
         //     where: {
         //         user_id: userId1
@@ -36,26 +34,42 @@ export default class PostService extends Service {
         //     limit: size,
         //     offset: (page - 1) * size
         // })
-        const offset: number = (page - 1) * size;
-        const sql = `
-                    SELECT
-                        p.post_id postId,
-                        p.add_time addTime,
-                        p.content content,
-                        u.user_id userId,
-                        u.img img,
-                        u.user_name userName
-                    FROM
-                        tbl_post p
-                    LEFT JOIN tbl_user u ON p.user_id = u.user_id
-                    WHERE p.user_id = '${userId1}'
-                    ORDER BY p.add_time DESC
-                    limit ${size}
-                    OFFSET ${offset}
-                    `
-        const posts: IBasePost[] = await this.app.mysql.query(sql)
-        let dealPosts: PostAllInfo[] = await this.service.post.getPostsInfo(posts, userId2);
-        return dealPosts;
+        const postService = this.service.post;
+        const posts = await this.app.model.Post.fetchPostsOpLikeUserId(userId, size, page);
+        return await postService.getPostsInfo(posts);
+        // const commentService = this.service.comment;
+        // const offset: number = (page - 1) * size;
+        // const sql = `
+        //             SELECT
+        //                 p.post_id postId,
+        //                 p.add_time addTime,
+        //                 p.content content,
+        //                 u.user_id userId,
+        //                 u.img img,
+        //                 u.user_name userName
+        //             FROM
+        //                 tbl_post p
+        //             LEFT JOIN tbl_user u ON p.user_id = u.user_id
+        //             WHERE p.user_id = '${userId1}'
+        //             ORDER BY p.add_time DESC
+        //             limit ${size}
+        //             OFFSET ${offset}
+        //             `
+        // const posts: IBasePost[] = await this.app.mysql.query(sql)
+        // let dealPosts: IUserPost[] = [];
+        // for (const post of posts) {
+        //     const likeNum: number = await postService.getPostLikeNums(post.postId);
+        //     const comment = await commentService.getPostComments(post.postId, 0, 1, 3);
+        //     const imgs = await postService.getPostImgsByPostId(post.postId);
+
+        //     dealPosts.push({
+        //         ...post,
+        //         likeNum,
+        //         imgs,
+        //         comment
+        //     })
+        // }
+        // return dealPosts;
     }
 
     /**
@@ -75,8 +89,7 @@ export default class PostService extends Service {
                 sortBasePosts.push(basePost)
             }
         }
-        const posts: PostAllInfo[] = await this.service.post.getPostsInfo(sortBasePosts, userId)
-        return posts
+        return await this.service.post.getPostsDetail(sortBasePosts, userId)
     }
 
     /**
@@ -96,35 +109,6 @@ export default class PostService extends Service {
         const res = await this.app.model.Img.fetchPostAllImgs(postId);
         return res.map(img => img.src + this.app.config.postImgConf);
     }
-
-
-    public async getPostCommentsParentByPostId(postId: number, size: number = 20, page: number = 1) {
-        const comments = await this.app.model.Comment.fetchPostParentComments(postId, size, page);
-        return {
-            rows: this.service.transform.comment(comments.rows),
-            count: comments.count
-        };
-    }
-
-    public async getPostCommentsChildByPostId(postId: number, rId: number, size: number = 20, page: number = 1) {
-        const comments = await this.app.model.Comment.fetchPostChildComments(postId, rId, size, page);
-
-        return {
-            rows: this.service.transform.comment(comments.rows),
-            count: comments.count
-        };
-    }
-
-    /**
-     * 根据帖子Id 添加评论
-     * @param postId
-     * @param userId
-     * @param content
-     */
-    public async addComments(postId: number, userId: string, content: string, rId: number, pId: number): Promise<Comment> {
-        return await this.app.model.Comment.createComment(postId, userId, content, rId, pId)
-    }
-
 
     /**
      * 用户添加帖子
@@ -206,120 +190,57 @@ export default class PostService extends Service {
         return Boolean(result)
     }
 
-
-    /**
-     * @description 获取单个帖子的基本信息
-     * @author ZhangYu
-     * @date 2020-02-08
-     * @param {number} post_id
-     * @returns {Promise<IBasePost>}
-     * @memberof PostService
-     */
-    public async getBasePost(post_id: number) {
-        const PostModel = this.app.model.Post;
-        return await PostModel.fetchPostByPostId(post_id) as Post;
-    }
-
-    /**
-     * @description 获取单个完整的帖子详情
-     * @author ZhangYu
-     * @date 2019-09-03
-     * @param {number} post_id
-     * @param {string} user_id  当前登录人的userId
-     * @memberof PostService
-     */
-    public async getPostInfo(post_id: number, user_id: string) {
-        const postService = this.service.post;
-        const userService = this.service.user;
-        const commentService = this.service.comment;
-        const post = await postService.getBasePost(post_id);
-        if (post) {
-
-            let dealPosts: PostAllInfo;
-            const imgs = await postService.getPostImgsByPostId(post.postId);
-            const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
-
-            const comments = await commentService.getPostComments(post.postId, 1, 20);
-
-            // for (const comment of comments.edges) {
-            //     let userInfo: User = await userService.getUserInfoByUserId(comment.userId) as User;
-            //     dealComments = [
-            //         ...dealComments,
-            //         {
-            //             content: comment.content,
-            //             id: comment.id,
-            //             userName: userInfo.userName,
-            //             userId: userInfo.userId,
-            //             userImg: userInfo.img,
-            //             addTime: timestampToTime(Number(comment.addTime))
-            //         }
-            //     ]
-
-            // }
-            const likeNum: number = await postService.getPostLikeNums(post.postId);
-            const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
-            const marked: boolean = await postService.getUserMarkedPost(user_id, post.postId);
-            const focused: boolean = await userService.floowedByUserId(post.userId, user_id)
-            dealPosts =
-            {
-                ...post,
-                imgs,
-                userName: userInfo.userName,
-                img: userInfo.img,
-                comments,
-                addTime: timestampToTime(Number(post.addTime)),
-                likeNum,
-                liked,
-                marked,
-                focused
-            }
-            return dealPosts;
-        } else {
-            return null
-        }
-
-    }
-
     /**
      * @description 获取多个完整的帖子详情
      * @author ZhangYu
      * @date 2019-09-03
-     * @param {IBasePost} posts
+     * @param {Post} posts
      * @param {string} user_id  当前登录人的userId
      * @memberof PostService
      */
-    public async getPostsInfo(posts: Array<IBasePost>, user_id: string) {
-        const postService = this.service.post;
+    public async getPostsDetail(posts: Post[], user_id: string) {
         const userService = this.service.user;
-        const commentService = this.service.comment;
-        let dealPosts: PostAllInfo[] = [];
+        const postService = this.service.post;
+        let dealPosts: any[] = [];
         for (let post of posts) {
             this.app.logger.info("单个帖子基本信息", post)
-            const imgs = await postService.getPostImgsByPostId(post.postId);
-            const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
 
-            const comments = await commentService.getPostComments(post.postId, 1, 20);
-            const likeNum: number = await postService.getPostLikeNums(post.postId);
+            const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
             const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
             const marked: boolean = await postService.getUserMarkedPost(user_id, post.postId);
-            const focused: boolean = await userService.floowedByUserId(post.userId, user_id)
-
+            const focused: boolean = await userService.floowedByUserId(post.userId, user_id);
             dealPosts = [
                 ...dealPosts,
                 {
                     ...post,
-                    imgs,
+                    ...((await postService.getPostsInfo([post]))[0]),
+                    addTime: timestampToTime(Number(post.addTime)),
                     userName: userInfo.userName,
                     img: userInfo.img,
-                    comments,
-                    addTime: timestampToTime(Number(post.addTime)),
-                    likeNum,
                     liked,
                     marked,
-                    focused
+                    focused,
                 }
             ]
+        }
 
+        return dealPosts;
+    }
+
+    public async getPostsInfo(posts: Post[]) {
+        const postService = this.service.post;
+        const commentService = this.service.comment;
+        const dealPosts: IUserPost[] = [];
+        for (const post of posts) {
+            const imgs = await postService.getPostImgsByPostId(post.postId);
+            const comment = await commentService.getPostComments(post.postId, 0, 1, 3);
+            const likeNum: number = await postService.getPostLikeNums(post.postId);
+            dealPosts.push({
+                ...post,
+                imgs,
+                comment,
+                likeNum
+            })
         }
         return dealPosts;
     }
@@ -376,8 +297,8 @@ export default class PostService extends Service {
     public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<PostAllInfo[]> {
         const postModel = this.app.model.Post;
         const postService = this.service.post;
-        const posts = await postModel.fetchPostsOpInUserId(userIds, size, page)
-        const detailPosts: PostAllInfo[] = await postService.getPostsInfo(posts, user_id);
-        return detailPosts
+        const posts = await postModel.fetchPostsOpInUserId(userIds, size, page);
+
+        return await postService.getPostsDetail(posts, user_id);
     }
 }

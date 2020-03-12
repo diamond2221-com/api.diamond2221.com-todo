@@ -78,6 +78,17 @@ export class Post extends Model<Post> {
         })
     }
 
+    static async fetchPostsOpLikeUserId(userId: string, size: number, page: number) {
+        return await this.findAll({
+            where: {
+                userId
+            },
+            order: [["add_time", "desc"]],
+            limit: size,
+            offset: (page - 1) * size
+        })
+    }
+
     static async fetchPostsOpInUserId(userIds: string[], size: number, page: number) {
         return await this.findAll({
             where: {
