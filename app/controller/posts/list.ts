@@ -27,7 +27,6 @@ export default class ListController extends Controller {
         const userId: string = ctx.query.userId;
 
         const posts: IUserPost[] = await service.post.getUserPostsByUserId(userId, size, page);
-        this.app.logger.info(posts);
         ctx.send(posts);
     }
 

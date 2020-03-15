@@ -37,8 +37,7 @@ export default (appInfo: EggAppInfo) => {
     ''
     // add your egg config in here
     // 使用koa的中间件
-    // config.middleware = [];
-    config.middleware = ["authorization", "singleSign"];
+    config.middleware = ["authorization", "singleSign", /* "grpaql" */];
 
     config.multipart = {
         mode: "file"
@@ -62,6 +61,11 @@ export default (appInfo: EggAppInfo) => {
         }
     }
 
+    config.graphql = {
+        router: '/graphql/query'
+    }
+
+
     config.bodyParser = {
         enable: true,
         jsonLimit: '5mb',
@@ -82,7 +86,8 @@ export default (appInfo: EggAppInfo) => {
         "/api/v1/accounts/register",
         "/api/v1/users/search",
         "/api/v1/accounts/signUp/sms",
-        "/api/v1/accounts/signUp/verify"
+        "/api/v1/accounts/signUp/verify",
+        '/graphql/query'
     ]
 
     // add your special config in here

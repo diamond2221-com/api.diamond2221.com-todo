@@ -20,8 +20,7 @@ export default class PostService extends Service {
 
     /**
      * 通过用户Id 获取 帖子 (分页)
-     * @param userId1 获取该用户的帖子
-     * @param userId2 当前登录人的id
+     * @param userId 获取该用户的帖子
      * @param size
      * @param page
      */
@@ -203,7 +202,7 @@ export default class PostService extends Service {
         const postService = this.service.post;
         let dealPosts: any[] = [];
         for (let post of posts) {
-            this.app.logger.info("单个帖子基本信息", post)
+            // this.app.logger.info("单个帖子基本信息", post)
 
             const userInfo: User = await userService.getUserInfoByUserId(post.userId) as User;
             const liked: boolean = await postService.getUserLikedPost(user_id, post.postId);
