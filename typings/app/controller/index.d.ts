@@ -11,9 +11,9 @@ import ExportPostsAll from '../../../app/controller/posts/all';
 import ExportPostsComment from '../../../app/controller/posts/comment';
 import ExportPostsDetail from '../../../app/controller/posts/detail';
 import ExportPostsIndex from '../../../app/controller/posts/index';
-import ExportPostsLikePost from '../../../app/controller/posts/likePost';
-import ExportPostsList from '../../../app/controller/posts/list';
-import ExportPostsMarkPost from '../../../app/controller/posts/markPost';
+import ExportPostsLike from '../../../app/controller/posts/like';
+import ExportPostsMark from '../../../app/controller/posts/mark';
+import ExportPostsUser from '../../../app/controller/posts/user';
 import ExportRecordVisit from '../../../app/controller/record/visit';
 import ExportUsersFans from '../../../app/controller/users/fans';
 import ExportUsersFocus from '../../../app/controller/users/focus';
@@ -48,9 +48,9 @@ declare module 'egg' {
       comment: ExportPostsComment;
       detail: ExportPostsDetail;
       index: ExportPostsIndex;
-      likePost: ExportPostsLikePost;
-      list: ExportPostsList;
-      markPost: ExportPostsMarkPost;
+      like: ExportPostsLike;
+      mark: ExportPostsMark;
+      user: ExportPostsUser;
     }
     record: {
       visit: ExportRecordVisit;

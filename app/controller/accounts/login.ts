@@ -27,10 +27,11 @@ export default class LoginController extends Controller {
         const LoginParams: LoginParams = ctx.request.body;
 
         let user: User | null = await service.accounts.getUserByUserNamePassWord(LoginParams);
+        const info: string = await ctx.request.header["client-info"];
         if (user) {
             let token: string = await service.accounts.Login(user.userName, user.userId);
 
-            await app.redis.set(`${user.userId}`, token, 'EX', ((60 * 60 * 24 * 7) - 2))
+            await app.redis.set(`${info}---${user.userId}`, token, 'EX', ((60 * 60 * 24 * 7) - 2))
             ctx.send({
                 token,
                 ...user

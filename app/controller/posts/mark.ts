@@ -1,7 +1,7 @@
 import { Controller } from 'egg';
 import { PostAllInfo } from "../../types/post_interface";
 
-export default class MarkPostController extends Controller {
+export default class MarkController extends Controller {
     /**
      * 获取用户收藏的帖子
      */

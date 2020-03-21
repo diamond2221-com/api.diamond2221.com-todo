@@ -7,7 +7,7 @@ export default (app: Application) => {
     const { posts } = controller;
 
     // 用户帖子相关
-    router.resources("userPostList", `${PrefixV1Url}/posts/list`, posts.list);
+    router.resources("userPostList", `${PrefixV1Url}/posts/user`, posts.user);
 
     // 用户发帖
     router.resources("newPost", `${PrefixV1Url}/posts/add`, posts.add);
@@ -25,9 +25,9 @@ export default (app: Application) => {
     router.resources("postDetail", `${PrefixV1Url}/posts/detail`, posts.detail);
 
     // 用户收藏帖子相关
-    router.resources("markPost", `${PrefixV1Url}/posts/markPost`, posts.markPost);
+    router.resources("markPost", `${PrefixV1Url}/posts/mark`, posts.mark);
 
     // 用户喜欢帖子相关
-    router.resources("likePost", `${PrefixV1Url}/posts/likePost`, posts.likePost);
+    router.resources("likePost", `${PrefixV1Url}/posts/like`, posts.like);
 
 }

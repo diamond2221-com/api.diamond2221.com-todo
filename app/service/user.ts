@@ -131,7 +131,7 @@ export default class UserService extends Service {
      * @memberof UserService
      */
     public async cancelFocusUserByUserId(userId: string, focusUserId: string) {
-        await this.app.model.Focus.destroyFocus(userId, focusUserId)
+        return await this.app.model.Focus.destroyFocus(userId, focusUserId)
     }
 
     /**

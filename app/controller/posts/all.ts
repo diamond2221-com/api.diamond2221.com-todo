@@ -1,6 +1,6 @@
 import { Controller } from 'egg';
 
-import { PostAllInfo } from "../../types/post_interface";
+import { IUserPost } from "../../types/post_interface";
 
 export default class AllController extends Controller {
     /**
@@ -27,9 +27,9 @@ export default class AllController extends Controller {
 
         let posts = await service.post.getPosts(size, page);
         this.app.logger.warn(posts);
-        const user_id: string = this.ctx.request.header["client-uid"]
+        // const user_id: string = this.ctx.request.header["client-uid"]
 
-        let dealPosts: PostAllInfo[] = await service.post.getPostsDetail(posts, user_id)
+        let dealPosts: IUserPost[] = await service.post.getPostsInfo(posts)
         ctx.send(dealPosts);
     }
 }

@@ -24,7 +24,7 @@ export default class PostService extends Service {
      * @param size
      * @param page
      */
-    public async getUserPostsByUserId(userId: string, size: number, page: number): Promise<IUserPost[]> {
+    public async getUserPostsByUserId(userId: string, page: number, size: number): Promise<IUserPost[]> {
         // const res = await this.app.model.Post.findAll({
         //     where: {
         //         user_id: userId1
@@ -254,7 +254,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async markPostByPostId(postId: number, userId: string) {
-        await this.app.model.MarkPost.createUserMarkPost(postId, userId);
+        return await this.app.model.MarkPost.createUserMarkPost(postId, userId);
     }
 
     /**
@@ -266,7 +266,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async cancelMarkPostByPostId(postId: number, userId: string) {
-        await this.app.model.MarkPost.delUserMarkPost(postId, userId);
+        return await this.app.model.MarkPost.delUserMarkPost(postId, userId);
     }
 
     /**
@@ -278,7 +278,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async likePostByPostId(postId: number, userId: string) {
-        await this.app.model.LikePost.createUserLikePost(postId, userId);
+        return await this.app.model.LikePost.createUserLikePost(postId, userId);
     }
 
     /**
@@ -290,7 +290,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async cancelLikePostByPostId(postId: number, userId: string) {
-        await this.app.model.LikePost.delUserLikePost(postId, userId);
+        return await this.app.model.LikePost.delUserLikePost(postId, userId);
     }
 
     public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<PostAllInfo[]> {

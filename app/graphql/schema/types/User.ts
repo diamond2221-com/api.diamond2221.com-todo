@@ -41,6 +41,19 @@ export class User {
     })
     badge: number;
 
+    // @Field()
+    // addTime: string;
+
     @Field()
-    addTime: string;
+    fansNum: number;
+
+    @Field()
+    focusNum: number;
+
+    @Field()
+    focused: boolean;
+
+    @Field()
+    postNum: number;
+
 }

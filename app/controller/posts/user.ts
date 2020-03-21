@@ -2,7 +2,7 @@ import { Controller } from "egg";
 
 import { IUserPost } from "../../types/post_interface";
 
-export default class ListController extends Controller {
+export default class UserController extends Controller {
     /**
      * index
      * 获取用户帖子
@@ -26,7 +26,7 @@ export default class ListController extends Controller {
         const size: number = ctx.query.size;
         const userId: string = ctx.query.userId;
 
-        const posts: IUserPost[] = await service.post.getUserPostsByUserId(userId, size, page);
+        const posts: IUserPost[] = await service.post.getUserPostsByUserId(userId, page, size);
         ctx.send(posts);
     }
 

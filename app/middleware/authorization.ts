@@ -14,7 +14,8 @@ export default (options: any, app: Application) => {
             await next(options)
             return;
         } else {
-            const token: string | null = request.header["client-token"];
+            const token: string | null =
+                request.header[app.config.auth_headers_name];
             if (!token) {
                 ctx.send("您未登录，请登录后再试", 401);
                 return;

@@ -1,6 +1,6 @@
 import { Controller } from 'egg';
 
-export default class LikePostController extends Controller {
+export default class LikeController extends Controller {
     /**
      * @description 用户喜欢帖子
      * @author ZhangYu

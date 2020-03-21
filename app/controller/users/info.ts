@@ -32,7 +32,7 @@ export default class InfoController extends Controller {
             if (result) {
                 ctx.send(result)
             } else {
-                return ctx.send('没有该用户', 200)
+                return ctx.send('没有该用户', 400)
             }
         }
     }
