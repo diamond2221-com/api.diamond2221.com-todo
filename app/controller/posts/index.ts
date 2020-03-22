@@ -1,5 +1,5 @@
 import { Controller } from "egg";
-import { PostAllInfo } from "../../types/post_interface";
+import { IPost } from "../../types/post_interface";
 
 export default class IndexController extends Controller {
     /**
@@ -25,7 +25,7 @@ export default class IndexController extends Controller {
         const user_id = ctx.request.header["client-uid"];
         const users = await service.user.getFocusListByUserId(user_id, 1, 1000000);
         const userIds: string[] = [...(new Set([...users.map(user => user.userId), user_id]))];
-        let dealPosts: PostAllInfo[] = await service.post.getPostsByUserId(user_id, userIds, page, size);
+        let dealPosts: IPost[] = await service.post.getPostsByUserId(user_id, userIds, page, size);
 
         ctx.send(dealPosts, 200);
     }

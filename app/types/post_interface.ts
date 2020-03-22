@@ -9,7 +9,7 @@ export interface IUserPost extends IBasePost {
     likeNum: number;
     comment: IPostCommentRes
 }
-export interface PostAllInfo extends IUserPost {
+export interface IPost extends IUserPost {
     userName: string;
     img: string;
     liked: boolean;

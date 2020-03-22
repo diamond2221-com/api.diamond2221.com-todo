@@ -1,6 +1,6 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
-import { PostAllInfo, IUserPost, /* IBasePost */ } from "../types/post_interface";
+import { IPost, IUserPost, /* IBasePost */ } from "../types/post_interface";
 // import { IUserInfo } from "../types/user_interface"
 import { User } from "../model/user";
 import { Post } from "../model/post";
@@ -293,7 +293,7 @@ export default class PostService extends Service {
         return await this.app.model.LikePost.delUserLikePost(postId, userId);
     }
 
-    public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<PostAllInfo[]> {
+    public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<IPost[]> {
         const postModel = this.app.model.Post;
         const postService = this.service.post;
         const posts = await postModel.fetchPostsOpInUserId(userIds, size, page);

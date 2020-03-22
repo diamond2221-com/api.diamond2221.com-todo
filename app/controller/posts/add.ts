@@ -2,7 +2,7 @@ import { Controller } from "egg";
 
 import { timestampToTime } from "../../utils/common";
 
-import { PostAllInfo } from "../../types/post_interface";
+import { IPost } from "../../types/post_interface";
 import { User } from "../../model/user";
 
 export default class AddController extends Controller {
@@ -31,7 +31,7 @@ export default class AddController extends Controller {
         try {
             const userInfo: User = await service.user.getUserInfoByUserId(newPost.userId) as User;
             const focused: boolean = false;
-            const result: PostAllInfo = {
+            const result: IPost = {
                 ...newPost,
                 userName: userInfo.userName,
                 img: userInfo.img,

@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import { PostAllInfo } from "../../types/post_interface";
+import { IPost } from "../../types/post_interface";
 
 export default class MarkController extends Controller {
     /**
@@ -23,7 +23,7 @@ export default class MarkController extends Controller {
         const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
 
-        let dealPosts: PostAllInfo[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
+        let dealPosts: IPost[] = await service.post.getUserMarkPostsByUserId(userId, Number(size), Number(page));
         ctx.send(dealPosts);
     }
 

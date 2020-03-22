@@ -1,5 +1,5 @@
 import { Controller } from "egg"
-import { PostAllInfo } from "../../types/post_interface";
+import { IPost } from "../../types/post_interface";
 
 export default class DetailController extends Controller {
     public async index() {
@@ -15,7 +15,7 @@ export default class DetailController extends Controller {
 
         const postId: number = ctx.query.postId;
         const userId: string = ctx.request.header["client-uid"]
-        let detailPost: PostAllInfo[] | null = null;
+        let detailPost: IPost[] | null = null;
         const post = await this.app.model.Post.fetchPostByPostId(postId);
 
         if (post) {
