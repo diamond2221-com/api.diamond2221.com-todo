@@ -22,7 +22,7 @@ export default class UploadImgsController extends Controller {
             const suffix: string = get_suffix(file.filename);
             const filename: string = random_string(16);
             let res = await client.put(`post_img/${filename}${suffix}`, file.filepath);
-            result.push(res.url);
+            result.push(res.url.replace(/http\:\/\//, 'https://'));
         }
 
         ctx.send(result, 200, "")
