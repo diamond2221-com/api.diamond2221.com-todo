@@ -151,7 +151,7 @@ export default class UserService extends Service {
 
         for (const user of users) {
             const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.userId) as User;
-            const fan: IFans = { img, name, signature, userId, userName, website, badge, followed: true }
+            const fan: IFans = { img, name, signature, userId, userName, website, badge, focused: true }
             result = [...result, fan];
         }
         return result;
@@ -175,8 +175,8 @@ export default class UserService extends Service {
         let result: IFans[] = [];
         for (const user of users) {
             const { img, name, signature, userId, userName, website, badge } = await service.user.getUserInfoByUserId(user.focusUserId) as User;
-            const followed: boolean = await service.user.floowedByUserId(userId, focusUserId);
-            const fan: IFans = { img, name, signature, userId, userName, website, badge, followed }
+            const focused: boolean = await service.user.floowedByUserId(userId, focusUserId);
+            const fan: IFans = { img, name, signature, userId, userName, website, badge, focused }
             result = [...result, fan];
         }
         return result;
@@ -319,9 +319,9 @@ export default class UserService extends Service {
                             LIMIT ${(page - 1) * size},
                             ${size}`
         const res: { user_id: string, counts: number }[] = await this.app.mysql.query(sql);
+
         const userList: IOtherUser[] = [];
         for (let index = 0; index < res.length; index++) {
-            res[index];
             const user: IOtherUser | null = await this.service.user.getUserDetailInfo(res[index].user_id, 'user_id', user_id)
             if (user) {
                 userList.push(user)

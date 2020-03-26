@@ -1,5 +1,5 @@
 export interface IFans extends IUser {
-    followed?: boolean;
+    focused?: boolean;
 }
 
 export interface IUser {
