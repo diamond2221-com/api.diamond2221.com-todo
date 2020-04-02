@@ -40,7 +40,7 @@ export default class UpdateController extends Controller {
             }
         }
 
-        addProp(newUserInfo, "user_name", userName);
+        addProp(newUserInfo, "userName", userName);
         addProp(newUserInfo, "img", img);
         addProp(newUserInfo, "name", name);
         addProp(newUserInfo, "signature", signature);
