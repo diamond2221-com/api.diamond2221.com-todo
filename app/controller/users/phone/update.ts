@@ -21,7 +21,6 @@ export default class VerifyController extends Controller {
 
         const key: string = `${phone_number}-updatePhoneSms`
         const code = await app.redis.get(key);
-        await app.redis.del(key)
         if (!code) {
             return ctx.send("验证码已失效", 400);
         }
@@ -29,9 +28,10 @@ export default class VerifyController extends Controller {
         if (code !== verifyCode) {
             return ctx.send("验证码不正确", 400)
         }
+        await app.redis.del(key)
 
         try {
-            await service.user.changeUserInfoByUserId(user_id, { phone_number: phone_number })
+            await service.user.changeUserInfoByUserId(user_id, { phoneNumber: phone_number })
             ctx.send("OK", 200)
         } catch (error) {
             ctx.send("服务异常", 99)
