@@ -55,7 +55,7 @@ export default class RegisterController extends Controller {
         const res: boolean = await service.accounts.Register(RegisterParams.userName, RegisterParams.phoneNumber, RegisterParams.passWord);
 
         if (res) {
-            await app.redis.del(`${RegisterParams.phoneNumber}`);
+            await app.redis.del(`${RegisterParams.phoneNumber}-signUp`);
             return ctx.send("注册成功", 200)
         }
 

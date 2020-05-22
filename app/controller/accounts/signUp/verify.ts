@@ -25,37 +25,46 @@ export default class VerifyController extends Controller {
             userName: "",
             phoneNumber: "",
             passWord: "",
-            rePassWord: ""
+            rePassWord: "",
+            status: 0
         };
+        const change = () => result.status = 1
 
         if (userName.trim()) {
             const hasUser: boolean = await service.accounts.verifyRepeatUserName(userName);
             if (hasUser) {
                 result.userName = "当前用户名已被使用";
+                change()
             }
         } else {
             result.userName = "请输入用户名";
+            change()
         }
 
         if (phoneNumber) {
             const hasPhone: boolean = await service.accounts.verifyRepeatPhoneNumber(phoneNumber);
             if (hasPhone) {
                 result.phoneNumber = "当前手机号已被使用";
+                change()
             }
         } else {
             result.phoneNumber = "请输入手机号";
+            change()
         }
 
         if (!passWord) {
             result.passWord = "请输入密码";
+            change()
         }
 
         if (!rePassWord) {
             result.rePassword = "请输入确认密码";
+            change()
         }
 
         if (passWord !== rePassWord) {
             result.rePassword = "两次密码不相同";
+            change()
         }
 
         ctx.send(result, 200)
