@@ -3,6 +3,7 @@ export interface IBasePost {
     userId: string;
     content: string;
     addTime: string;
+    status: IPostStatus;
 }
 export interface IUserPost extends IBasePost {
     imgs?: string[];
@@ -45,3 +46,9 @@ export interface IPostCommentRes {
     };
     count: number;
 }
+
+/**
+ * @IPostStatus
+ * @description 帖子类型
+ */
+export type IPostStatus = 1 | 2 | 3;

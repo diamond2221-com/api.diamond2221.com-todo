@@ -33,6 +33,7 @@ export default class AddController extends Controller {
             const focused: boolean = false;
             const result: IPost = {
                 ...newPost,
+                status: 1,
                 userName: userInfo.userName,
                 img: userInfo.img,
                 addTime: timestampToTime(newPost.addTime),

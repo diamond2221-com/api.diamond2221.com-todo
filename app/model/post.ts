@@ -4,7 +4,9 @@
 import { Column, DataType, Model, PrimaryKey, AutoIncrement, Table } from 'sequelize-typescript';
 import { Op } from 'sequelize';
 
-const { STRING, INTEGER } = DataType;
+const { STRING, INTEGER, ENUM } = DataType;
+import { IPostStatus } from "../types/post_interface"
+
 @Table({
     modelName: 'tbl_post'
 })
@@ -34,6 +36,16 @@ export class Post extends Model<Post> {
     content: string;
 
     @Column({
+        type: ENUM('1', '2', '3'),
+        comment: `该帖子的状态：
+                    1： 所有人可见
+                    2：仅自己可见
+                    3：所有人不可见（被删除）`,
+        field: 'status'
+    })
+    status: IPostStatus;
+
+    @Column({
         type: STRING(13),
         comment: '发帖的时间戳',
         field: 'add_time'
@@ -48,18 +60,35 @@ export class Post extends Model<Post> {
         })
     }
 
-    static async fetchPostsOpInPostIds(postIds: number[]) {
+    static async fetchPostsOpInPostIds(postIds: number[], status: IPostStatus = 1) {
         return await this.findAll({
             where: {
                 postId: {
                     [Op.in]: postIds
-                }
+                },
+                status,
             }
         })
     }
 
-    static async fetchAllPosts(page: number, size: number) {
+    static async fetchAllPosts(ownUserId: string, page: number, size: number, /* status: IPostStatus = 1 */) {
         return await this.findAll({
+            where: {
+                [Op.or]: [
+                    {
+                        userId: ownUserId,
+                        status: {
+                            [Op.in]: [1, 2]
+                        }
+                    },
+                    {
+                        userId: {
+                            [Op.notLike]: ownUserId
+                        },
+                        status: 1
+                    }
+                ]
+            },
             order: [["add_time", "desc"]],
             limit: size,
             offset: (page - 1) * size
@@ -70,18 +99,22 @@ export class Post extends Model<Post> {
         return await this.count({ where: { userId } })
     }
 
-    static async createPost(content: string, userId: string) {
+    static async createPost(content: string, userId: string, status: IPostStatus = 1) {
         return await this.create({
             content,
             userId,
+            status,
             addTime: Date.now()
         })
     }
 
-    static async fetchPostsOpLikeUserId(userId: string, size: number, page: number) {
+    static async fetchPostsOpLikeUserId(userId: string, size: number, page: number, status: IPostStatus[] = [1]) {
         return await this.findAll({
             where: {
-                userId
+                userId,
+                status: {
+                    [Op.in]: status
+                },
             },
             order: [["add_time", "desc"]],
             limit: size,
@@ -89,12 +122,21 @@ export class Post extends Model<Post> {
         })
     }
 
-    static async fetchPostsOpInUserId(userIds: string[], size: number, page: number) {
+    static async fetchPostsOpInUserId(ownUserId: string, userIds: string[], size: number, page: number) {
         return await this.findAll({
             where: {
-                userId: {
-                    [Op.in]: userIds
-                }
+                [Op.or]: [
+                    {
+                        userId: {
+                            [Op.in]: userIds
+                        },
+                        status: 1
+                    },
+                    {
+                        userId: ownUserId,
+                        status: [1, 2]
+                    }
+                ],
             },
             order: [["add_time", "desc"]],
             limit: size,
@@ -104,6 +146,17 @@ export class Post extends Model<Post> {
 
     static async checkIsSelfPost(postId: number, userId: string) {
         return await this.findOne({ where: { postId, userId } })
+    }
+
+    static async updatePost(postId: number, status: IPostStatus) {
+        console.log(status, postId)
+        return await this.update({
+            status
+        }, {
+            where: {
+                postId
+            }
+        })
     }
 };
 

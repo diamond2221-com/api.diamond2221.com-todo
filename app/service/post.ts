@@ -1,6 +1,6 @@
 import { Service } from "egg";
 import { timestampToTime } from "../utils/common";
-import { IPost, IUserPost, /* IBasePost */ } from "../types/post_interface";
+import { IPost, IUserPost, IPostStatus } from "../types/post_interface";
 // import { IUserInfo } from "../types/user_interface"
 import { User } from "../model/user";
 import { Post } from "../model/post";
@@ -34,7 +34,13 @@ export default class PostService extends Service {
         //     offset: (page - 1) * size
         // })
         const postService = this.service.post;
-        const posts = await this.app.model.Post.fetchPostsOpLikeUserId(userId, size, page);
+        let status: IPostStatus[] = [1];
+        if (this.ctx.getUid() === userId) {
+            status = [1, 2];
+        } else {
+            status = [1];
+        }
+        const posts = await this.app.model.Post.fetchPostsOpLikeUserId(userId, size, page, status);
         return await postService.getPostsInfo(posts);
         // const commentService = this.service.comment;
         // const offset: number = (page - 1) * size;
@@ -143,7 +149,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPosts(size: number, page: number) {
-        return await this.app.model.Post.fetchAllPosts(page, size);
+        return await this.app.model.Post.fetchAllPosts(this.ctx.getUid(), page, size);
     }
 
 
@@ -293,11 +299,33 @@ export default class PostService extends Service {
         return await this.app.model.LikePost.delUserLikePost(postId, userId);
     }
 
-    public async getPostsByUserId(user_id: string, userIds: string[], page: number, size: number): Promise<IPost[]> {
+    public async getPostsByUserId(userIds: string[], page: number, size: number): Promise<IPost[]> {
         const postModel = this.app.model.Post;
         const postService = this.service.post;
-        const posts = await postModel.fetchPostsOpInUserId(userIds, size, page);
+        const posts = await postModel.fetchPostsOpInUserId(this.ctx.getUid(), userIds, size, page);
 
-        return await postService.getPostsDetail(posts, user_id);
+        return await postService.getPostsDetail(posts, this.ctx.getUid());
+    }
+
+    /**
+     * @description 判断是否为某人的帖子
+     * @author ZhangYu
+     * @date 2019-09-22
+     * @param {number} postId
+     * @param {string} userId
+     * @returns {Promise<boolean>}
+     * @memberof PostService
+     */
+    public async isSelfPost(postId: number, userId: string): Promise<boolean> {
+        return Boolean(await this.app.model.Post.checkIsSelfPost(postId, userId));
+    }
+
+    public async updatePostStatus(postId: number, status: IPostStatus) {
+        const isSelfPost = await this.service.post.isSelfPost(postId, this.ctx.getUid());
+        if (isSelfPost) {
+            const res = await this.app.model.Post.updatePost(postId, status);
+            return res[0];
+        }
+        return 2
     }
 }

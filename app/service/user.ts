@@ -72,19 +72,6 @@ export default class UserService extends Service {
     }
 
     /**
-     * @description 判断是否收藏的是自己的帖子
-     * @author ZhangYu
-     * @date 2019-09-22
-     * @param {number} postId
-     * @param {string} userId
-     * @returns {Promise<boolean>}
-     * @memberof UserService
-     */
-    public async isSelfPost(postId: number, userId: string): Promise<boolean> {
-        return Boolean(await this.app.model.Post.checkIsSelfPost(postId, userId));
-    }
-
-    /**
      * 通过用户Id 获取 粉丝总数
      * @param userId
      */

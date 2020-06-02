@@ -22,10 +22,9 @@ export default class IndexController extends Controller {
 
         const page: number = Number(ctx.query.page);
         const size: number = Number(ctx.query.size);
-        const user_id = ctx.request.header["client-uid"];
-        const users = await service.user.getFocusListByUserId(user_id, 1, 1000000);
-        const userIds: string[] = [...(new Set([...users.map(user => user.userId), user_id]))];
-        let dealPosts: IPost[] = await service.post.getPostsByUserId(user_id, userIds, page, size);
+        const users = await service.user.getFocusListByUserId(ctx.getUid(), 1, 1000000);
+        const userIds: string[] = [...(new Set(users.map(user => user.userId)))];
+        let dealPosts: IPost[] = await service.post.getPostsByUserId(userIds, page, size);
 
         ctx.send(dealPosts, 200);
     }

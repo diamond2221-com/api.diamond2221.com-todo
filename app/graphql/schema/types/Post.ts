@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import { PostViewInfo } from "./PostViewInfo";
+import { IPostStatus } from '../../../types/post_interface';
 
 
 @ObjectType()
@@ -24,6 +25,9 @@ export class Post {
 
     @Field()
     content: string;
+
+    @Field()
+    status: IPostStatus;
 
     @Field()
     addTime: string;

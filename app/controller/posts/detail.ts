@@ -14,13 +14,17 @@ export default class DetailController extends Controller {
         }
 
         const postId: number = ctx.query.postId;
-        const userId: string = ctx.request.header["client-uid"]
+        const userId: string = ctx.getUid();
         let detailPost: IPost[] | null = null;
         const post = await this.app.model.Post.fetchPostByPostId(postId);
 
         if (post) {
-            detailPost = await service.post.getPostsDetail([post], userId);
-            return ctx.send(detailPost[0]);
+            if (post.status === 1 || post.status === 2 && post.userId == userId) {
+                detailPost = await service.post.getPostsDetail([post], userId);
+                return ctx.send(detailPost[0]);
+            } else {
+                return ctx.send("找不到帖子了", 400)
+            }
         } else {
             return ctx.send("找不到帖子了", 400)
         }
