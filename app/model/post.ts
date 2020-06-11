@@ -71,20 +71,20 @@ export class Post extends Model<Post> {
         })
     }
 
-    static async fetchAllPosts(ownUserId: string, page: number, size: number, /* status: IPostStatus = 1 */) {
+    static async fetchAllPosts(page: number, size: number, /* status: IPostStatus = 1 */) {
         return await this.findAll({
             where: {
                 [Op.or]: [
+                    // {
+                    //     userId: ownUserId,
+                    //     status: {
+                    //         [Op.in]: [1, 2]
+                    //     }
+                    // },
                     {
-                        userId: ownUserId,
-                        status: {
-                            [Op.in]: [1, 2]
-                        }
-                    },
-                    {
-                        userId: {
-                            [Op.notLike]: ownUserId
-                        },
+                        // userId: {
+                        //     [Op.notLike]: ownUserId
+                        // },
                         status: 1
                     }
                 ]

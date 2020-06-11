@@ -149,7 +149,7 @@ export default class PostService extends Service {
      * @memberof PostService
      */
     public async getPosts(size: number, page: number) {
-        return await this.app.model.Post.fetchAllPosts(this.ctx.getUid(), page, size);
+        return await this.app.model.Post.fetchAllPosts(page, size);
     }
 
 
