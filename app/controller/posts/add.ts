@@ -15,7 +15,8 @@ export default class AddController extends Controller {
         // 定义创建接口的请求参数规则
         const rules = {
             content: "string",
-            imgs: "array"
+            imgs: "array",
+            status: [1, 2]
         };
         try {
             ctx.validate(rules, ctx.request.body);
@@ -24,16 +25,16 @@ export default class AddController extends Controller {
         }
 
         const { post } = service;
-        const { content, imgs } = ctx.request.body;
+        const { content, imgs, status = 1 } = ctx.request.body;
         const userId = ctx.request.header["client-uid"];
 
-        let newPost = await post.addPost(content, imgs, userId);
+        let newPost = await post.addPost(content, imgs, status, userId);
         try {
             const userInfo: User = await service.user.getUserInfoByUserId(newPost.userId) as User;
             const focused: boolean = false;
             const result: IPost = {
                 ...newPost,
-                status: 1,
+                status,
                 userName: userInfo.userName,
                 img: userInfo.img,
                 addTime: timestampToTime(newPost.addTime),

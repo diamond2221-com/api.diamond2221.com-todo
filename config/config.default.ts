@@ -6,6 +6,12 @@ export default (appInfo: EggAppInfo) => {
     // override config from framework / plugin
     // use for cookie sign key, should change to your own and keep security
 
+    config.cluster = {
+        listen: {
+            port: 7001,
+        }
+    };
+
     // 关闭安全威胁csrf的防范
     config.security = {
         csrf: {
@@ -61,7 +67,7 @@ export default (appInfo: EggAppInfo) => {
 
     // add your special config in here
     const bizConfig = {
-        sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
+        // sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
     };
 
     config.PrefixV1Url = "/api/v1";

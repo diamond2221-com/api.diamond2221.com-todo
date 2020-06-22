@@ -99,7 +99,7 @@ export class Post extends Model<Post> {
         return await this.count({ where: { userId } })
     }
 
-    static async createPost(content: string, userId: string, status: IPostStatus = 1) {
+    static async createPost(content: string, status: IPostStatus = 1, userId: string) {
         return await this.create({
             content,
             userId,

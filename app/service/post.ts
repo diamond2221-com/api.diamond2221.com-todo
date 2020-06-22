@@ -41,6 +41,7 @@ export default class PostService extends Service {
             status = [1];
         }
         const posts = await this.app.model.Post.fetchPostsOpLikeUserId(userId, size, page, status);
+
         return await postService.getPostsInfo(posts);
         // const commentService = this.service.comment;
         // const offset: number = (page - 1) * size;
@@ -121,8 +122,8 @@ export default class PostService extends Service {
      * @param imgs
      * @param userId
      */
-    public async addPost(content: string, imgs: string[], userId: string) {
-        const res = await this.app.model.Post.createPost(content, userId);
+    public async addPost(content: string, imgs: string[], status: IPostStatus, userId: string) {
+        const res = await this.app.model.Post.createPost(content, status, userId);
         const postId: number = res.postId;
         if (imgs.length) {
             for (const img of imgs) {
