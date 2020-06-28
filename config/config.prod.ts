@@ -50,6 +50,12 @@ export default () => {
         ]
     };
 
+    config.cors = {
+        origin: 'https://m.diamond2221.com,https://www.diamond2221.com,https://api.diamond2221.com,https://blog.diamond2221.com', // 可以填入 '*'，如果你不使用cookie的话。
+        credentials: true, // 允许cookie跨域
+        allowMethods: 'GET,HEAD,PUT,POST,DELTE,PATCH,OPTIONS',
+    };
+
     // redis本地配置
     config.redis = {
         client: {
