@@ -19,15 +19,7 @@ export default (appInfo: EggAppInfo) => {
         },
         xframe: {
             enable: false
-        },
-        domainWhiteList: [
-            "http://localhost:7001",
-            "http://127.0.0.1:7001",
-            "http://api.diamond2221.com",
-            "https://api.diamond2221.com",
-            "http://www.diamond2221.com",
-            "https://www.diamond2221.com"
-        ]
+        }
     };
 
     config.cors = {

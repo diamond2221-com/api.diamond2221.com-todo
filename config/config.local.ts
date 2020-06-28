@@ -62,6 +62,5 @@ export default () => {
         "/api/v1/accounts/signUp/verify",
         "/graphql/query"
     ];
-
     return config;
 };

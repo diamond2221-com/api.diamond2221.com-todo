@@ -41,6 +41,15 @@ export default () => {
         }
     };
 
+    config.security = {
+        domainWhiteList: [
+            "http://api.diamond2221.com",
+            "https://api.diamond2221.com",
+            "https://www.diamond2221.com",
+            "https://m.diamond2221.com"
+        ]
+    };
+
     // redis本地配置
     config.redis = {
         client: {
