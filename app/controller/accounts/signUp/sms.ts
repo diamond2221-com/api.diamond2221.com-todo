@@ -1,18 +1,12 @@
 import { Controller } from "egg";
 import { MathRand } from "../../../utils/common";
+import { CheckParams } from '../../../utils/decorators';
 
 export default class SmsController extends Controller {
+    @CheckParams({ phoneNumber: "number"}, "request.body")
     public async create() {
         const { ctx, app } = this;
         const { body } = ctx.request;
-        const rules = {
-            phoneNumber: "number"
-        }
-        try {
-            ctx.validate(rules, body)
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
         const phoneNumber: string = `${body.phoneNumber}`;
 
         try {

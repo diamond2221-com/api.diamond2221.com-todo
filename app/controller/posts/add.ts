@@ -4,25 +4,16 @@ import { timestampToTime } from "../../utils/common";
 
 import { IPost } from "../../types/post_interface";
 import { User } from "../../model/user";
+import { CheckParams } from '../../utils/decorators';
+
 
 export default class AddController extends Controller {
     /**
      * 用户添加帖子
      */
+    @CheckParams({ content: "string", imgs: "array", status: [1, 2] }, "request.body")
     public async create() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            content: "string",
-            imgs: "array",
-            status: [1, 2]
-        };
-        try {
-            ctx.validate(rules, ctx.request.body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
 
         const { post } = service;
         const { content, imgs, status = 1 } = ctx.request.body;

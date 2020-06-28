@@ -1,18 +1,11 @@
 import { Controller } from "egg"
 import { IPost } from "../../types/post_interface";
+import { CheckParams } from '../../utils/decorators';
 
 export default class DetailController extends Controller {
+    @CheckParams({ postId: "string" }, "query")
     public async index() {
         const { ctx, service } = this;
-        const rules = {
-            postId: "string"
-        }
-        try {
-            ctx.validate(rules, ctx.query);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const postId: number = ctx.query.postId;
         const userId: string = ctx.getUid();
         let detailPost: IPost[] | null = null;

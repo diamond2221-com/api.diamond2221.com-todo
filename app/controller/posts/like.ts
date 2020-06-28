@@ -1,4 +1,5 @@
 import { Controller } from 'egg';
+import { CheckParams } from '../../utils/decorators';
 
 export default class LikeController extends Controller {
     /**
@@ -8,20 +9,9 @@ export default class LikeController extends Controller {
      * @returns
      * @memberof LikePostController
      */
+    @CheckParams({ postId: 'number' }, "request.body")
     public async create() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            postId: 'number'
-        };
-
-        try {
-            ctx.validate(rules, ctx.request.body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const postId: number = ctx.request.body.postId;
         const userId: string = ctx.request.header["client-uid"];
         let isLiked: boolean = await service.post.getUserLikedPost(userId, postId)
@@ -40,20 +30,9 @@ export default class LikeController extends Controller {
      * @date 2020-02-08
      * @memberof LikePostController
      */
+    @CheckParams({ id: 'number' }, "params")
     public async destroy() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            id: 'number'
-        };
-
-        try {
-            ctx.validate(rules, ctx.params);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const postId: string = ctx.params.id;
         const userId = ctx.request.header["client-uid"];
         await service.post.cancelLikePostByPostId(Number(postId), userId);

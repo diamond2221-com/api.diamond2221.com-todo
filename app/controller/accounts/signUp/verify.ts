@@ -1,21 +1,16 @@
 import { Controller } from "egg";
+import { CheckParams } from '../../../utils/decorators';
 
 export default class VerifyController extends Controller {
+    @CheckParams({
+        userName: "string?",
+        phoneNumber: "string?",
+        passWord: "string?",
+        rePassWord: "string?"
+    }, "request.body")
     public async create() {
         const { ctx, service } = this;
         const body = ctx.request.body;
-        // 定义创建接口的请求参数规则
-        const rules = {
-            userName: "string?",
-            phoneNumber: "string?",
-            passWord: "string?",
-            rePassWord: "string?"
-        };
-        try {
-            ctx.validate(rules, body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
 
         const userName: string = body.userName;
         const passWord: string = body.passWord;

@@ -1,6 +1,7 @@
 import { Controller } from 'egg';
 
 import { IUserPost } from "../../types/post_interface";
+import { CheckParams } from '../../utils/decorators';
 
 export default class AllController extends Controller {
     /**
@@ -9,20 +10,9 @@ export default class AllController extends Controller {
      * @date 2019-09-03
      * @memberof PostController
      */
+    @CheckParams({ page: "number", size: "number" }, "query")
     public async index() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            page: "number",
-            size: "number"
-        };
-        try {
-            ctx.validate(rules, ctx.query);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const { page, size } = ctx.query;
 
         let posts = await service.post.getPosts(size, page);

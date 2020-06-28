@@ -1,4 +1,5 @@
 import { Controller } from "egg";
+import { CheckParams } from '../../utils/decorators';
 
 export default class UpdateController extends Controller {
     /**
@@ -7,23 +8,9 @@ export default class UpdateController extends Controller {
      * @date 2019-08-30
      * @memberof UserController
      */
+    @CheckParams({ userName: "string?", img: "string?", name: "string?", signature: "string?", website: "string?" }, "request.body")
     public async create() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            userName: "string?",
-            img: "string?",
-            name: "string?",
-            signature: "string?",
-            website: "string?"
-        };
-        try {
-            ctx.validate(rules, ctx.request.body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const { userName = "", img, name, signature, website } = ctx.request.body;
         const userId = ctx.request.header["client-uid"];
         if (userName.trim()) {

@@ -1,6 +1,7 @@
 import { Controller } from "egg";
 import { LoginParams } from '../../types/account_interface';
 import { User } from "../../model/user"
+import { CheckParams } from '../../utils/decorators';
 
 
 export default class LoginController extends Controller {
@@ -10,20 +11,9 @@ export default class LoginController extends Controller {
      * @date 2019-08-30
      * @memberof AccountController
      */
+    @CheckParams({ userName: "string", passWord: 'string' }, "request.body")
     public async create() {
         const { ctx, service, app } = this;
-        // 定义创建接口的请求参数规则
-        const rules = {
-            userName: "string",
-            passWord: 'string'
-        };
-
-        try {
-            ctx.validate(rules, ctx.request.body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const LoginParams: LoginParams = ctx.request.body;
 
         let user: User | null = await service.accounts.getUserByUserNamePassWord(LoginParams);

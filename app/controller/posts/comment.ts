@@ -2,25 +2,13 @@ import { Controller } from "egg";
 import { User } from "../../model/user";
 import { IPostComment } from "../../types/post_interface";
 import { timestampToTime } from "../../utils/common";
+import { CheckParams } from '../../utils/decorators';
 
 export default class CommentsController extends Controller {
-
-
+    @CheckParams({ postId: "number", rId: "number", page: "number", size: "number" }, "query")
     public async index() {
         const { ctx, service } = this;
-        const rules = {
-            postId: "number",
-            rId: "number",
-            page: "number",
-            size: "number"
-        }
-        const { query } = ctx.request;
-
-        try {
-            ctx.validate(rules, query);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
+        const { query } = ctx;
 
         const postId: number = Number(query.postId);
         const rId: number = Number(query.rId);
@@ -34,21 +22,10 @@ export default class CommentsController extends Controller {
     /**
      * 添加帖子评论
     */
+    @CheckParams({ content: "string", postId: "number", rId: "number", pId: "number", }, "request.body")
     public async create() {
         const { ctx, service } = this;
         const { body } = ctx.request;
-        // 定义创建接口的请求参数规则
-        const rules = {
-            content: "string",
-            postId: "number",
-            rId: "number",
-            pId: "number",
-        };
-        try {
-            ctx.validate(rules, body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
 
         const { content, postId } = body;
         const rId: number = Number(body.rId);

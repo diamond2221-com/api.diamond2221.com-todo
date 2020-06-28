@@ -1,4 +1,5 @@
 import { Controller } from "egg";
+import { CheckParams } from '../../utils/decorators';
 
 export default class ChangePasswordController extends Controller {
     /**
@@ -8,12 +9,10 @@ export default class ChangePasswordController extends Controller {
      * @returns
      * @memberof PasswordController
      */
+    @CheckParams({ cppOldPassword: "string", cppNewPassword: 'string', cppConfirmPassword: 'string' }, "request.body")
     public async create() {
         const { ctx, service } = this;
         const { accounts } = service;
-        // 定义创建接口的请求参数规则
-        const rules = { cppOldPassword: "string", cppNewPassword: 'string', cppConfirmPassword: 'string' };
-        try { ctx.validate(rules, ctx.request.body); } catch (error) { return ctx.send('参数错误', 400); }
 
         const { cppOldPassword, cppNewPassword, cppConfirmPassword } = ctx.request.body;
         const userId: string = ctx.request.header["client-uid"];

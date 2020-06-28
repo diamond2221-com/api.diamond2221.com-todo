@@ -1,4 +1,5 @@
 import { Controller } from "egg";
+import { CheckParams } from '../../utils/decorators';
 
 export default class FocusController extends Controller {
     /**
@@ -7,20 +8,9 @@ export default class FocusController extends Controller {
      * @date 2019-09-03
      * @memberof UserController
      */
+    @CheckParams({ page: "number", size: "number" }, "query")
     public async index() {
         const { ctx, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            page: "number",
-            size: "number"
-        };
-        try {
-            ctx.validate(rules, ctx.query);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const { page, size } = ctx.query;
         const userId = ctx.request.header["client-uid"];
         let focusList = await service.user.getFocusListByUserId(userId, page, size);
@@ -33,6 +23,7 @@ export default class FocusController extends Controller {
      * @date 2019-09-03
      * @memberof FocusController
      */
+    @CheckParams({ userId: "string" }, "request.body")
     public async create() {
         const { ctx, service } = this;
         const focusUserId = ctx.request.body.userId;
@@ -53,9 +44,9 @@ export default class FocusController extends Controller {
      * @date 2019-09-03
      * @memberof FocusController
      */
+    @CheckParams({ userId: "string" }, "request.query")
     public async destroy() {
         const { ctx, service } = this;
-
         const { userId } = ctx.request.query;
         const focusUserId = ctx.request.header["client-uid"];
         await service.user.cancelFocusUserByUserId(userId, focusUserId);

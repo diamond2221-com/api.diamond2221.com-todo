@@ -1,5 +1,6 @@
 import { Controller } from "egg";
 import { RegisterParams } from '../../types/account_interface';
+import { CheckParams } from '../../utils/decorators';
 
 export default class RegisterController extends Controller {
     /**
@@ -9,23 +10,9 @@ export default class RegisterController extends Controller {
      * @returns
      * @memberof AccountController
      */
+    @CheckParams({ userName: "string", phoneNumber: "number", passWord: "string", rePassWord: "string", verifyCode: "string" }, "request.body")
     public async create() {
         const { ctx, app, service } = this;
-
-        // 定义创建接口的请求参数规则
-        const rules = {
-            userName: "string",
-            phoneNumber: "number",
-            passWord: "string",
-            rePassWord: "string",
-            verifyCode: "string"
-        };
-        try {
-            ctx.validate(rules, ctx.request.body);
-        } catch (error) {
-            return ctx.send('参数错误', 400);
-        }
-
         const RegisterParams: RegisterParams = ctx.request.body;
 
         const hasUser: boolean = await service.accounts.verifyRepeatUserName(RegisterParams.userName);
