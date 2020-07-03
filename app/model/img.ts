@@ -50,6 +50,17 @@ export class Img extends Model<Img> {
         })
     }
 
+    static async fetchPostFirstImg(postId: number) {
+        return await this.findOne({
+            where: {
+                postId
+            },
+            order: [
+                ["add_time", "DESC"]
+            ]
+        })
+    }
+
     static async createImg(postId: number, img: string) {
         return await this.create({
             postId,

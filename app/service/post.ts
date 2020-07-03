@@ -117,6 +117,15 @@ export default class PostService extends Service {
     }
 
     /**
+     * 通过帖子Id 获取 单个帖子图片
+     * @param postId
+     */
+    public async getPostFirstImgByPostId(postId: number): Promise<string> {
+        const img = await this.app.model.Img.fetchPostFirstImg(postId)
+        return img ? img.src : ''
+    }
+
+    /**
      * 用户添加帖子
      * @param content
      * @param imgs
@@ -238,14 +247,16 @@ export default class PostService extends Service {
         const commentService = this.service.comment;
         const dealPosts: IUserPost[] = [];
         for (const post of posts) {
-            const imgs = await postService.getPostImgsByPostId(post.postId);
+            const imgs = await postService.getPostImgsByPostId(post.postId)
             const comment = await commentService.getPostComments(post.postId, 0, 1, 3);
             const likeNum: number = await postService.getPostLikeNums(post.postId);
+            const addTime: string = timestampToTime(post.addTime)
             dealPosts.push({
                 ...post,
                 imgs,
                 comment,
-                likeNum
+                likeNum,
+                addTime
             })
         }
         return dealPosts;
