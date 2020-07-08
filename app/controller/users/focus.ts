@@ -44,10 +44,10 @@ export default class FocusController extends Controller {
      * @date 2019-09-03
      * @memberof FocusController
      */
-    @CheckParams({ userId: "string" }, "request.query")
+    @CheckParams({ id: "string" }, "params")
     public async destroy() {
         const { ctx, service } = this;
-        const { userId } = ctx.request.query;
+        const { id: userId } = ctx.params;
         const focusUserId = ctx.request.header["client-uid"];
         await service.user.cancelFocusUserByUserId(userId, focusUserId);
 
