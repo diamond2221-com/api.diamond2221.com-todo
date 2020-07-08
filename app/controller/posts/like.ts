@@ -32,12 +32,16 @@ export default class LikeController extends Controller {
      */
     @CheckParams({ id: 'number' }, "params")
     public async destroy() {
-        const { ctx, service } = this;
-        const postId: string = ctx.params.id;
-        const userId = ctx.request.header["client-uid"];
-        await service.post.cancelLikePostByPostId(Number(postId), userId);
+        try {
+            const { ctx, service } = this;
+            const postId: string = ctx.params.id;
+            const userId = ctx.request.header["client-uid"];
+            await service.post.cancelLikePostByPostId(Number(postId), userId);
 
-        ctx.send({}, 200, "取消喜欢成功")
+            ctx.send({}, 200, "取消喜欢成功")
+        } catch (error) {
+            this.app.logger.error(error)
+        }
     }
 }
 
