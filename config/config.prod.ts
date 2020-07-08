@@ -53,7 +53,7 @@ export default () => {
     config.cors = {
         origin: '*', // 可以填入 '*'，如果你不使用cookie的话。
         credentials: true, // 允许cookie跨域
-        allowMethods: 'GET,HEAD,PUT,POST,DELTE,PATCH,OPTIONS',
+        allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
     };
 
     // redis本地配置
