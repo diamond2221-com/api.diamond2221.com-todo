@@ -45,6 +45,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/ali-oss": "^6.0.5",
     "@types/bluebird": "^3.5.29",
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.12",
