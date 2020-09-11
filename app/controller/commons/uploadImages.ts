@@ -22,16 +22,10 @@ export default class UploadImgsController extends Controller {
             const suffix: string = get_suffix(file.filename);
             const filename: string = random_string(16);
             let res = await client.put(`post_img/${filename}${suffix}`, file.filepath);
+            this.app.logger.info('上传图片到阿里OSS ---> ', res)
             result.push(res.url.replace(/http\:\/\//, 'https://'));
         }
 
         ctx.send(result, 200, "")
-    }
-
-    public async index() {
-        const { ctx } = this;
-        console.log(ctx.request)
-        console.log(ctx.query);
-        ctx.send("OK", 200)
     }
 }
