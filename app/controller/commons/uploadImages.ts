@@ -22,8 +22,10 @@ export default class UploadImgsController extends Controller {
             const suffix: string = get_suffix(file.filename);
             const filename: string = random_string(16);
             let res = await client.put(`post_img/${filename}${suffix}`, file.filepath);
+            const dealName = 'https://cdn.diamond2221.com/' + res.name
+            result.push(dealName);
             this.app.logger.info('上传图片到阿里OSS ---> ', res)
-            result.push(res.url.replace(/http\:\/\//, 'https://'));
+            this.app.logger.info('图片访问路径 ---> ', dealName)
         }
 
         ctx.send(result, 200, "")
