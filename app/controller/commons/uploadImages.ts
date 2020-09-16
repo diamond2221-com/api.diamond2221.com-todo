@@ -3,7 +3,6 @@ import { Controller } from 'egg';
 import * as OssAli from "ali-oss";
 import { get_suffix, random_string } from '../../utils/common';
 
-
 export default class UploadImgsController extends Controller {
     public async create() {
         const { ctx } = this;

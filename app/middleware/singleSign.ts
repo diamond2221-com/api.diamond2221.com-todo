@@ -13,11 +13,11 @@ export default (options: object, app: Application) => {
         if (app.config.authWhiteList.some(item => url.includes(item))) {
             return await next(options)
         }
-        app.logger.info(`
-            最新的Token: ${info} --- ${signToken}
-            请求的Token: ${info} --- ${token}
-            \n\n
-        `);
+        app.logger.info(
+            `接口： ${ctx.request.url}\n`,
+            `最新的Token: ${info} --- ${signToken}\n`,
+            `请求的Token: ${info} --- ${token}\n`
+        )
 
         if (token !== signToken) {
             return ctx.send("账号已在别处,请您重新登录", 17);
