@@ -2,7 +2,7 @@ import { EggAppConfig, PowerPartial } from "egg";
 
 export default () => {
     const config: PowerPartial<EggAppConfig> = {};
-
+    config.PrefixV1Url = "/DIAMOND";
     config.mysql = {
         // 单数据库信息配置
         client: {
@@ -54,13 +54,13 @@ export default () => {
 
     // 不需要验证token的 路由白名单
     config.authWhiteList = [
-        "/api/v1/commons/uploadImages",
-        "/api/v1/accounts/login",
-        "/api/v1/accounts/register",
-        "/api/v1/users/search",
-        "/api/v1/accounts/signUp/sms",
-        "/api/v1/accounts/signUp/verify",
-        "/graphql/query"
+        `${config.PrefixV1Url}/commons/uploadImages`,
+        `${config.PrefixV1Url}/accounts/login`,
+        `${config.PrefixV1Url}/accounts/register`,
+        `${config.PrefixV1Url}/users/search`,
+        `${config.PrefixV1Url}/accounts/signUp/sms`,
+        `${config.PrefixV1Url}/accounts/signUp/verify`,
+        `${config.PrefixV1Url}/graphql/query`
     ];
     return config;
 };

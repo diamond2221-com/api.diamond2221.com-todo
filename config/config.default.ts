@@ -29,7 +29,7 @@ export default (appInfo: EggAppInfo) => {
 
     // token 在请求头中的 名称
     config.auth_headers_name = "client-token";
-    config.jwtSecret = "ins_zhangyu";
+    config.jwtSecret = "diamond";
 
     config.keys = appInfo.name + "_1563628739386_852";
     "";
@@ -62,7 +62,7 @@ export default (appInfo: EggAppInfo) => {
         // sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
     };
 
-    config.PrefixV1Url = "/api/v1";
+    config.PrefixV1Url = "/DIAMOND";
     // the return config will combines to EggAppConfig
     return {
         ...config,
