@@ -2,9 +2,9 @@
  * @desc 用户表
  */
 import { Column, DataType, Model, PrimaryKey, Table, AutoIncrement } from 'sequelize-typescript';
-import * as Sequelize from "sequelize"
+// import * as Sequelize from "sequelize"
 
-const { STRING, INTEGER, CHAR } = DataType;
+const { STRING, INTEGER } = DataType;
 @Table({
     modelName: 'tbl_user'
 })
@@ -17,186 +17,32 @@ export class User extends Model<User> {
         comment: '主键id',
         field: 'id'
     })
-    public id: string;
+    public id: number;
 
     @Column({
-        type: STRING,
-        comment: '用户ID user_id 唯一',
-        field: 'user_id'
-    })
-    public userId: string;
-
-    @Column({
-        type: STRING(45),
-        comment: "用户昵称 唯一",
-        field: 'user_name'
-    })
-    public userName: string;
-
-    @Column({
-        type: CHAR(11),
-        comment: "用户手机号 唯一",
-        field: "phone_number",
-    })
-    public phoneNumber: string;
-
-
-    @Column({
-        type: STRING(54),
-        comment: '用户密码',
-        field: "pass_word",
-    })
-    public passWord: string;
-
-    @Column({
-        type: STRING,
-        comment: "用户头像 完整路径",
-        field: "img"
-    })
-    public img: string;
-
-    @Column({
-        type: STRING(30),
-        comment: '用户真实姓名',
-        field: "name"
+        type: STRING(255),
+        comment: "name",
+        field: 'name'
     })
     public name: string;
 
     @Column({
-        type: STRING,
-        comment: '用户个性签名',
-        field: "signature"
+        type: STRING(11),
+        field: 'phone'
     })
-    public signature: string;
-
-    @Column({
-        type: STRING,
-        comment: '用户个人网站地址',
-        field: "website"
-    })
-    public website: string;
-
-    @Column({
-        type: INTEGER('2'),
-        comment: '用户是否拥有徽章',
-        field: "badge"
-    })
-    public badge: number;
+    public phone: string;
 
     @Column({
         type: STRING(13),
-        comment: '用户注册时间',
-        field: "add_time"
+        field: 'add_time'
     })
-    public addTime: string;
+    public add_time: string;
 
     @Column({
         type: STRING(13),
-        comment: '用户最后一次登录时间',
-        field: "last_time"
+        field: 'up_time'
     })
-    public lastTime: string;
-
-    static async getUserInfoByUserId(userId: string) {
-        return await this.findOne({
-            where: {
-                userId
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        });
-    }
-
-    static async getUserInfoByPhoneNumber(phoneNumber: string) {
-        return await this.findOne({
-            where: {
-                phoneNumber
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        });
-    }
-
-    static async getUserInfoByUserName(userName: string) {
-        return await this.findOne({
-            where: {
-                userName
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        });
-    }
-
-    static async updateUserInfo(newUserInfo, userId: string) {
-        return await this.update(newUserInfo, { where: { userId } })
-    }
-
-    static async findAllUsersOrLikeUserName(userName: string) {
-        return await this.findAll({
-            where: {
-                userName: {
-                    [Sequelize.Op.like]: `%${userName}%`
-                }
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        })
-    }
-
-    static async findUserOrNotEqUserIdAndUserName(userId: string, userName: string) {
-        return await this.findOne({
-            where: {
-                userId: {
-                    [Sequelize.Op.ne]: userId
-                },
-                userName
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        })
-    }
-
-    static async findUserOrNotEqUserIdAndPhoneNumber(userId: string, phoneNumber: string) {
-        return await this.findOne({
-            where: {
-                userId: {
-                    [Sequelize.Op.ne]: userId
-                },
-                phoneNumber
-            },
-            attributes: {
-                exclude: ["id"]
-            }
-        })
-    }
-
-    static async createUser(userId: string, userName: string, phoneNumber: string, passWord: string) {
-        return this.create({
-            userId,
-            userName,
-            phoneNumber,
-            passWord,
-            addTime: Date.now(),
-            lastTime: Date.now()
-        })
-    }
-
-    static async updateLastLoginTime(userId) {
-        return this.update(
-            { "lastTime": Date.now() },
-            {
-                where: {
-                    userId
-                }
-            }
-        )
-    }
-
+    public up_time: string;
 };
 
 

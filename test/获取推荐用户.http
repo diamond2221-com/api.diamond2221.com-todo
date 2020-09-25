@@ -1,5 +1,0 @@
-GET  http://localhost:7001/api/v1/users/suggested?page=1&size=5
-Client-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1dWVhYzllOThmMjc0ZTQzZDVhODhkNDM2NTVhODY5MTllIiwidXNlck5hbWUiOiJ6aGFuZ3l1IiwiaWF0IjoxNTgzMTU4MTI3LCJleHAiOjE1ODM3NjI5Mjd9.wjiA_aTVMdh10yZKKLc4dmp7Jlha6ZIBG8040Tiza4Q
-Client-Uid: uueac9e98f274e43d5a88d43655a86919e
-Content-Type: application/json
-

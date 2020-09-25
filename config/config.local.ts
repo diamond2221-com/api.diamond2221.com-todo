@@ -2,7 +2,6 @@ import { EggAppConfig, PowerPartial } from "egg";
 
 export default () => {
     const config: PowerPartial<EggAppConfig> = {};
-    config.PrefixV1Url = "/DIAMOND";
     config.mysql = {
         // 单数据库信息配置
         client: {
@@ -15,7 +14,7 @@ export default () => {
             // 密码
             password: "981220zy",
             // 数据库名
-            database: "db_instagram"
+            database: "db_todo"
         },
         // 是否加载到 app 上，默认开启
         app: true,
@@ -27,7 +26,7 @@ export default () => {
         dialect: "mysql",
         host: "127.0.0.1",
         port: 3306,
-        database: "db_instagram",
+        database: "db_todo",
         username: "root",
         password: "981220zy",
         define: {
@@ -42,25 +41,11 @@ export default () => {
         }
     };
 
-    // redis本地配置
-    config.redis = {
-        client: {
-            port: 6379, // Redis port
-            host: "127.0.0.1", // Redis host
-            password: "981220Zy+++",
-            db: 0
-        }
-    };
-
     // 不需要验证token的 路由白名单
     config.authWhiteList = [
-        `${config.PrefixV1Url}/commons/uploadImages`,
-        `${config.PrefixV1Url}/accounts/login`,
-        `${config.PrefixV1Url}/accounts/register`,
-        `${config.PrefixV1Url}/users/search`,
-        `${config.PrefixV1Url}/accounts/signUp/sms`,
-        `${config.PrefixV1Url}/accounts/signUp/verify`,
-        `${config.PrefixV1Url}/graphql/query`
+        `${config.APPPATH}/commons/uploadImages`,
+        `${config.APPPATH}/graphql/query`
     ];
+
     return config;
 };

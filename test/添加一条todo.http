@@ -1,0 +1,9 @@
+POST    http://127.0.0.1:7002/TODO/todo
+Content-Type: application/json
+
+{
+    "name": "6点下班",
+    "desc": "6点准时下班！！！ 下班不积极，脑袋有问题！！！",
+    "expirTime": 1600851833574,
+    "addUser": 1
+}

@@ -8,7 +8,7 @@ export default (appInfo: EggAppInfo) => {
 
     config.cluster = {
         listen: {
-            port: 7001,
+            port: 7002,
         }
     };
 
@@ -29,7 +29,7 @@ export default (appInfo: EggAppInfo) => {
 
     // token 在请求头中的 名称
     config.auth_headers_name = "client-token";
-    config.jwtSecret = "diamond";
+    config.jwtSecret = "store";
 
     config.keys = appInfo.name + "_1563628739386_852";
     "";
@@ -62,8 +62,13 @@ export default (appInfo: EggAppInfo) => {
         // sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
     };
 
-    config.PrefixV1Url = "/DIAMOND";
+    config.APPPATH = "/TODO";
     // the return config will combines to EggAppConfig
+
+    config.static = {
+        prefix: '/'
+    }
+
     return {
         ...config,
         ...bizConfig

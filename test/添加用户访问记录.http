@@ -1,9 +1,0 @@
-POST http://localhost:7001/api/v1/record/visit
-Client-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1dWY4ZDAyZmY1NzJlMzQyNmQ4ZTA2YmY3ZjUzMmU3ZGIyIiwidXNlck5hbWUiOiJkaWFtb25kMjIyMSIsImlhdCI6MTU4Mjg4NTIyNCwiZXhwIjoxNTgzNDkwMDI0fQ.M0zoOI3norCXh2wzc1V2izzg-FhfkcJZ3jkEk-oKCLY
-Client-Uid: uuf8d02ff572e3426d8e06bf7f532e7db2
-Content-Type: application/json
-
-{
-    "visit_user_id": "uuf8d02ff572e3426d8e06bf7f532e7db2",
-    "type": 1
-}

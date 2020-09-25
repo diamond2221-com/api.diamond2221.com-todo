@@ -1,14 +1,6 @@
 import { Application } from 'egg';
-import CommonRouter from "./router/common";
-import PostRouter from "./router/post";
-import AccountRouter from "./router/account";
-import UserRouter from "./router/user";
-import RecordRouter from "./router/record";
+import UserRouter from "./router/todo";
 
 export default (app: Application) => {
-    CommonRouter(app);
-    PostRouter(app);
-    AccountRouter(app);
     UserRouter(app);
-    RecordRouter(app);
 };

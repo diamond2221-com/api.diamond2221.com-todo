@@ -2,24 +2,12 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
-import ExportComment from '../../../app/model/comment';
-import ExportFocus from '../../../app/model/focus';
-import ExportImg from '../../../app/model/img';
-import ExportLikePost from '../../../app/model/likePost';
-import ExportMarkPost from '../../../app/model/markPost';
-import ExportPost from '../../../app/model/post';
+import ExportTodo from '../../../app/model/todo';
 import ExportUser from '../../../app/model/user';
-import ExportVisitRecord from '../../../app/model/visitRecord';
 
 declare module 'egg' {
   interface IModel {
-    Comment: ReturnType<typeof ExportComment>;
-    Focus: ReturnType<typeof ExportFocus>;
-    Img: ReturnType<typeof ExportImg>;
-    LikePost: ReturnType<typeof ExportLikePost>;
-    MarkPost: ReturnType<typeof ExportMarkPost>;
-    Post: ReturnType<typeof ExportPost>;
+    Todo: ReturnType<typeof ExportTodo>;
     User: ReturnType<typeof ExportUser>;
-    VisitRecord: ReturnType<typeof ExportVisitRecord>;
   }
 }
