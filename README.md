@@ -1,4 +1,4 @@
-# hackernews-async-ts
+# api.diamond2221.com/TODO
 
 [Hacker News](https://news.ycombinator.com/) showcase using typescript && egg
 
