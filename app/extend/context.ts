@@ -1,5 +1,4 @@
 import { Context } from '../../typings/app';
-
 module.exports = {
     send(this: Context, data: any = {}, code: number = 200, message: string = "成功") {
         let body: any = {};
@@ -40,5 +39,6 @@ module.exports = {
 
             }
         }
-    },
+    }
+
 }
