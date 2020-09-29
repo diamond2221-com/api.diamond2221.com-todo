@@ -68,14 +68,14 @@ export class Todo extends Model<Todo> {
             'add_time',
             'up_time'
         }
-        return this.findAndCountAll<Todo>({
+        return (this.findAndCountAll<Todo>({
             where: {
                 status: 1
             },
             limit: size,
             offset: (page - 1) * size,
             order: [EOrderType[orderType - 1], 'desc']
-        })
+        }))
     }
 
     public static async findCreate(name: string, desc: string, expirTime: number, addUser: number) {

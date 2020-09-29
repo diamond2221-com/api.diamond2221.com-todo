@@ -1,5 +1,4 @@
 import { Controller } from "egg";
-
 import { CheckParams } from '../utils/decorators';
 
 export default class TodoController extends Controller {
