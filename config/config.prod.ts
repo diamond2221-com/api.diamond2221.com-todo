@@ -37,7 +37,7 @@ export default () => {
             timestamps: false
         },
         query: {
-            raw: true
+            // raw: true
         }
     };
 

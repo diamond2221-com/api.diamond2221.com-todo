@@ -40,8 +40,10 @@ export default (appInfo: EggAppInfo) => {
 
     config.multipart = { mode: "file" };
 
+
+    config.APPPATH = "/TODO";
     config.graphql = {
-        router: "/graphql/query"
+        router: `${config.APPPATH}/graphql/query`
     };
 
     config.bodyParser = {
@@ -62,13 +64,11 @@ export default (appInfo: EggAppInfo) => {
         // sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
     };
 
-    config.APPPATH = "/TODO";
-    // the return config will combines to EggAppConfig
-
     config.static = {
         prefix: '/'
     }
 
+    // the return config will combines to EggAppConfig
     return {
         ...config,
         ...bizConfig

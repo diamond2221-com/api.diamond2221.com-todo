@@ -1,9 +1,7 @@
 /**
  * @desc 用户表
  */
-import { Column, DataType, Model, PrimaryKey, Table, AutoIncrement } from 'sequelize-typescript';
-// import * as Sequelize from "sequelize"
-
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 const { STRING, INTEGER } = DataType;
 @Table({
     modelName: 'tbl_todo'
@@ -62,20 +60,25 @@ export class Todo extends Model<Todo> {
     })
     public status: 1 | 2 | 3;
 
-    public static async fetchAllAndCount(page: number, size: number, orderType: 1 | 2 | 3) {
-        enum EOrderType {
-            'expir_time',
-            'add_time',
-            'up_time'
-        }
-        return (this.findAndCountAll<Todo>({
-            where: {
-                status: 1
-            },
-            limit: size,
-            offset: (page - 1) * size,
-            order: [EOrderType[orderType - 1], 'desc']
-        }))
+    public static async fetchAllAndCount(page: number, size: number, orderType: 1 | 2 | 3): Promise<any> {
+        let p = new Promise(resolve => {
+            setTimeout(() => {
+                enum EOrderType {
+                    'expir_time',
+                    'add_time',
+                    'up_time'
+                }
+                resolve((this.findAndCountAll<Todo>({
+                    where: {
+                        status: 1
+                    },
+                    limit: size,
+                    offset: (page - 1) * size,
+                    order: [EOrderType[orderType - 1], 'desc']
+                })))
+            }, 2000);
+        })
+        return await p
     }
 
     public static async findCreate(name: string, desc: string, expirTime: number, addUser: number) {
@@ -129,9 +132,13 @@ export class Todo extends Model<Todo> {
                 }
             })
     }
+
+    // static associate() {
+    //     Todo.belongsTo(User, { as: '{User}', foreignKey: 'addUser', targetKey: 'id' });
+    // }
 };
 
-
 export default () => {
+    // export default (app: Application) => {
     return Todo;
 }

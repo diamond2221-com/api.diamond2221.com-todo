@@ -1,10 +1,12 @@
 /**
  * @desc 用户表
  */
-import { Column, DataType, Model, PrimaryKey, Table, AutoIncrement } from 'sequelize-typescript';
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 // import * as Sequelize from "sequelize"
+// import { Application } from 'egg'
 
-const { STRING, INTEGER } = DataType;
+const { STRING, INTEGER, DATE } = DataType;
+
 @Table({
     modelName: 'tbl_user'
 })
@@ -43,9 +45,28 @@ export class User extends Model<User> {
         field: 'up_time'
     })
     public up_time: string;
+
+    @Column({
+        type: DATE('string'),
+        field: 'upd_time'
+    })
+    public upd_time: Date;
+
+    public static async getUser(id: number) {
+        return await this.findOne({
+            where: {
+                id
+            }
+        })
+    }
+    // static associate() {
+    //     User.hasMany(Todo, { foreignKey: 'addUser' });
+    // }
 };
 
 
 export default () => {
+    // export default (app: Application) => {
+
     return User;
 }

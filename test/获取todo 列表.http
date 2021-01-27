@@ -1,1 +1,1 @@
-GET  http://127.0.0.1:7002/TODO/todo?page=1&size=8&orderType=1
+GET  http://127.0.0.1:7002/TODO/user?page=1&size=100

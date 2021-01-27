@@ -18,9 +18,13 @@ const plugin: EggPlugin = {
     enable: true,
     package: "egg-validate"
   },
+  // sequelize: {
+  //   enable: true,
+  //   package: "egg-sequelize-ts"
+  // }
   sequelize: {
     enable: true,
-    package: "egg-sequelize-ts"
+    package: 'egg-sequelize',
   },
   // redis: {
   //   enable: true,
