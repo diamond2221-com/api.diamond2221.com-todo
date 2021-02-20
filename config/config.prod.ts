@@ -46,7 +46,9 @@ export default () => {
             "http://api.diamond2221.com",
             "https://api.diamond2221.com",
             "https://www.diamond2221.com",
-            "https://m.diamond2221.com"
+            "https://m.diamond2221.com",
+            "http://todo-diamond2221.netlify.app",
+            "https://todo-diamond2221.netlify.app",
         ]
     };
 
