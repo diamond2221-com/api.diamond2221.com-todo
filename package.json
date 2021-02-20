@@ -1,5 +1,5 @@
 {
-  "name": "api.diamond2221.com/todo",
+  "name": "api.diamond2221.com.todo",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -8,8 +8,8 @@
     "declarations": true
   },
   "scripts": {
-    "start": "egg-scripts start --port=7002 --daemon --title=egg-server-api.diamond2221.com/todo",
-    "stop": "egg-scripts stop --title=egg-server-api.diamond2221.com/todo",
+    "start": "egg-scripts start --port=7002 --daemon --title=egg-server-api.diamond2221.com.todo",
+    "stop": "egg-scripts stop --title=egg-server-api.diamond2221.com.todo",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug --inpsect=9230",
     "test-local": "egg-bin test",
