@@ -62,21 +62,19 @@ export class Todo extends Model<Todo> {
 
     public static async fetchAllAndCount(page: number, size: number, orderType: 1 | 2 | 3): Promise<any> {
         let p = new Promise(resolve => {
-            setTimeout(() => {
-                enum EOrderType {
-                    'expir_time',
-                    'add_time',
-                    'up_time'
-                }
-                resolve((this.findAndCountAll<Todo>({
-                    where: {
-                        status: 1
-                    },
-                    limit: size,
-                    offset: (page - 1) * size,
-                    order: [EOrderType[orderType - 1], 'desc']
-                })))
-            }, 2000);
+            enum EOrderType {
+                'expir_time',
+                'add_time',
+                'up_time'
+            }
+            resolve((this.findAndCountAll<Todo>({
+                where: {
+                    status: 1
+                },
+                limit: size,
+                offset: (page - 1) * size,
+                order: [EOrderType[orderType - 1], 'desc']
+            })))
         })
         return await p
     }
