@@ -14,7 +14,7 @@ export default () => {
             // 密码
             password: "981220Zy+++",
             // 数据库名
-            database: "db_instagram"
+            database: "db_todo"
         },
         // 是否加载到 app 上，默认开启
         app: true,
@@ -26,7 +26,7 @@ export default () => {
         dialect: "mysql",
         host: "127.0.0.1",
         port: 3306,
-        database: "db_instagram",
+        database: "db_todo",
         username: "root",
         password: "981220Zy+++",
         define: {
