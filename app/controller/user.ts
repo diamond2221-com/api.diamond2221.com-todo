@@ -12,24 +12,20 @@ export default class UserController extends Controller {
         // const { page, size, orderType } = ctx.query
         // const res = await ctx.model.Usermodel.fetchAllAndCount(page, size, orderType)
 
-        console.log(ctx.model.Todomodel, ctx.model.User)
-        // ctx.send('res')
-
-        const res = (await ctx.model.Todomodel.findAndCountAll(
-            {
-                // where: {
-                //     addUser: 2
-                // },
-                include: [{
-                    model: ctx.model.Usermodel,
-                    as: 'user',
-                    // attributes: ['name', 'phone', 'upd_time']
-                }],
-            }
-        ))
-        // const data = res.rows[0].toJSON()
-        // console.log(data)
-        ctx.send(res)
+        ctx.send(ctx.service.todo.fetchAllAndCount())
+        // const res = (await ctx.model.Todomodel.findAndCountAll(
+        //     {
+        //         // where: {
+        //         //     addUser: 2
+        //         // },
+        //         include: [{
+        //             model: ctx.model.Usermodel,
+        //             as: 'user',
+        //             // attributes: ['name', 'phone', 'upd_time']
+        //         }],
+        //     }
+        // ))
+        // ctx.send(res)
     }
 
     /**

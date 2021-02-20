@@ -132,13 +132,8 @@ export class Todo extends Model<Todo> {
                 }
             })
     }
-
-    // static associate() {
-    //     Todo.belongsTo(User, { as: '{User}', foreignKey: 'addUser', targetKey: 'id' });
-    // }
 };
 
 export default () => {
-    // export default (app: Application) => {
     return Todo;
 }

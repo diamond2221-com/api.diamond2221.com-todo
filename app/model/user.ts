@@ -2,8 +2,6 @@
  * @desc 用户表
  */
 import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
-// import * as Sequelize from "sequelize"
-// import { Application } from 'egg'
 
 const { STRING, INTEGER, DATE } = DataType;
 
@@ -59,9 +57,6 @@ export class User extends Model<User> {
             }
         })
     }
-    // static associate() {
-    //     User.hasMany(Todo, { foreignKey: 'addUser' });
-    // }
 };
 
 

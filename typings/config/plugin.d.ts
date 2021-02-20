@@ -17,7 +17,7 @@ import 'egg-view';
 import 'egg-mysql';
 import 'egg-cors';
 import 'egg-validate';
-import 'egg-sequelize';
+import 'egg-sequelize-ts';
 import { EggPluginItem } from 'egg';
 declare module 'egg' {
   interface EggPlugin {
