@@ -6,7 +6,7 @@ export default () => {
         // 单数据库信息配置
         client: {
             // host
-            host: "127.0.0.1",
+            host: "59.110.20.21",
             // 端口号
             port: "3306",
             // 用户名
@@ -24,7 +24,7 @@ export default () => {
 
     config.sequelize = {
         dialect: "mysql",
-        host: "127.0.0.1",
+        host: "59.110.20.21",
         port: 3306,
         database: "db_todo",
         username: "root",
@@ -62,7 +62,7 @@ export default () => {
     config.redis = {
         client: {
             port: 6379, // Redis port
-            host: "127.0.0.1", // Redis host
+            host: "59.110.20.21", // Redis host
             password: "981220Zy+++",
             db: 0
         }
